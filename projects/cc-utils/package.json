@@ -1,0 +1,23 @@
+{
+  "name": "@carstennichte/cc-utils",
+  "description": "Utilities for sketching in HTML Canvas, and make some generative art.",
+  "license": "CC-BY-NC-SA-4.0",
+  "author": "Carsten Nichte <c.nichte@t-online.de> (https://carsten-nichte.de/index/)",
+  "version": "1.0.0",
+  "packageManager": "yarn@4.0.0",
+  "private": true,
+  "main": "dist/cc-utils.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "webpack --config ./webpack.config.js"
+  },
+  "devDependencies": {
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "canvas-sketch-util": "^1.10.0",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1"
+  }
+}

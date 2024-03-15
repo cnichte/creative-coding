@@ -1,0 +1,24 @@
+{
+  "name": "@carstennichte/creative-coding",
+  "private": true,
+  "license": "CC-BY-NC-SA-4.0",
+  "author": {
+    "name": "Carsten Nichte",
+    "email": "c.nichte@t-online.de",
+    "url": "https://carsten-nichte.de/index/"
+  },
+  "packageManager": "yarn@4.1.1",
+  "workspaces": [
+    "projects/*"
+  ],
+  "devDependencies": {
+    "@yarnpkg/pnpify": "^4.0.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.2",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "uuid": "^9.0.1"
+  }
+}

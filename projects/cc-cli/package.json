@@ -1,0 +1,32 @@
+{
+  "name": "@carstennichte/cc-cli",
+  "type": "module",
+  "description": "Command Line Tool for sketching in HTML Canvas, and make some generative art",
+  "version": "1.0.0",
+  "private": true,
+  "license": "CC-BY-NC-SA-4.0",
+  "author": "Carsten Nichte <c.nichte@t-online.de> (https://carsten-nichte.de/index/)",
+  "main": "index.js",
+  "bin": "./index.js",
+  "keywords": [
+    "art",
+    "genart",
+    "generative",
+    "generative-art",
+    "creative-coding",
+    "canvas",
+    "sketch",
+    "code",
+    "canvas-sketch",
+    "geom",
+    "geometry",
+    "random"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0"
+  }
+}
