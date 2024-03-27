@@ -1,12 +1,18 @@
 /**
- * Title    : Example Artwork No. 2 - Shapes
+ * Title    : Artwork No. 3 - TheGrid
  * Project  : Creative Coding
- * File     : projects/002-shapes/index.js
- * Version  : 0.1.0
- * Published: -
- *
- *
- * In the projects folder open the Terminal, and:
+ * File     : projects/003-thegrid/index.js
+ * Version  : 1.7.0
+ * Published: https://carsten-nichte.de/art/portfolio/the-grid/
+ * 
+ * made with 
+ * https://github.com/mattdesl/canvas-sketch
+ * https://github.com/mattdesl/canvas-sketch-util
+ * 
+ * Cell-Patterns -> zB. Linie im Grid zeichnen oder einen Buchstaben...
+ * also etwas mit dem Grid darstellen.
+ * 
+ ** In the projects folder open the Terminal, and:
  *
  * Start Server: `yarn run start`
  * Build html:   `yarn run build`
@@ -15,14 +21,14 @@
  * Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
  * https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
  * https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1
- *
+ * 
  * In short:
  * Do not sell the code, or creative stuff made with this code.
  * You are allowed to make someone happy, and give away the works you have created for free.
  * learn, code, and have fun.
- *
+ * 
  * @author Carsten Nichte - 2022
- *
+ * 
  */
 import { Pane } from "tweakpane";
 
@@ -40,7 +46,28 @@ import {
   ObserverSubject,
   Size,
   Vector,
+  Grid_Manager,
 } from "@carstennichte/cc-utils";
+
+
+interface RandomizedColors {
+  canvasColor: string;
+
+  backgroundFillColor: string;
+  backgroundBorderColor: string;
+
+  gridFillColor: string;
+  gridBorderColor: string;
+
+  cellFillColor: string;
+  cellBorderColor: string;
+
+  cellContentFillColor: string;
+  cellContentBorderColor: string;
+
+  accentFillColor: string;
+  accentBorderColor: string;
+}
 
 /**
  * Ein Sketch besteht aus:
@@ -64,6 +91,27 @@ class MySketch implements Sketch {
 
   private scene: SceneGraph | null;
 
+  private parameter: any = {};
+  private grid:any = null;  
+  private randomized: RandomizedColors = {
+    canvasColor: "#ffffffff",
+
+    backgroundFillColor: '#ffffffff',
+    backgroundBorderColor: '#efefefff',
+
+    gridFillColor: '#ffffffff',
+    gridBorderColor: '#2a27ebff',
+
+    cellFillColor: '#ffffffff',
+    cellBorderColor: '#000000ff',
+
+    cellContentFillColor: '#ffffffff',
+    cellContentBorderColor: '#000000ff',
+
+    accentFillColor: '#ffffffff',
+    accentBorderColor: '#ac1325ff'
+  }
+
   /**
    * Creates an instance of Sketch.
    * @memberof MySketch
@@ -77,6 +125,8 @@ class MySketch implements Sketch {
     this.colorSet = null;
 
     this.animation_halt = false;
+
+    // this.parameter = Object.assign(this.parameter, parameter);
 
     // Lets set up the Scene
     this.scene = null;
@@ -104,7 +154,9 @@ class MySketch implements Sketch {
       this.ctx = ctx;
     }
 
-    // provide tweakpanes...
+    // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
+
+    // Inject ParameterSets and init with Tweakpane-Parameters
     BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
       pane: tweakpane,
       folder: tweakpane_folder_artwork,
@@ -126,20 +178,36 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
-    // create my artwork objects
+    Grid_Manager.tweakpaneSupport.provide_tweakpane_to(parameter,{
+      pane: tweakpane,
+      folder: null,
+      folder_name_prefix: "",
+      use_separator: false,
+      parameterSetName: "",
+      excludes: [],
+      defaults: {},
+    });
+
+    // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);
+    
+    this.grid = new Grid_Manager(parameter);
 
-    // inform Background about format changes
+    // Background listens to Format changes
     format.addObserver(this.background);
+    format.addObserver(this.grid);
 
-    // use some colors
+    // Quadrat listens to ColorSet changes
     this.colorSet = new ColorSet(parameter);
-    this.colorSet.addObserver(this.background); // calls update
-    this.colorSet.animationTimer.addListener(this.background); // calls animate_slow
+    this.colorSet.addObserver(this.background);
+    this.colorSet.addObserver(this.grid);
+    this.colorSet.animationTimer.addListener(this.background);
+    this.colorSet.animationTimer.addListener(this.grid);
 
-    // lets set up the scene
+    // Lets set up the Scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
+    this.scene.push(this.grid);
   } // prepare
 
   /**
@@ -152,7 +220,6 @@ class MySketch implements Sketch {
    * @memberof MySketch
    */
   animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
-
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
     // transfert all the tweakpane-parameters to the parameter-sets
@@ -187,10 +254,10 @@ class MySketch implements Sketch {
 /* when all site content is loaded */
 window.onload = function () {
   const artwork_meta: Artwork_Meta = {
-    title: "Shapes",
-    description: "Basic Shapes, centered on the canvas.",
+    title: "The Grid",
+    description: " The Grid",
     author: "Carsten Nichte",
-    version: "1.0.0",
+    version: "1.7.0",
     year: "2022",
   };
 
@@ -201,9 +268,9 @@ window.onload = function () {
       scale: 0,
       canvas: {
         id: "theCanvas",
-        parent_container_id:"theCanvasContainer",
-        parent_container_class:"canvas_parent_css_class",
-        tweakpane_container_id:"theTweakpaneContainer",
+        parent_container_id: "theCanvasContainer",
+        parent_container_class: "canvas_parent_css_class",
+        tweakpane_container_id: "theTweakpaneContainer",
         size: new Size(800, 800),
         center: new Vector(400, 400),
         clearscreen: false,

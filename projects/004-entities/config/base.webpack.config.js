@@ -1,7 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
-// const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin'); // , new HtmlInlineScriptPlugin()
 
 module.exports = {
   target: "web",
@@ -12,7 +11,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Happy Creative Coding',
-    })
+    }),
   ], 
   optimization: {
     minimize: true,

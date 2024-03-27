@@ -1,9 +1,9 @@
-let Artwork = require('./My_Artwork.js');
+let Artwork = require('./My_Artwork.js/index.js');
 
 /**
  * Title    : My Artwork Skeleton
  * Project  : Creative Coding
- * File     : projects/001-thegrid/main.js
+ * File     : projects/002-entities/main.js
  * Version  : 0.1.0
  * Published: -
  * 

@@ -108,7 +108,7 @@ interface State {
 export class Format extends ObserverSubject {
   private parameter: any;
 
-  private state: State;
+  public state: State;
   private state_last: State;
 
   public static AspectRatios = {

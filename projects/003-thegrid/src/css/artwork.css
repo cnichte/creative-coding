@@ -1,33 +1,39 @@
+/*
 * {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
 }
-
-body {
-  background-color: #212529;
-}
-
+*/
 /* https://runebook.dev/de/docs/css/css_positioning/understanding_z_index/stacking_without_z-index */
+/*
 .canvasWrap { 
   position:relative;
   z-index:-1;
   padding: 10px;
  } 
+*/
+
+/* https://kulturbanause.de/blog/einfuhrung-in-das-flexbox-modell-von-css/ */
+/* min-width = Mobile First */
+
+#theCanvasContainer{
+  display: contents;
+}
+
+#theTweakpaneContainer{
+  position: absolute;
+  z-index: 100;
+}
 
 canvas {
-  /* position: static; */
+  position: relative;
+  top: 28px;
+  left: 0px;
+
+  width: 100%;
   margin: auto;
-  display: block;
   box-shadow: 0 2px 12px -2px rgba(0, 0, 0, .55);
   background: grey;
   border: 1px solid grey;
-}
-
-@font-face {
-  font-family: 'MyFont';
-  src: url('../fonts/branda-yolq.ttf') format('ttf'),
-    url('../fonts/branda-yolq.ttf') format('ttf');
-  font-weight: 600;
-  font-style: normal;
 }

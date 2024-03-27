@@ -204,7 +204,10 @@ window.onload = function () {
       animation_halt: false,
       scale: 0,
       canvas: {
-        id: "",
+        id: "theCanvas",
+        parent_container_id:"theCanvasContainer",
+        parent_container_class:"canvas_parent_css_class",
+        tweakpane_container_id:"theTweakpaneContainer",
         size: new Size(800, 800),
         center: new Vector(400, 400),
         clearscreen: false,

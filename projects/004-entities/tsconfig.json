@@ -38,7 +38,7 @@
     "strict": true,
 
     // ?
-    "verbatimModuleSyntax": true,
+    // "verbatimModuleSyntax": true,
 
     // Generate d.ts files
     "declaration": true,

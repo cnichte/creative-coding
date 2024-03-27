@@ -1,6 +1,20 @@
 # Setup a minimalistic Dev Enviroment with JARN 2 and Webpack 5
 
-* Hier läuft ein Monorepo (npm name) bzw. Workspace (yarn).
+Post-resolution validation
+➤ YN0002: │ @carstennichte/creative-coding@workspace:. doesn't provide html-webpack-plugin (p84341), requested by html-inline-script-webpack-plugin.
+➤ YN0086: │ Some peer dependencies are incorrectly met; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+
+
+* https://github.com/icelam/html-inline-script-webpack-plugin/issues/493
+* https://www.npmjs.com/package/html-inline-script-webpack-plugin
+* npm install --save-dev html-inline-script-webpack-plugin
+* npm i html-inline-script-webpack-plugin
+* yarn add html-inline-script-webpack-plugin   <---- so gings
+
+---
+
+* Hier läuft ein YARN-Workspace (bzw. Monorepo nach npm nomenklatur),
+* Typescript and Webpack.
 * https://yarnpkg.com/features/workspaces
 
 ## Projekt archivieren mit ZIP
@@ -10,6 +24,19 @@ Das Projekt flott in ein zip archiv verpacken (ohne das Projektverzeichnis selbe
 ```
 zip -r creativeCoding-Backup-$(date +"%Y-%m-%d").zip . -x '*node_modules*' '*.yarn*' '*.git*' '*.vscode*' '*.zip'
 ```
+
+## Projekt zur Hugo-Webseite transportieren
+
+Dazu hab ich das Skript `copy.sh` geschrieben das die datei kopiert und umbenennt:
+
+```bash
+bash copy.sh 001-pixel
+bash copy.sh 002-shapes
+```
+
+Kopiert `projects/001-pixel/dist/production/index.bundle.js`
+
+nach `/Users/cnichte/develop-software/01-active/carsten-nichte.de - static website/assets/js/cc-code/001-pixel.js`
 
 ## YARN 2
 
@@ -520,6 +547,27 @@ https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates
 
 Multipart... noch nicht probiert...
 https://github.com/webpack/webpack/tree/main/examples/multi-part-library
+
+
+
+# canvas fullscreen toogle
+
+```js
+
+// beenden mit esc taste
+function fullscreen(){
+           var el = document.getElementById('canvas');
+ 
+           if(el.webkitRequestFullScreen) {
+               el.webkitRequestFullScreen();
+           }
+          else {
+             el.mozRequestFullScreen();
+          }            
+}
+ 
+canvas.addEventListener("click",fullscreen)
+```
 
 ## EXAMPLE index.js
 

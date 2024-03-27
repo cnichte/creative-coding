@@ -152,17 +152,17 @@ export interface CheckObserverSubject_ColorSet_Parameter {
   number: number;
 }
 
-interface CS_Result {
+export interface CS_Result {
   index: number;
   cs_object: ColorSetType | null;
 }
 
-interface CS_Result_String {
+export interface CS_Result_String {
   index: number;
   color: string;
 }
 
-interface CS_ResultColorInfo {
+export interface CS_ResultColorInfo {
   borderColor: string;
   fillColor: string;
   backgroundColor: string;
@@ -183,7 +183,7 @@ interface CS_ResultColorInfo {
  *
  * @interface State
  */
-interface State {
+export interface State {
   colorset: ColorSet_ParameterSet;
 }
 
@@ -191,7 +191,7 @@ export class ColorSet extends ObserverSubject {
   private parameter: any;
   public animationTimer: AnimationTimer;
 
-  private state: State;
+  public state: State;
   private state_last: State;
 
   public static Groups = {

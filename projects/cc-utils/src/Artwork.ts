@@ -106,6 +106,14 @@ export interface Artwork_Meta {
   year: string;
 }
 
+interface HTML_Content_Props {
+  canvas_id: string;
+  parent_container_id: string;
+  parent_container_class: string;
+  tweakpane_container_id:string;
+  artwork_meta: any;
+}
+
 /**
  * Das ParamterSet für das Modul.
  *
@@ -202,11 +210,65 @@ export class Artwork {
       Object.assign(parameter, { tweakpane: {} });
     }
 
+    //* HTML Content, im wesentlichen das <canvas> Element.
+
+    const parent_container_id = parameter.artwork.canvas.parent_container_id.trim();
+    const tweakpane_container_id = parameter.artwork.canvas.tweakpane_container_id.trim();
+
+    // TODO Try to find the canvas element with ID...
+    this.theCanvas = this.document.getElementById(
+      this.parameter.artwork.canvas.id
+    );
+    
+    if(this.theCanvas==null) {
+      // append one in body, or in the element with id
+      const html_props:HTML_Content_Props={
+        canvas_id: this.parameter.artwork.canvas.id,
+        parent_container_id: parent_container_id,
+        parent_container_class: parameter.artwork.canvas.parent_container_class,
+        tweakpane_container_id: tweakpane_container_id,
+        artwork_meta: this.parameter.artwork.meta,
+      }
+
+      this.document.body.appendChild(
+        Artwork.getHTMLContent(html_props)
+      );
+
+      this.theCanvas = this.document.getElementById(
+        this.parameter.artwork.canvas.id
+      );
+    }
+
     //* The Tweakpane
-    this.tweakpane = new Pane({
-      title: `Artwork '${parameter.artwork.meta.title}'`,
-      expanded: true,
-    });
+    const pc = document.getElementById(parent_container_id);
+    console.log(`#### found canvas Parent-Container ${parent_container_id}?`, pc);
+    
+    const tpc = document.getElementById(tweakpane_container_id);
+    console.log(`#### found canvas Tweakpane-Container ${tweakpane_container_id}?`, tpc);
+
+    if(tweakpane_container_id.length >0 && tpc){
+      console.log(`put tweakpane in id ${tweakpane_container_id}`);
+      this.tweakpane = new Pane({
+        title: `Artwork '${parameter.artwork.meta.title}'`,
+        expanded: false,
+        container: document.getElementById(tweakpane_container_id),
+      });
+    }else{
+      if(parent_container_id.length >0 && pc){
+        console.log(`put tweakpane in id ${parent_container_id}`);
+        this.tweakpane = new Pane({
+          title: `Artwork '${parameter.artwork.meta.title}'`,
+          expanded: false,
+          container: document.getElementById(parent_container_id),
+        });
+      }else{
+        console.log(`put tweakpane in body`);
+        this.tweakpane = new Pane({
+          title: `Artwork '${parameter.artwork.meta.title}'`,
+          expanded: false
+        });
+      }
+    }
 
     this.tweakpane_folder_artwork = null;
 
@@ -231,18 +293,6 @@ export class Artwork {
       }); // Artwork.OPEN_TWEAK_PANES
 
     this.format = new Format(this.parameter);
-
-    // HTML Content, im wesentlichen das <canvas> Element.
-    this.document.body.appendChild(
-      Artwork.getHTMLContent(
-        this.parameter.artwork.canvas.id,
-        this.parameter.artwork.meta
-      )
-    );
-
-    this.theCanvas = this.document.getElementById(
-      this.parameter.artwork.canvas.id
-    );
 
     this.ctx = this.theCanvas.getContext("2d");
 
@@ -440,19 +490,26 @@ export class Artwork {
    * @return {*} div Element with <canvas id="theCanvas" />
    * @memberof Artwork
    */
-  private static getHTMLContent(
-    id: string = "theCanvas",
-    artwork_meta: any
-  ): any {
-    const element_div = document.createElement("div");
-    element_div.classList.add("canvasWrap"); // CSS Style: class="canvasWrap" Attribute
+  private static getHTMLContent(props:HTML_Content_Props): any {
 
-    const element_canvas = document.createElement("canvas"); // theCanvas Element
-    element_canvas.setAttribute("id", id); //  id Attribute
+    const elm_wrapper = document.createElement("div");
+    elm_wrapper.classList.add(props.parent_container_class); // CSS Style: class="canvasWrap" Attribute
+    if(props.parent_container_id.length >0){
+      elm_wrapper.setAttribute("id", props.parent_container_id); 
+    }
 
-    element_div.appendChild(element_canvas);
+    const elm_tweakpane = document.createElement("div");
+    if(props.tweakpane_container_id.length >0){
+      elm_tweakpane.setAttribute("id", props.tweakpane_container_id); 
+    }
 
-    return element_div;
+    const elm_canvas = document.createElement("canvas"); // theCanvas Element
+    elm_canvas.setAttribute("id", props.canvas_id); //  id Attribute
+
+    elm_wrapper.appendChild(elm_tweakpane);
+    elm_wrapper.appendChild(elm_canvas);
+
+    return elm_wrapper;
   } // getHTMLContent
 
   //* --------------------------------------------------------------------

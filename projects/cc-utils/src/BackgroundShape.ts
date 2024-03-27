@@ -74,9 +74,11 @@ interface State {
 export class BackgroundShape extends Background {
 
   private random_color: any; // Color
-  private animationTimeline: AnimationTimeline;
-  private breathe: Breathe;
 
+  private animationTimeline: AnimationTimeline|null = null;
+  private breathe: Breathe|null = null;
+  private hasAnimations:boolean = false;
+  
   /**
    * Construct the Thing.
    *
@@ -85,9 +87,11 @@ export class BackgroundShape extends Background {
   constructor(parameter: any) {
     super(parameter);
 
-    this.animationTimeline = new AnimationTimeline();
-    this.breathe = new Breathe(this.parameter.accent.animation);
-    this.animationTimeline.push(this.breathe);
+  //  this.animationTimeline = new AnimationTimeline();
+  //  if(this.parameter.accent.animation !=null || this.parameter.accent.animation !=undefined){
+  //    this.breathe = new Breathe(this.parameter.accent.animation);
+  //    this.animationTimeline.push(this.breathe);
+  //  }
 
     // Das ist der State....
     this.random_color = {
