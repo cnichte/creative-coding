@@ -111,7 +111,15 @@ class MySketch implements Sketch {
       this.ctx = ctx;
     }
 
-    console.log("TWEAKPANE FOLDER ARTWORK", tweakpane_items);
+    // tweakpane, null, false, parameter, ""
+    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      items: tweakpane_items,
+      folder_name_prefix: "",
+      use_separator: true,
+      parameterSetName: "",
+      excludes: [],
+      defaults: {},
+    });
 
     // provide tweakpanes...
     Background.tweakpaneSupport.provide_tweakpane_to(parameter, {
@@ -123,15 +131,7 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
-    // tweakpane, null, false, parameter, ""
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
-      folder_name_prefix: "",
-      use_separator: true,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
+
 
     // create my artwork objects
     this.background = new Background(parameter);
@@ -206,9 +206,9 @@ window.onload = function () {
       scale: 0,
       canvas: {
         id: "theCanvas",
-        parent_container_id:"theCanvasContainer",
-        parent_container_class:"canvas_parent_css_class",
-        tweakpane_container_id:"theTweakpaneContainer",
+        parent_container_id: "theCanvasContainer",
+        parent_container_class: "canvas_parent_css_class",
+        tweakpane_container_id: "theTweakpaneContainer",
         size: new Size(800, 800),
         center: new Vector(400, 400),
         clearscreen: false,

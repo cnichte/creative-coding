@@ -1,6 +1,6 @@
 {
-  "name": "@carstennichte/003-thegrid",
-  "packageManager": "yarn@4.0.0",
+  "name": "@carstennichte/003-grid",
+  "packageManager": "yarn@4.1.1",
   "scripts": {
     "watch": "webpack --watch --config ./config/dev.webpack.config.js",
     "start": "webpack serve --open --config ./config/dev.webpack.config.js",

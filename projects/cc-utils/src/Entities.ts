@@ -382,7 +382,8 @@ export class Entity_Manager extends ObserverSubject {
       props.items.pane.registerPlugin(EssentialsPlugin); // TODO das muss ggfs in den Root Folder
 
       props.items.folder = props.items.pane.addFolder({
-        title: 'Entities > Appearance'
+        title: 'Entities > Appearance',
+        expanded: false,
       });
 
       props.items.folder.addBlade({

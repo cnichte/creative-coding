@@ -49,6 +49,7 @@ import {
   Vector,
   Grid_Manager,
   Entity_Manager,
+  Tweakpane_Items,
 } from "@carstennichte/cc-utils";
 
 
@@ -142,7 +143,7 @@ class MySketch implements Sketch {
    * @param {Object} parameter
    * @param {Format} format
    * @param {Pane} tweakpane
-   * @param {*} tweakpane_folder_artwork
+   * @param {Tweakpane_Items} tweakpane_items
    * @memberof Sketch
    */
   prepare(
@@ -150,7 +151,7 @@ class MySketch implements Sketch {
     parameter: any,
     format: Format,
     tweakpane: Pane,
-    tweakpane_folder_artwork: any
+    tweakpane_items: Tweakpane_Items
   ) {
     if (this.ctx == null) {
       // singleton-pattern
@@ -159,37 +160,27 @@ class MySketch implements Sketch {
 
     // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
 
+    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      items: tweakpane_items,
+      folder_name_prefix: "",
+      use_separator: false,
+      parameterSetName: "",
+      excludes: [],
+      defaults: {},
+    });
+
     // Inject ParameterSets and init with Tweakpane-Parameters
     BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: tweakpane_folder_artwork,
-      folder_name_prefix: "",
+      items: tweakpane_items,
+      folder_name_prefix: "Background ",
       use_separator: false,
       parameterSetName: "",
       excludes: [],
       defaults: {},
     });
 
-    // tweakpane, null, false, parameter, ""
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: null,
-      folder_name_prefix: "",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
 
-    Entity_Manager.tweakpaneSupport.provide_tweakpane_to(parameter,{
-      pane: tweakpane,
-      folder: null,
-      folder_name_prefix: "",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
+    // TODO My_Target + My_Accent
 
     // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);

@@ -1,7 +1,7 @@
 # Shape Test
 
 * Project : Creative Coding
-* Title : Shapes
+* Title : Grid
 * Date : 2022
 * Published: -
 

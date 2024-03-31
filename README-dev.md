@@ -38,11 +38,20 @@ zip -r creativeCoding-Backup-$(date +"%Y-%m-%d").zip . -x '*node_modules*' '*.ya
 Dazu hab ich das Skript `copy.sh` geschrieben das die datei kopiert und umbenennt:
 
 ```bash
+# im jeweiligen Projekt-Folder
 yarn run build
+
+# im root folder
 bash copy.sh 001-pixel
-bash copy.sh 002-shapes
-bash copy.sh 003-thegrid
+bash copy.sh 002-shape
+bash copy.sh 003-grid
 bash copy.sh 004-entities
+
+bash copy.sh 005-punktstunde
+bash copy.sh 006-particles
+bash copy.sh 007-quadrate
+
+bash copy.sh 008-duette
 ```
 
 Kopiert `projects/001-pixel/dist/production/index.bundle.js`

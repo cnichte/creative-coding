@@ -1,6 +1,6 @@
 {
-  "name": "@carstennichte/002-shapes",
-  "packageManager": "yarn@4.0.0",
+  "name": "@carstennichte/002-shape",
+  "packageManager": "yarn@4.1.1",
   "scripts": {
     "watch": "webpack --watch --config ./config/dev.webpack.config.js",
     "start": "webpack serve --open --config ./config/dev.webpack.config.js",

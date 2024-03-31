@@ -8,7 +8,7 @@ import { TweakpaneSupport_Props } from "@carstennichte/cc-utils/dist/TweakpaneSu
  *  Pattern.Observer (update)
  *  SceneGraph_Item (draw)
  */
-class My_Accent { // implements Pattern.Observer
+export class My_Accent { // implements Pattern.Observer
 
   private parameter: any;
   private animationTimeline: AnimationTimeline;
@@ -189,6 +189,3 @@ class My_Accent { // implements Pattern.Observer
   }
 
 } // class MyAccent
-
-
-module.exports = My_Accent;
