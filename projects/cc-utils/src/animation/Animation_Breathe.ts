@@ -1,5 +1,5 @@
 /**
- * Title    : Breathe
+ * Title    : Animation_Breathe
  * Project  : Creative Coding
  * File     : projects/cc-utils/animations/Breathe.js
  * Version  : 1.0.0
@@ -27,6 +27,7 @@ import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
   type TweakpaneSupport_Props,
+  type Tweakpane_Items,
 } from "../TweakpaneSupport";
 
 import { AnimationTimeline } from "../AnimationTimeline";
@@ -35,14 +36,15 @@ import { Size } from "../Size";
 
 // const random = require('canvas-sketch-util/random');
 
+// export namespace Animation {
+
 /**
- *
  *
  * @export
  * @class Animation_Breathe
  * @extends {AnimationTimeline_Item}
  */
-export class Breathe extends AnimationTimeline_Item {
+export class Animation_Breathe extends AnimationTimeline_Item {
   public static TWEAKPANE_PREFIX: string = "_animation_breathe";
 
   private min: number;
@@ -146,12 +148,12 @@ export class Breathe extends AnimationTimeline_Item {
     inject_parameterset_to: function (
       parameter: any,
       props: TweakpaneSupport_Props = {
-        parameterSetName : "",
+        parameterSetName: "",
       }
     ): void {
       let pt: any = parameter.tweakpane; // prefixable
       let tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Breathe.TWEAKPANE_PREFIX
+        props.parameterSetName + Animation_Breathe.TWEAKPANE_PREFIX
       );
 
       if (!("animation" in parameter)) {
@@ -191,13 +193,13 @@ export class Breathe extends AnimationTimeline_Item {
     transfer_tweakpane_parameter_to: function (
       parameter: any,
       props: TweakpaneSupport_Props = {
-        parameterSetName : "",
+        parameterSetName: "",
       }
     ): void {
       let tp_prefix = "";
       if (props.parameterSetName != null) {
         tp_prefix = TweakpaneSupport.create_tp_prefix(
-          props.parameterSetName + Breathe.TWEAKPANE_PREFIX
+          props.parameterSetName + Animation_Breathe.TWEAKPANE_PREFIX
         );
       }
 
@@ -229,9 +231,9 @@ export class Breathe extends AnimationTimeline_Item {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ): Tweakpane_Items {
       let tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Breathe.TWEAKPANE_PREFIX
+        props.parameterSetName + Animation_Breathe.TWEAKPANE_PREFIX
       );
 
       // Inject Tweakpane parameters
@@ -241,14 +243,14 @@ export class Breathe extends AnimationTimeline_Item {
         max: 3.5,
       };
 
-      props.folder.addInput(parameter.tweakpane, tp_prefix + "depth", {
+      props.items.folder.addInput(parameter.tweakpane, tp_prefix + "depth", {
         label: "Breathe",
         min: 0.125,
         max: 5.0,
         step: 0.004,
       });
 
-      props.folder.addInput(parameter.tweakpane, tp_prefix + "increment", {
+      props.items.folder.addInput(parameter.tweakpane, tp_prefix + "increment", {
         label: "Speed",
         min: 0.001,
         max: 0.2,
@@ -261,13 +263,16 @@ export class Breathe extends AnimationTimeline_Item {
       };
 
       let props1: Provide_Tweakpane_To_Props = {
-        pane: props.pane,
-        folder: props.folder,
+        items:{
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null
+        },
         folder_name_prefix: tp_prefix,
         use_separator: true,
         parameterSetName: "",
         excludes: [], // optional
-        defaults: timeline_defaults, // optional
+        defaults: timeline_defaults,     
       };
 
       AnimationTimeline.tweakpaneSupport.provide_tweakpane_to(
@@ -275,7 +280,9 @@ export class Breathe extends AnimationTimeline_Item {
         props1
       );
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class Animation_Breathe
+
+// } // namespace Animation

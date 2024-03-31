@@ -44,7 +44,7 @@ import { ObserverSubject, type Observer } from "./ObserverPattern";
 import { SceneGraph, type Drawable } from "./SceneGraph";
 import { Shape } from "./Shape";
 import { Size } from "./Size";
-import { TweakpaneSupport, type TweakpaneSupport_Props, type Provide_Tweakpane_To_Props } from "./TweakpaneSupport";
+import { TweakpaneSupport, type TweakpaneSupport_Props, type Provide_Tweakpane_To_Props, type Tweakpane_Items } from "./TweakpaneSupport";
 import { Vector } from "./Vector";
 
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
@@ -331,7 +331,7 @@ export class Entity_Manager extends ObserverSubject {
   } // draw
 
   public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props) {
+    provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props):Tweakpane_Items {
 
       // Inject Tweakpane parameters
       parameter.tweakpane = Object.assign(parameter.tweakpane, {
@@ -361,38 +361,35 @@ export class Entity_Manager extends ObserverSubject {
         brush_fillColor: "#efefef7F",
       };
 
-      if (props.folder == null) {
-        props.folder = props.pane.addFolder({
-          title: 'Entities ',
-          // view: 'color',
-          // alpha: true
-        });
-      }
 
       // TODO folder_name_prefix + "Entity::", pane, folder, parameter_tweakpane, "entity", [], brush_defaults
       let brush_tp_props: Provide_Tweakpane_To_Props = {
-        pane: props.pane,
-        folder: null,
-        folder_name_prefix: props.folder_name_prefix,
+        items:{
+          pane: props.items.pane,
+          folder: null,
+          tab: null
+        },
+        folder_name_prefix: "Entities > ",
         use_separator: false,
         parameterSetName: 'entity',
         excludes: [],
         defaults: brush_defaults,
       };
 
-      props.pane.registerPlugin(EssentialsPlugin); // TODO das muss ggfs in den Root Folder
+      const tpi_brush:Tweakpane_Items = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, brush_tp_props);
 
-      let folder = props.pane.addFolder({
-        title: '4. Entities::Appearance'
+
+      props.items.pane.registerPlugin(EssentialsPlugin); // TODO das muss ggfs in den Root Folder
+
+      props.items.folder = props.items.pane.addFolder({
+        title: 'Entities > Appearance'
       });
 
-      folder = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, brush_tp_props);
-
-      props.folder.addBlade({
+      props.items.folder.addBlade({
         view: "separator",
       });
 
-      folder.addBinding(parameter.tweakpane, 'entity_nature', {
+      props.items.folder.addBinding(parameter.tweakpane, 'entity_nature', {
         label: 'Nature',
         options: {
           individual: 'individual',
@@ -400,32 +397,32 @@ export class Entity_Manager extends ObserverSubject {
         }
       });
 
-      folder.addBinding(parameter.tweakpane, 'entity_sizeRange', {
+      props.items.folder.addBinding(parameter.tweakpane, 'entity_sizeRange', {
         label: 'Size',
         min: 0,
         max: 1,
         step: 0.01,
       });
 
-      folder.addBinding(parameter.tweakpane, 'entity_bounceMode', {
+      props.items.folder.addBinding(parameter.tweakpane, 'entity_bounceMode', {
         label: 'Bounce',
       });
 
-      folder.addBinding(parameter.tweakpane, 'entity_count', {
+      props.items.folder.addBinding(parameter.tweakpane, 'entity_count', {
         label: 'Anzahl',
         min: 1,
         max: 1500,
         step: 1
       });
 
-      folder.addBinding(parameter.tweakpane, 'entity_distanceFactor', {
+      props.items.folder.addBinding(parameter.tweakpane, 'entity_distanceFactor', {
         label: 'Connect',
         min: 0.0,
         max: 1,
         step: 0.01
       });
 
-      return folder;
+      return props.items;
 
     },
     inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {

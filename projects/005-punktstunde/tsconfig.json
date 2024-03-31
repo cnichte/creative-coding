@@ -1,0 +1,60 @@
+{
+  //* https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html
+  //* https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options.html#im-writing-a-library
+  //* https://stackoverflow.com/questions/55304436/webpack-with-typescript-getting-typescript-emitted-no-output-error
+  
+  // include macht auch das alles flat im /dist/ Verzeichnis erscheint! 
+  // und nicht in einem src Unterverzeichnis
+  "include": ["./src/**/*"],
+
+  "compilerOptions": {
+    // Types should go into this directory.
+    // Removing this would place the .d.ts files next to the .js files
+    "outDir": "./dist/",
+  
+    // ???
+    // "noImplicitAny": true,
+    // ???
+    "module": "es6",
+  
+    "target": "es5", // set to the *lowest* target you support
+
+    // Tells TypeScript to read JS files, as normally they are ignored as source files
+    "allowJs": true,
+
+    // ???
+    "moduleResolution": "node",
+
+    // This compiler run should only output d.ts files
+    // https://www.typescriptlang.org/tsconfig#emitDeclarationOnly
+    //! = false, sonst Error: TypeScript emitted no output for index.ts.
+    "emitDeclarationOnly": false,
+
+    // https://www.typescriptlang.org/tsconfig#noEmit
+    //! = false, sonst Error: TypeScript emitted no output for index.ts.
+    "noEmit": false,
+
+    // ?
+    "strict": true,
+
+    // ?
+    // "verbatimModuleSyntax": true,
+
+    // Generate d.ts files
+    "declaration": true,
+
+    // ?
+    "sourceMap": true,
+
+    // go to js file when using IDE functions like
+    // "Go to Definition" in VSCode
+    "declarationMap": true,
+
+    // https://www.typescriptlang.org/tsconfig#esModuleInterop
+    // um 'export default' zu nutzen.
+    // "esModuleInterop": false
+
+    //! = false, sonst Error: TypeScript emitted no output for index.ts.
+    "noEmitOnError":false,
+  }
+}

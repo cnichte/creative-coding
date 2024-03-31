@@ -1,9 +1,9 @@
 /**
- * Title    : Artwork No. 3 - TheGrid
+ * Title    : Artwork No. 5 - Punktstunde
  * Project  : Creative Coding
- * File     : projects/003-thegrid/index.js
- * Version  : 1.7.0
- * Published: https://carsten-nichte.de/art/portfolio/the-grid/
+ * File     : projects/004-entities/index.js
+ * Version  : 0.1.0
+ * Published: https://carsten-nichte.de/art/portfolio/entities/
  * 
  * made with 
  * https://github.com/mattdesl/canvas-sketch
@@ -30,7 +30,8 @@
  * @author Carsten Nichte - 2022
  * 
  */
-import { Pane } from "tweakpane";
+
+ import { Pane } from "tweakpane";
 
 import "./css/artwork.css";
 import "./css/tweakpane.css";
@@ -47,7 +48,7 @@ import {
   Size,
   Vector,
   Grid_Manager,
-  Tweakpane_Items,
+  Entity_Manager,
 } from "@carstennichte/cc-utils";
 
 
@@ -84,16 +85,16 @@ class MySketch implements Sketch {
 
   private ctx: any;
 
-  private background: BackgroundShape | null;
-  private format: Format | null;
-  private colorSet: ColorSet | null;
+  private background: BackgroundShape|null;
+  private format: Format|null;
+  private colorSet: ColorSet|null;
 
   private animation_halt: boolean;
 
-  private scene: SceneGraph | null;
+  private scene: SceneGraph|null;
 
   private parameter: any = {};
-  private grid: any = null;
+  private entity_manager:Entity_Manager|null;
   private randomized: RandomizedColors = {
     canvasColor: "#ffffffff",
 
@@ -127,6 +128,7 @@ class MySketch implements Sketch {
 
     this.animation_halt = false;
 
+    this.entity_manager = null;
     // this.parameter = Object.assign(this.parameter, parameter);
 
     // Lets set up the Scene
@@ -140,7 +142,7 @@ class MySketch implements Sketch {
    * @param {Object} parameter
    * @param {Format} format
    * @param {Pane} tweakpane
-   * @param {Tweakpane_Items} tweakpane_items
+   * @param {*} tweakpane_folder_artwork
    * @memberof Sketch
    */
   prepare(
@@ -148,7 +150,7 @@ class MySketch implements Sketch {
     parameter: any,
     format: Format,
     tweakpane: Pane,
-    tweakpane_items: Tweakpane_Items
+    tweakpane_folder_artwork: any
   ) {
     if (this.ctx == null) {
       // singleton-pattern
@@ -157,9 +159,10 @@ class MySketch implements Sketch {
 
     // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
 
-    // tweakpane, null, false, parameter, ""
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
+    // Inject ParameterSets and init with Tweakpane-Parameters
+    BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      pane: tweakpane,
+      folder: tweakpane_folder_artwork,
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -167,22 +170,20 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
-    // Inject ParameterSets and init with Tweakpane-Parameters
-    BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
-      folder_name_prefix: "Background ",
+    // tweakpane, null, false, parameter, ""
+    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      pane: tweakpane,
+      folder: null,
+      folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
       excludes: [],
       defaults: {},
     });
 
-    Grid_Manager.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: {
-        pane: tweakpane_items.pane,
-        folder: null,
-        tab: null
-      },
+    Entity_Manager.tweakpaneSupport.provide_tweakpane_to(parameter,{
+      pane: tweakpane,
+      folder: null,
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -192,24 +193,24 @@ class MySketch implements Sketch {
 
     // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);
-
-    this.grid = new Grid_Manager(parameter);
+    
+    this.entity_manager = new Entity_Manager(parameter);
 
     // Background listens to Format changes
     format.addObserver(this.background);
-    format.addObserver(this.grid);
+    format.addObserver(this.entity_manager);
 
     // Quadrat listens to ColorSet changes
     this.colorSet = new ColorSet(parameter);
     this.colorSet.addObserver(this.background);
-    this.colorSet.addObserver(this.grid);
+    this.colorSet.addObserver(this.entity_manager);
     this.colorSet.animationTimer.addListener(this.background);
-    this.colorSet.animationTimer.addListener(this.grid);
+    this.colorSet.animationTimer.addListener(this.entity_manager);
 
     // Lets set up the Scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
-    this.scene.push(this.grid);
+    this.scene.push(this.entity_manager);
   } // prepare
 
   /**
@@ -256,10 +257,10 @@ class MySketch implements Sketch {
 /* when all site content is loaded */
 window.onload = function () {
   const artwork_meta: Artwork_Meta = {
-    title: "The Grid",
-    description: " The Grid",
+    title: "Entities",
+    description: "Entities",
     author: "Carsten Nichte",
-    version: "1.7.0",
+    version: "0.9.0",
     year: "2022",
   };
 

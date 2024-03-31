@@ -1,3 +1,11 @@
+Das Verhalten der Tweakpane-items: pane, folder, tab.
+
+* folder==null -> legt folder in der pane an und packt alles rein.
+* folder!=null -> legt alles in den übergebenen folder.
+  * Der übergebene Folder kann auch ein tab.pane[x] sein
+  * Bei bedarf kann ein Separator eingefügt werden.
+* Zurück gegeben wird am besten der zuletzt verwendete/erzeugte Folder/Tab
+
 # Setup a minimalistic Dev Enviroment with JARN 2 and Webpack 5
 
 Post-resolution validation
@@ -30,8 +38,11 @@ zip -r creativeCoding-Backup-$(date +"%Y-%m-%d").zip . -x '*node_modules*' '*.ya
 Dazu hab ich das Skript `copy.sh` geschrieben das die datei kopiert und umbenennt:
 
 ```bash
+yarn run build
 bash copy.sh 001-pixel
 bash copy.sh 002-shapes
+bash copy.sh 003-thegrid
+bash copy.sh 004-entities
 ```
 
 Kopiert `projects/001-pixel/dist/production/index.bundle.js`

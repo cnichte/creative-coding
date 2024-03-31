@@ -47,6 +47,7 @@ import { AnimationTimer } from "./AnimationTimer";
 import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
+  type Tweakpane_Items,
   type TweakpaneSupport_Props,
 } from "./TweakpaneSupport";
 
@@ -785,7 +786,7 @@ export class ColorSet extends ObserverSubject {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ): Tweakpane_Items {
       let parameterTP: ColorSet_ParameterTweakpane = {
         colorset_mode: "animate_from_all",
         colorset_groupname: "",
@@ -798,56 +799,60 @@ export class ColorSet extends ObserverSubject {
 
       ColorSet.tweakpaneSupport.inject_parameterset_to(parameter);
 
-      if (props.folder == null) {
-        props.folder = props.pane.addFolder({
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
           title: props.parameterSetName + "Color Palette",
+          expanded: false,
         });
       }
 
       if (props.use_separator) {
-        props.folder.addBlade({
+        props.items.folder.addBlade({
           view: "separator",
         });
       }
 
-      props.folder.addBinding(parameter.tweakpane, "colorset_mode", {
+      props.items.folder.addBinding(parameter.tweakpane, "colorset_mode", {
         label: "Mode",
         options: ColorSet.Modes,
       });
 
-      props.folder.addBinding(parameter.tweakpane, "colorset_groupname", {
+      props.items.folder.addBinding(parameter.tweakpane, "colorset_groupname", {
         label: "Group",
         options: ColorSet.Groups,
       });
 
       // A Monitor
-      props.folder.addBinding(parameter.tweakpane, "colorset_setname", {
+      props.items.folder.addBinding(parameter.tweakpane, "colorset_setname", {
         label: "G.V, C",
         readonly: true,
         multiline: false,
       });
 
-      props.folder.addBinding(parameter.tweakpane, "colorset_variante", {
+      props.items.folder.addBinding(parameter.tweakpane, "colorset_variante", {
         label: "Variante",
         max: 99,
         min: -1,
         step: 1,
       });
 
-      props.folder.addBinding(parameter.tweakpane, "colorset_number", {
+      props.items.folder.addBinding(parameter.tweakpane, "colorset_number", {
         label: "Color",
         max: 99,
         min: -1,
         step: 1,
       });
 
-      props.folder.addBlade({
+      props.items.folder.addBlade({
         view: "separator",
       });
 
       AnimationTimer.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        pane: props.pane,
-        folder: props.folder,
+        items:{
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null
+        },
         folder_name_prefix: "",
         use_separator: false,
         parameterSetName: "colorset",
@@ -855,7 +860,7 @@ export class ColorSet extends ObserverSubject {
         defaults: {},
       });
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class ColorSet

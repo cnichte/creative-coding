@@ -1,7 +1,8 @@
 // this is required for monorepo
 export { AnimationTimeline } from "./AnimationTimeline";
 export { AnimationTimeline_Item } from "./AnimationTimeline_Item";
-export { Breathe as Animation_Breathe } from "./animation/Breathe";
+
+export { Animation_Breathe } from './animation/Animation_Breathe';
 
 export { AnimationTimer, type Animable } from "./AnimationTimer";
 export { Artwork, type Sketch, type Artwork_Meta } from "./Artwork";
@@ -20,7 +21,7 @@ export { ParameterObject } from "./ParameterObject";
 export { SceneGraph, type Drawable } from "./SceneGraph";
 export { Shape } from "./Shape";
 export { Size } from "./Size";
-export { TweakpaneSupport, type Provide_Tweakpane_To_Props } from "./TweakpaneSupport";
+export { TweakpaneSupport, type Provide_Tweakpane_To_Props, type Tweakpane_Items } from "./TweakpaneSupport";
 export { Vector } from "./Vector";
 
 /*

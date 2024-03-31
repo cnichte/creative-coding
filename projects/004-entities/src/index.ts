@@ -31,7 +31,7 @@
  * 
  */
 
- import { Pane } from "tweakpane";
+import { Pane } from "tweakpane";
 
 import "./css/artwork.css";
 import "./css/tweakpane.css";
@@ -49,6 +49,7 @@ import {
   Vector,
   Grid_Manager,
   Entity_Manager,
+  Tweakpane_Items,
 } from "@carstennichte/cc-utils";
 
 
@@ -85,16 +86,16 @@ class MySketch implements Sketch {
 
   private ctx: any;
 
-  private background: BackgroundShape|null;
-  private format: Format|null;
-  private colorSet: ColorSet|null;
+  private background: BackgroundShape | null;
+  private format: Format | null;
+  private colorSet: ColorSet | null;
 
   private animation_halt: boolean;
 
-  private scene: SceneGraph|null;
+  private scene: SceneGraph | null;
 
   private parameter: any = {};
-  private entity_manager:Entity_Manager|null;
+  private entity_manager: Entity_Manager | null;
   private randomized: RandomizedColors = {
     canvasColor: "#ffffffff",
 
@@ -142,7 +143,7 @@ class MySketch implements Sketch {
    * @param {Object} parameter
    * @param {Format} format
    * @param {Pane} tweakpane
-   * @param {*} tweakpane_folder_artwork
+   * @param {Tweakpane_Items} tweakpane_items
    * @memberof Sketch
    */
   prepare(
@@ -150,40 +151,41 @@ class MySketch implements Sketch {
     parameter: any,
     format: Format,
     tweakpane: Pane,
-    tweakpane_folder_artwork: any
+    tweakpane_items: Tweakpane_Items
   ) {
     if (this.ctx == null) {
       // singleton-pattern
       this.ctx = ctx;
     }
 
+    // tweakpane, null, false, parameter, ""
+    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      items: tweakpane_items,
+      folder_name_prefix: "",
+      use_separator: false,
+      parameterSetName: "",
+      excludes: [],
+      defaults: {},
+    });
+
     // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
 
     // Inject ParameterSets and init with Tweakpane-Parameters
     BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: tweakpane_folder_artwork,
-      folder_name_prefix: "",
+      items: tweakpane_items,
+      folder_name_prefix: "Background ",
       use_separator: false,
       parameterSetName: "",
       excludes: [],
       defaults: {},
     });
 
-    // tweakpane, null, false, parameter, ""
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: null,
-      folder_name_prefix: "",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
-
-    Entity_Manager.tweakpaneSupport.provide_tweakpane_to(parameter,{
-      pane: tweakpane,
-      folder: null,
+    Entity_Manager.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      items: {
+        pane: tweakpane_items.pane,
+        folder: null,
+        tab: null
+      },
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -193,7 +195,7 @@ class MySketch implements Sketch {
 
     // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);
-    
+
     this.entity_manager = new Entity_Manager(parameter);
 
     // Background listens to Format changes

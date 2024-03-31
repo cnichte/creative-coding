@@ -53,10 +53,11 @@ import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
   type TweakpaneSupport_Props,
+  type Tweakpane_Items,
 } from "./TweakpaneSupport";
 
 import { AnimationTimeline } from "./AnimationTimeline";
-import { Breathe } from './animation/Breathe';
+import { Animation_Breathe } from './animation/Animation_Breathe';
 
 export interface BackgroundShape_ParameterSet {
   size: Size;
@@ -76,7 +77,7 @@ export class BackgroundShape extends Background {
   private random_color: any; // Color
 
   private animationTimeline: AnimationTimeline|null = null;
-  private breathe: Breathe|null = null;
+  private breathe: Animation_Breathe|null = null;
   private hasAnimations:boolean = false;
   
   /**
@@ -279,7 +280,7 @@ export class BackgroundShape extends Background {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ):Tweakpane_Items {
       let brush_defaults: Brush_ParameterTweakpane = {
         brush_shape: "Circle",
         brush_position_x: 0.5, // Die initiale Position des Shapes.
@@ -303,9 +304,12 @@ export class BackgroundShape extends Background {
       brush_defaults
     */
 
-      props.folder = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        pane: props.pane,
-        folder: null,
+      const tpi_brush: Tweakpane_Items = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items:{
+          pane: props.items.pane,
+          folder: null,
+          tab: null
+        },
         folder_name_prefix: props.folder_name_prefix,
         use_separator: false,
         parameterSetName: "backgroundshape",
@@ -314,13 +318,16 @@ export class BackgroundShape extends Background {
       });
 
       // pane, folder, "", false, parameter, folder_name_prefix
-      props.folder = Background.tweakpaneSupport.provide_tweakpane_to(
+      props.items.folder = Background.tweakpaneSupport.provide_tweakpane_to(
         parameter,
         {
-          pane: props.pane,
-          folder: null,
+          items:{
+            pane: props.items.pane,
+            folder: tpi_brush.folder,
+            tab: null
+          },
           folder_name_prefix: props.folder_name_prefix,
-          use_separator: false,
+          use_separator: true,
           parameterSetName: "", // TODO not supported
           excludes: [],
           defaults: {},
@@ -333,7 +340,7 @@ export class BackgroundShape extends Background {
       // TODO folder.addSeparator();
       // TODO Breathe.tweakpaneSupport.provide_tweakpane_to(pane, folder, parameter_tweakpane, "accent");
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class

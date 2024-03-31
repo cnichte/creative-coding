@@ -7,8 +7,8 @@ if [[ $# -eq 0 ]] ; then
     exit 1
 fi
 # File / Folder exists
-if [ -f "$1" ]; then
+# if [ -f "/Users/cnichte/develop-software/01-active/creative-coding/projects/$1" ]; then
     echo "Transport And Rename '$1' Code to Hugo..."
     cp /Users/cnichte/develop-software/01-active/creative-coding/projects/$1/dist/production/index.bundle.js "/Users/cnichte/develop-software/01-active/carsten-nichte.de - static website/assets/js/cc-code/$1.js"
-fi
+# fi
 

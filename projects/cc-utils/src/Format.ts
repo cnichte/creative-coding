@@ -56,8 +56,10 @@
  */
 
 const Color = require("canvas-sketch-util/color");
-import { Pane } from "tweakpane";
 
+import { Pane } from "tweakpane";
+import { TabApi } from "tweakpane";
+import { FolderApi } from "tweakpane";
 
 import { ObserverSubject } from "./ObserverPattern";
 import { Shape } from "./Shape";
@@ -66,6 +68,7 @@ import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
   type TweakpaneSupport_Props,
+  type Tweakpane_Items,
 } from "./TweakpaneSupport";
 import { Vector } from "./Vector";
 
@@ -514,7 +517,7 @@ export class Format extends ObserverSubject {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ):Tweakpane_Items {
       let parameterTP: Format_ParameterTweakpane = {
         format_page_orientation: "Portrait",
         format_aspect_ratio: 1.0,
@@ -523,40 +526,38 @@ export class Format extends ObserverSubject {
       };
 
       parameter.tweakpane = Object.assign(parameter.tweakpane, parameterTP);
-
       Format.tweakpaneSupport.inject_parameterset_to(parameter);
 
-      if (props.folder == null) {
-        props.folder = props.pane.addFolder({
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
           title: props.folder_name_prefix + "Format",
         });
       }
-
       if (props.use_separator) {
-        props.folder.addBlade({
+        props.items.folder.addBlade({
           view: "separator",
         });
       }
 
-      props.folder.addBinding(parameter.tweakpane, "format_page_orientation", {
+      props.items.folder.addBinding(parameter.tweakpane, "format_page_orientation", {
         label: "Format",
         options: Format.PageOrientation,
       });
 
-      props.folder.addBinding(parameter.tweakpane, "format_aspect_ratio", {
+      props.items.folder.addBinding(parameter.tweakpane, "format_aspect_ratio", {
         label: "Asp.Ratio",
         options: Format.AspectRatios,
       });
 
-      props.folder.addBinding(parameter.tweakpane, "format_keep_aspect_ratio", {
+      props.items.folder.addBinding(parameter.tweakpane, "format_keep_aspect_ratio", {
         label: "Keep AR",
       });
 
-      props.folder.addBinding(parameter.tweakpane, "format_fencing", {
+      props.items.folder.addBinding(parameter.tweakpane, "format_fencing", {
         label: "Fence",
       });
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class Format

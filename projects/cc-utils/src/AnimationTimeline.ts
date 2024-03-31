@@ -25,6 +25,7 @@ import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
   type TweakpaneSupport_Props,
+  type Tweakpane_Items,
 } from "./TweakpaneSupport";
 
 
@@ -51,7 +52,7 @@ interface State {
 }
 
 export class AnimationTimeline {
-  private items: AnimationTimeline_Item[];
+  public items: AnimationTimeline_Item[];
 
   /**
    ** Manages the life cycle of an agent.
@@ -191,7 +192,7 @@ export class AnimationTimeline {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ):Tweakpane_Items {
       let pt: any = parameter.tweakpane; // prefixable
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 
@@ -201,14 +202,14 @@ export class AnimationTimeline {
         max: 1.0,
       };
 
-      props.folder.addInput(pt, tp_prefix + "timeline", {
+      props.items.folder.addInput(pt, tp_prefix + "timeline", {
         label: "Timeline",
         min: 0.0,
         max: 1.0,
         step: 0.0001,
       });
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class AnimationTimeline

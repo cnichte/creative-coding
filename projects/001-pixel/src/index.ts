@@ -41,6 +41,7 @@ import {
   ParameterObject,
   Size,
   Vector,
+  Tweakpane_Items,
 } from "@carstennichte/cc-utils";
 
 /*
@@ -95,7 +96,7 @@ class MySketch implements Sketch {
    * @param {Object} parameter
    * @param {Format} format
    * @param {Pane} tweakpane
-   * @param {*} tweakpane_folder_artwork
+   * @param {Tweakpane_Items} tweakpane_items
    * @memberof Sketch
    */
   prepare(
@@ -103,17 +104,18 @@ class MySketch implements Sketch {
     parameter: any,
     format: Format,
     tweakpane: Pane,
-    tweakpane_folder_artwork: any
+    tweakpane_items: Tweakpane_Items
   ) {
     if (this.ctx == null) {
       // singleton-pattern
       this.ctx = ctx;
     }
 
+    console.log("TWEAKPANE FOLDER ARTWORK", tweakpane_items);
+
     // provide tweakpanes...
     Background.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: tweakpane_folder_artwork,
+      items: tweakpane_items,
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -123,10 +125,9 @@ class MySketch implements Sketch {
 
     // tweakpane, null, false, parameter, ""
     ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: null,
+      items: tweakpane_items,
       folder_name_prefix: "",
-      use_separator: false,
+      use_separator: true,
       parameterSetName: "",
       excludes: [],
       defaults: {},

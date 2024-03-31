@@ -60,6 +60,7 @@ import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
   type TweakpaneSupport_Props,
+  type Tweakpane_Items,
 } from "./TweakpaneSupport";
 
 export interface BrushText {
@@ -371,7 +372,7 @@ export class Brush implements Brush_ParameterSet {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ): Tweakpane_Items {
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 
       let pd:Brush_ParameterTweakpane = props.defaults;
@@ -393,25 +394,26 @@ export class Brush implements Brush_ParameterSet {
 
       parameter.tweakpane = Object.assign(parameter.tweakpane, obj);
 
-      if (props.folder == null) {
-        props.folder = props.pane.addFolder({
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
           title: props.folder_name_prefix + "Brush",
+          expanded: false,
         });
       }
 
-      props.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_shape", {
+      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_shape", {
         label: "Shape",
         options: Shape.ShapeNames,
       });
 
-      props.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_border", {
+      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_border", {
         label: "Border",
         min: 0,
         max: 1,
         step: 0.0001,
       });
 
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         parameter.tweakpane,
         tp_prefix + "brush_position_x",
         {
@@ -421,7 +423,7 @@ export class Brush implements Brush_ParameterSet {
           step: 0.0001,
         }
       );
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         parameter.tweakpane,
         tp_prefix + "brush_position_y",
         {
@@ -432,14 +434,14 @@ export class Brush implements Brush_ParameterSet {
         }
       );
 
-      props.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_scale", {
+      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_scale", {
         label: "Scale",
         min: 0,
         max: 1.0,
         step: 0.0001,
       });
 
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         parameter.tweakpane,
         tp_prefix + "brush_scale_x",
         {
@@ -450,7 +452,7 @@ export class Brush implements Brush_ParameterSet {
         }
       );
 
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         parameter.tweakpane,
         tp_prefix + "brush_scale_y",
         {
@@ -461,14 +463,14 @@ export class Brush implements Brush_ParameterSet {
         }
       );
 
-      props.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_rotate", {
+      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_rotate", {
         label: "Rotate",
         min: 0,
         max: 360,
         step: 1,
       });
 
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         parameter.tweakpane,
         tp_prefix + "brush_fillColor",
         {
@@ -476,7 +478,7 @@ export class Brush implements Brush_ParameterSet {
         }
       );
 
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         parameter.tweakpane,
         tp_prefix + "brush_borderColor",
         {
@@ -484,7 +486,7 @@ export class Brush implements Brush_ParameterSet {
         }
       );
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class Brush

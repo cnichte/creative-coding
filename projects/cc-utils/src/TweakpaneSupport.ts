@@ -20,6 +20,8 @@
  * @author Carsten Nichte - 2022
  */
 import { Pane } from "tweakpane";
+import { TabApi } from "tweakpane";
+import { FolderApi } from "tweakpane";
 
 /**
  * Die Parameter für die Methode provide_tweakpane_to, als Objekt.
@@ -34,9 +36,14 @@ import { Pane } from "tweakpane";
  *
  * @interface Provide_Tweakpane_To_Props
  */
-export interface Provide_Tweakpane_To_Props {
+
+export interface Tweakpane_Items {
   pane: Pane;
   folder: any;
+  tab: any;
+}
+export interface Provide_Tweakpane_To_Props {
+  items: Tweakpane_Items;
   folder_name_prefix: string;
   use_separator: boolean;
   parameterSetName: string;
@@ -80,7 +87,7 @@ interface TweakpaneSupportType {
   ): void;
 
   /* Step 1. initialize TP */
-  provide_tweakpane_to(parameter: any, props: Provide_Tweakpane_To_Props): any;
+  provide_tweakpane_to(parameter: any, props: Provide_Tweakpane_To_Props): Tweakpane_Items;
 }
 
 /**

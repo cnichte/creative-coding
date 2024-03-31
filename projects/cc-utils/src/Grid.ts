@@ -52,7 +52,7 @@ import { ObserverSubject, type Observer } from './ObserverPattern';
 import { SceneGraph, type Drawable } from './SceneGraph';
 import { Shape } from './Shape';
 import { Size } from './Size';
-import type { Provide_Tweakpane_To_Props, TweakpaneSupport, TweakpaneSupport_Props } from './TweakpaneSupport';
+import type { Provide_Tweakpane_To_Props, TweakpaneSupport, TweakpaneSupport_Props, Tweakpane_Items } from './TweakpaneSupport';
 import { Vector } from './Vector';
 
 export class Grid_Manager extends ObserverSubject {
@@ -283,7 +283,7 @@ export class Grid_Manager extends ObserverSubject {
   }
 
   public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props) {
+    provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props):Tweakpane_Items {
 
       parameter.tweakpane = Object.assign(parameter.tweakpane, {
 
@@ -301,46 +301,50 @@ export class Grid_Manager extends ObserverSubject {
         brush_scale_x: 1.0,
         brush_scale_y: 1.0,
         brush_rotate: 0,
-        brush_border: 0.18,
+        brush_border: 0.0070,
         brush_borderColor: "#efefef7F",
         brush_fillColor: "#efefef7F",
       };
 
-      if (props.folder == null) {
-        props.folder = props.pane.addFolder({
-          title: '5. Grid ',
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
+          title: 'Grid ',
+          expanded: false,
           // view: 'color',
           // alpha: true
         });
       }
 
-      props.folder.addBinding(parameter.tweakpane, 'grid_show', {
+      props.items.folder.addBinding(parameter.tweakpane, 'grid_show', {
         label: 'Show',
       });
 
-      props.folder.addBinding(parameter.tweakpane, 'grid_cols', {
+      props.items.folder.addBinding(parameter.tweakpane, 'grid_cols', {
         label: 'Cols',
         min: 1,
         max: 100,
         step: 1
       });
 
-      props.folder.addBinding(parameter.tweakpane, 'grid_rows', {
+      props.items.folder.addBinding(parameter.tweakpane, 'grid_rows', {
         label: 'Rows',
         min: 1,
         max: 100,
         step: 1
       });
 
-      props.folder.addBlade({
+      props.items.folder.addBlade({
         view: "separator",
       });
 
       // TODO folder_name_prefix + "Grid:", props.pane, folder, parameter.tweakpane, "grid", [], brush_defaults
       let brush_tp_props: Provide_Tweakpane_To_Props = {
-        pane: props.pane,
-        folder: null,
-        folder_name_prefix: props.folder_name_prefix,
+        items:{
+          pane: props.items.pane,
+          folder: null,
+          tab: null
+        },
+        folder_name_prefix: "Grid ",
         use_separator: false,
         parameterSetName: 'grid',
         excludes: [],
@@ -349,9 +353,9 @@ export class Grid_Manager extends ObserverSubject {
 
       Grid_Manager.tweakpaneSupport.inject_parameterset_to(parameter);
 
-      props.folder = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, brush_tp_props);
+      props.items.folder = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, brush_tp_props);
 
-      return props.folder;
+      return props.items;
     },
     inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
       return Object.assign(parameter, {

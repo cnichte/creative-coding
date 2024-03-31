@@ -40,6 +40,7 @@ import {
   ObserverSubject,
   Size,
   Vector,
+  Tweakpane_Items,
 } from "@carstennichte/cc-utils";
 
 /**
@@ -89,7 +90,7 @@ class MySketch implements Sketch {
    * @param {Object} parameter
    * @param {Format} format
    * @param {Pane} tweakpane
-   * @param {*} tweakpane_folder_artwork
+   * @param {Tweakpane_Items} tweakpane_items
    * @memberof Sketch
    */
   prepare(
@@ -97,17 +98,16 @@ class MySketch implements Sketch {
     parameter: any,
     format: Format,
     tweakpane: Pane,
-    tweakpane_folder_artwork: any
+    tweakpane_items: Tweakpane_Items
   ) {
     if (this.ctx == null) {
       // singleton-pattern
       this.ctx = ctx;
     }
 
-    // provide tweakpanes...
-    BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: tweakpane_folder_artwork,
+    // tweakpane, null, false, parameter, ""
+    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      items: tweakpane_items,
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -115,10 +115,9 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
-    // tweakpane, null, false, parameter, ""
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      pane: tweakpane,
-      folder: null,
+    // provide tweakpanes...
+    BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      items: tweakpane_items,
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -188,7 +187,7 @@ class MySketch implements Sketch {
 window.onload = function () {
   const artwork_meta: Artwork_Meta = {
     title: "Shapes",
-    description: "Basic Shapes, centered on the canvas.",
+    description: "Basic shapes, centered on the canvas.",
     author: "Carsten Nichte",
     version: "1.0.0",
     year: "2022",
@@ -201,11 +200,11 @@ window.onload = function () {
       scale: 0,
       canvas: {
         id: "theCanvas",
-        parent_container_id:"theCanvasContainer",
-        parent_container_class:"canvas_parent_css_class",
-        tweakpane_container_id:"theTweakpaneContainer",
-        size: new Size(800, 800),
-        center: new Vector(400, 400),
+        parent_container_id: "theCanvasContainer",
+        parent_container_class: "canvas_parent_css_class",
+        tweakpane_container_id: "theTweakpaneContainer",
+        size: new Size(1800, 1800), // TODO Das wird nicht berücksichtigt
+        center: new Vector(900, 900),
         clearscreen: false,
         mouse: new Vector(0, 0),
       },

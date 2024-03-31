@@ -49,7 +49,8 @@ import { Vector } from "./Vector";
 import type { Observer, ObserverSubject } from "./ObserverPattern";
 import {
   TweakpaneSupport,
-  type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props
+  type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props,
+  type Tweakpane_Items
 } from "./TweakpaneSupport";
 
 /**
@@ -86,7 +87,7 @@ export interface Artwork_Canvas {
 export interface Artwork_Animation {
   global_halt: boolean; // animation_halt
   lastTime: number;
-  intervall:number; /* 60 Frames per Second - ca. 60.6ms */
+  intervall: number; /* 60 Frames per Second - ca. 60.6ms */
 
   timeStamp: number;
   deltaTime: number;
@@ -110,7 +111,7 @@ interface HTML_Content_Props {
   canvas_id: string;
   parent_container_id: string;
   parent_container_class: string;
-  tweakpane_container_id:string;
+  tweakpane_container_id: string;
   artwork_meta: any;
 }
 
@@ -144,7 +145,7 @@ export class Artwork {
   private format: Format;
 
   private tweakpane: Pane;
-  private tweakpane_folder_artwork: any;
+  private tweakpane_items: any;
 
   private theCanvas: any;
   private ctx: any;
@@ -219,10 +220,10 @@ export class Artwork {
     this.theCanvas = this.document.getElementById(
       this.parameter.artwork.canvas.id
     );
-    
-    if(this.theCanvas==null) {
+
+    if (this.theCanvas == null) {
       // append one in body, or in the element with id
-      const html_props:HTML_Content_Props={
+      const html_props: HTML_Content_Props = {
         canvas_id: this.parameter.artwork.canvas.id,
         parent_container_id: parent_container_id,
         parent_container_class: parameter.artwork.canvas.parent_container_class,
@@ -242,26 +243,26 @@ export class Artwork {
     //* The Tweakpane
     const pc = document.getElementById(parent_container_id);
     console.log(`#### found canvas Parent-Container ${parent_container_id}?`, pc);
-    
+
     const tpc = document.getElementById(tweakpane_container_id);
     console.log(`#### found canvas Tweakpane-Container ${tweakpane_container_id}?`, tpc);
 
-    if(tweakpane_container_id.length >0 && tpc){
+    if (tweakpane_container_id.length > 0 && tpc) {
       console.log(`put tweakpane in id ${tweakpane_container_id}`);
       this.tweakpane = new Pane({
         title: `Artwork '${parameter.artwork.meta.title}'`,
         expanded: false,
         container: document.getElementById(tweakpane_container_id),
       });
-    }else{
-      if(parent_container_id.length >0 && pc){
+    } else {
+      if (parent_container_id.length > 0 && pc) {
         console.log(`put tweakpane in id ${parent_container_id}`);
         this.tweakpane = new Pane({
           title: `Artwork '${parameter.artwork.meta.title}'`,
           expanded: false,
           container: document.getElementById(parent_container_id),
         });
-      }else{
+      } else {
         console.log(`put tweakpane in body`);
         this.tweakpane = new Pane({
           title: `Artwork '${parameter.artwork.meta.title}'`,
@@ -270,7 +271,7 @@ export class Artwork {
       }
     }
 
-    this.tweakpane_folder_artwork = null;
+    this.tweakpane_items = null;
 
     // this.tweakpane.registerPlugin(EssentialsPlugin); // TODO: registerPlugin
 
@@ -281,10 +282,13 @@ export class Artwork {
 
     //* init Parameter-Object...
     // setup gui, and bring the modules parameters into settings.tweakpane.
-    this.tweakpane_folder_artwork =
+    this.tweakpane_items =
       Artwork.tweakpaneSupport.provide_tweakpane_to(this.parameter, {
-        pane: this.tweakpane,
-        folder: null,
+        items:{
+          pane: this.tweakpane,
+          folder: null,
+          tab: null
+        },
         folder_name_prefix: "",
         use_separator: false,
         parameterSetName: "",
@@ -347,7 +351,7 @@ export class Artwork {
       this.parameter,
       this.format,
       this.tweakpane,
-      this.tweakpane_folder_artwork
+      this.tweakpane_items
     );
     this.sketchRunner.sketch = sketch;
     this.sketchRunner.animationLoop(0); // starts the endless loop
@@ -490,17 +494,17 @@ export class Artwork {
    * @return {*} div Element with <canvas id="theCanvas" />
    * @memberof Artwork
    */
-  private static getHTMLContent(props:HTML_Content_Props): any {
+  private static getHTMLContent(props: HTML_Content_Props): any {
 
     const elm_wrapper = document.createElement("div");
     elm_wrapper.classList.add(props.parent_container_class); // CSS Style: class="canvasWrap" Attribute
-    if(props.parent_container_id.length >0){
-      elm_wrapper.setAttribute("id", props.parent_container_id); 
+    if (props.parent_container_id.length > 0) {
+      elm_wrapper.setAttribute("id", props.parent_container_id);
     }
 
     const elm_tweakpane = document.createElement("div");
-    if(props.tweakpane_container_id.length >0){
-      elm_tweakpane.setAttribute("id", props.tweakpane_container_id); 
+    if (props.tweakpane_container_id.length > 0) {
+      elm_tweakpane.setAttribute("id", props.tweakpane_container_id);
     }
 
     const elm_canvas = document.createElement("canvas"); // theCanvas Element
@@ -618,10 +622,10 @@ export class Artwork {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ):Tweakpane_Items {
       let parameterTP: Artwork_ParameterTweakpane = {
-        artwork_canvas_width: 500,
-        artwork_canvas_height: 500,
+        artwork_canvas_width: 2000,
+        artwork_canvas_height:2000,
         artwork_clearscreen: true,
         artwork_scale: 1.0,
       };
@@ -630,28 +634,19 @@ export class Artwork {
 
       Artwork.tweakpaneSupport.inject_parameterset_to(parameter);
 
-      // TODO ist das Format hier richtig?
-      Format.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        pane: props.pane,
-        folder: props.folder,
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "",
-        excludes: [],
-        defaults: {},
+      const folder = props.items.pane.addFolder({
+          title: props.folder_name_prefix + "Canvas",
+          expanded: false,
       });
 
-      props.folder = props.pane.addFolder({
-        title: props.folder_name_prefix + "Canvas",
-        expanded: true,
+      props.items.tab = folder.addTab({
+        pages: [
+          {title: props.folder_name_prefix + "Properties"},
+          {title: 'Format'},
+        ],
       });
-
-      props.folder.addBlade({
-        view: "separator",
-      });
-
-      props.folder
-        .addBinding(parameter.tweakpane, "artwork_canvas_width", {
+      
+      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_canvas_width", {
           label: "Width",
           with: 800,
         })
@@ -662,8 +657,7 @@ export class Artwork {
           }
         });
 
-      props.folder
-        .addBinding(parameter.tweakpane, "artwork_canvas_height", {
+        props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_canvas_height", {
           label: "Height",
           height: 400,
         })
@@ -674,22 +668,37 @@ export class Artwork {
           }
         });
 
-      props.folder.addBlade({
+        props.items.tab.pages[0].addBlade({
         view: "separator",
       });
 
-      props.folder.addBinding(parameter.tweakpane, "artwork_scale", {
+      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_scale", {
         label: "Scale",
         min: 0.2,
         max: 2.0,
         step: 0.0001,
       });
 
-      props.folder.addBinding(parameter.tweakpane, "artwork_clearscreen", {
+      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_clearscreen", {
         label: "ClearScreen",
       });
 
-      return props.folder;
+
+      // TODO ist das Format hier richtig?
+      Format.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items:{
+          pane: props.items.pane,
+          folder: props.items.tab.pages[1],
+          tab: null
+        },
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "",
+        excludes: [],
+        defaults: {},
+      });
+
+      return props.items;
     }, // provide_tweakpane_to
   };
 } // class Artwork

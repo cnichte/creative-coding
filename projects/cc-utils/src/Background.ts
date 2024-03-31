@@ -45,7 +45,8 @@ import type { Observer, ObserverSubject } from "./ObserverPattern";
 
 import {
   TweakpaneSupport,
-  type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props
+  type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props,
+  type Tweakpane_Items
 } from "./TweakpaneSupport";
 
 export interface Background_ParameterSet {
@@ -286,7 +287,7 @@ export class Background implements Observer {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ):Tweakpane_Items {
       let parameterTP: Background_ParameterTweakpane = {
         background_color: "#efefefFF",
       };
@@ -295,23 +296,24 @@ export class Background implements Observer {
 
       Background.tweakpaneSupport.inject_parameterset_to(parameter);
 
-      if (props.folder == null) {
-        props.folder = props.pane.addFolder({
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
           title: props.folder_name_prefix + "Background",
+          expanded: false,
         });
       }
 
       if (props.use_separator) {
-        props.folder.addBlade({
+        props.items.folder.addBlade({
           view: "separator",
         });
       }
 
-      props.folder.addBinding(parameter.tweakpane, "background_color", {
+      props.items.folder.addBinding(parameter.tweakpane, "background_color", {
         label: "Background",
       });
 
-      return props.folder;
+      return props.items;
     },
   };
 } // class Background

@@ -35,6 +35,7 @@ import {
   TweakpaneSupport,
   type Provide_Tweakpane_To_Props,
   type TweakpaneSupport_Props,
+  type Tweakpane_Items,
 } from "./TweakpaneSupport";
 
 // TODO Was ist die Source für ein Objekt?
@@ -325,7 +326,7 @@ export class AnimationTimer {
     provide_tweakpane_to: function (
       parameter: any,
       props: Provide_Tweakpane_To_Props
-    ) {
+    ):Tweakpane_Items {
       let pt: any = parameter.tweakpane; // prefixable
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 
@@ -338,11 +339,11 @@ export class AnimationTimer {
 
       Object.assign(pt, obj);
 
-      props.folder.addBinding(pt, tp_prefix + "animation_timer_doAnimate", {
+      props.items.folder.addBinding(pt, tp_prefix + "animation_timer_doAnimate", {
         label: "Animate",
       });
 
-      props.folder.addBinding(
+      props.items.folder.addBinding(
         pt,
         tp_prefix + "animation_timer_slowDownFactor",
         {
@@ -352,7 +353,7 @@ export class AnimationTimer {
         }
       );
 
-      return props.folder;
+      return props.items;
     },
   };
 
