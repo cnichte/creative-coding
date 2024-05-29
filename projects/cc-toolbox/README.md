@@ -3,12 +3,12 @@
 * Project : Creative Coding
 * Title : cc-toolbox
 * Date : 2022
-* Published: https://gitlab.com/glimpse-of-life
+* Published: <https://gitlab.com/glimpse-of-life>
 
 ---
 
 * Author : Carsten Nichte
-* Web : https://carsten-nichte.de/ 
+* Web : <https://carsten-nichte.de/>
 
 ---
 
@@ -28,10 +28,10 @@ Some Common Classes / Objects i use in my Creative Code Projects, are packed in 
 * AnimationTimeline - Execute animations in specific time windows.
 * Animations        - Some basic Animations.
 
-### Things to paint with 
+### Things to paint with
 
-* Brush          - A thing to paint with. 
-  * Shape      - A collectoin of basic Shapes to draw. 
+* Brush          - A thing to paint with.
+  * Shape      - A collectoin of basic Shapes to draw.
   * Characters -
 * ColorSet       - to color something from a collection of colors.
 
@@ -45,15 +45,14 @@ Some Common Classes / Objects i use in my Creative Code Projects, are packed in 
 
 * ObserverPattern
 
-### Predefined reusable Agents:
+### Predefined reusable Agents
 
 * Background      - Supports colored Background.
 * BackgroundShape - Supports a centered Background Shape.
 * Entities
 * Grid            - A Grid... it is what it is: A collection of mini canvases.
 
-
-## Makes use of...
+## Makes use of
 
 * canvas-sketch-utils
 
@@ -64,8 +63,8 @@ For reference take a look in the projects.
 ## Licence
 
 * Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
-* https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-* https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1
+* <https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode>
+* <https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1>
 
 ### Licence in short
 
