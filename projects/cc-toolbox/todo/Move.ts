@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/animations/Move.js
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  * 
  ** A basic Animation. Takes the shortest path between two points.
  *  Supports: Tweakpane, ParamterSet

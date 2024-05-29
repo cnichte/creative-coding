@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/animation/Breathe.js
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  *
  ** A basic Animation. Breathe is a sort of Pulse Effect, best used on Brush.scale.
  *  Supports: Tweakpane, ParamterSet

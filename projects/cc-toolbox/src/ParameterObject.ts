@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/ParameterObject.ts
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  *
  * Nützliche Funktionen zum Parameter-Objekt.
  *

@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/Vector.ts
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  * 
  * A Vector is a Point in our 2D Canvas.
  * It stores the Position of someting that has a Size (or not, if only a Pixel).

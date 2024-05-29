@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/Exporter.ts
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  * 
  ** Object Serializion - Save and Load all the Parameters to and from Json.
  * That should help to recreate an Artwork.

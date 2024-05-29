@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/SceneGraph.ts
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  *
  * The SceneGraph is (at least) a sort of Group, or Memory, or Buffer.
  * It is a one dimensional Storage based on number,

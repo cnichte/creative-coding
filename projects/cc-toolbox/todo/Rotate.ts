@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/animations/Rotate.js
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  * 
  ** A basic Animation. Rotate a Shape, best used with Brush.angle.
  *  The animation has two Modes: rotate and weighing.

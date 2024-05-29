@@ -3,7 +3,7 @@
 * Project : Creative Coding
 * Title : cc-cli
 * Date : 2022
-* Published: https://gitlab.com/glimpse-of-life
+* Published: https://github.com/cnichte/creative-coding/
 
 ---
 

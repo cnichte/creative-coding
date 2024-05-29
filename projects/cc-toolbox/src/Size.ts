@@ -5,7 +5,7 @@ import { Vector } from "./Vector";
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/Size.ts
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  *
  * Stores the size of something on the Canvas.
  * May have a width and height, or a radius.

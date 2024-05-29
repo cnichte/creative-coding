@@ -3,7 +3,7 @@
  * Project  : Creative Coding
  * File     : projects/cc-toolbox/Shape.ts
  * Version  : 1.0.0
- * Published: https://gitlab.com/glimpse-of-life
+ * Published: https://github.com/cnichte/creative-coding/
  *
  ** A Class for drawing all the nice little basic Shapes on the canvas.
  ** This is a well organized Collection of Shapes.
