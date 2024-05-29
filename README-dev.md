@@ -1,3 +1,11 @@
+# Konzepte
+
+* Ein (Static) Artwork entsteht in dem ich ein Parameter Objekt übergebe welches das Artwork initialisiert und aufbaut. 
+* Die Tweakpane kann man im finalen Artwork komplett weglassen / deaktivieren, wenn man mag. Dafür muss ein globaler Schalter her. 
+* Daraus folgt auch: Agenten sollten sich immer aus dem Parameter-Set bedienen, und nicht aus der Tweakpane. Um die Daten vorher aus der TP in das PS zu transportieren ist der swap da. 
+
+---
+
 Das Verhalten der Tweakpane-items: pane, folder, tab.
 
 * folder==null -> legt folder in der pane an und packt alles rein.
@@ -42,7 +50,7 @@ Dazu hab ich das Skript `copy.sh` geschrieben das die datei kopiert und umbenenn
 yarn run build
 
 # im root folder
-bash copy.sh 001-pixel
+bash copy.sh 001-bit
 bash copy.sh 002-shape
 bash copy.sh 003-grid
 bash copy.sh 004-entities
@@ -118,6 +126,19 @@ npx npm-check-updates -u --interactive --format group
  npm update --save-dev
 
  npm install ??
+```
+
+## Create a release (gilt das auch für yarn?)
+
+```bash
+# first build, also to update the d.ts
+npm run build:ts
+# then commit all changes to git, and then...
+# create a version: major,minor,patch 
+# patch: 1.0.0 -> 1.0.1
+npm version major
+npm version minor
+npm version patch
 ```
 
 ### Add typescript & enable VSCode integration
@@ -413,7 +434,7 @@ yarn add @carstennichte/cc-utils
 
 ```json
   "dependencies": {
-    "@carstennichte/cc-utils": "workspace:^"
+    "@carstennichte/cc-toolbox": "workspace:^"
   }
 ```
 

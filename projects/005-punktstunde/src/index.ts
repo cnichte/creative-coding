@@ -32,26 +32,26 @@
  */
 
  import { Pane } from "tweakpane";
-
-import "./css/artwork.css";
-import "./css/tweakpane.css";
-
-import {
+ 
+ import "./css/artwork.css";
+ import "./css/tweakpane.css";
+ import {
   Artwork,
   Artwork_Meta,
+  Artwork_Animation, 
+  Artwork_Canvas, 
+  Artwork_Canvas_HTML, 
+  Artwork_ParameterSet,
   BackgroundShape,
   ColorSet,
   Format,
   SceneGraph,
   Sketch,
-  ObserverSubject,
   Size,
   Vector,
-  Grid_Manager,
-  Entity_Manager,
   Tweakpane_Items,
-} from "@carstennichte/cc-utils";
-
+} from "@carstennichte/cc-toolbox";
+import { My_Accent } from "./my-accent";
 
 interface RandomizedColors {
   canvasColor: string;
@@ -95,7 +95,9 @@ class MySketch implements Sketch {
   private scene: SceneGraph|null;
 
   private parameter: any = {};
-  private entity_manager:Entity_Manager|null;
+  
+  private my_accent:My_Accent|null;
+
   private randomized: RandomizedColors = {
     canvasColor: "#ffffffff",
 
@@ -129,7 +131,7 @@ class MySketch implements Sketch {
 
     this.animation_halt = false;
 
-    this.entity_manager = null;
+    this.my_accent = null;
     // this.parameter = Object.assign(this.parameter, parameter);
 
     // Lets set up the Scene
@@ -179,29 +181,39 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
+    My_Accent.tweakpaneSupport.provide_tweakpane_to(parameter,{
+      items: {
+        pane: tweakpane_items.pane,
+        folder: null,
+        tab: null
+      },
+      folder_name_prefix: "Accent ",
+      use_separator: false,
+      parameterSetName: "accent"
+    });
 
     // TODO My_Target + My_Accent
 
     // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);
     
-    this.entity_manager = new Entity_Manager(parameter);
+    this.my_accent = new My_Accent(parameter);
 
     // Background listens to Format changes
     format.addObserver(this.background);
-    format.addObserver(this.entity_manager);
+    format.addObserver(this.my_accent);
 
     // Quadrat listens to ColorSet changes
     this.colorSet = new ColorSet(parameter);
     this.colorSet.addObserver(this.background);
-    this.colorSet.addObserver(this.entity_manager);
+    this.colorSet.addObserver(this.my_accent);
     this.colorSet.animationTimer.addListener(this.background);
-    this.colorSet.animationTimer.addListener(this.entity_manager);
+    this.colorSet.animationTimer.addListener(this.my_accent);
 
     // Lets set up the Scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
-    this.scene.push(this.entity_manager);
+    this.scene.push(this.my_accent);
   } // prepare
 
   /**
@@ -219,6 +231,8 @@ class MySketch implements Sketch {
     // transfert all the tweakpane-parameters to the parameter-sets
     BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
     ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
+
+    My_Accent.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
     // check the colorSets animation-timer.
     // calls all Listeners animate_slow Method when time is up.
@@ -247,31 +261,47 @@ class MySketch implements Sketch {
 
 /* when all site content is loaded */
 window.onload = function () {
+
   const artwork_meta: Artwork_Meta = {
-    title: "Entities",
-    description: "Entities",
+    title: "005 Punktstunde",
+    description: "Basic Animations",
     author: "Carsten Nichte",
     version: "0.9.0",
     year: "2022",
   };
 
-  let parameter: any = {
+  const artwork_canvas_html:Artwork_Canvas_HTML = {
+    id: "theCanvas",
+    parent_container_id: "theCanvasContainer",
+    parent_container_class: "canvas_parent_css_class",
+    tweakpane_container_id: "theTweakpaneContainer",
+  }
+
+  const artwork_canvas: Artwork_Canvas = {
+    html: artwork_canvas_html,
+    size: new Size(800,800),
+    center: new Vector(400,400),
+    clearscreen: false,
+    mouse: new Vector(0, 0),
+  }
+
+  const artwork_animation: Artwork_Animation = {
+    global_halt: false,
+    duration: 60,
+    lastTime: 0,
+    intervall: 0,
+    timeStamp: 0,
+    deltaTime: 0
+  }
+
+  const parameter:Artwork_ParameterSet = {
     artwork: {
       meta: artwork_meta,
-      animation_halt: false,
-      scale: 0,
-      canvas: {
-        id: "theCanvas",
-        parent_container_id: "theCanvasContainer",
-        parent_container_class: "canvas_parent_css_class",
-        tweakpane_container_id: "theTweakpaneContainer",
-        size: new Size(800, 800),
-        center: new Vector(400, 400),
-        clearscreen: false,
-        mouse: new Vector(0, 0),
-      },
-    },
-  };
+      canvas: artwork_canvas,
+      scale: 1.0,
+      animation: artwork_animation
+    }
+  }
 
   // TODO: Ich würde hier auch gern ein Format und ne Größe übergeben wollen.
 

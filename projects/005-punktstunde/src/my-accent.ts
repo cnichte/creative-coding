@@ -1,5 +1,5 @@
-import { Animation_Breathe, Brush, ColorSet, Format, Provide_Tweakpane_To_Props, TweakpaneSupport, AnimationTimeline, Vector, Size, Shape } from "@carstennichte/cc-utils";
-import { TweakpaneSupport_Props } from "@carstennichte/cc-utils/dist/TweakpaneSupport";
+import { Breathe, Brush, ColorSet, Format, Provide_Tweakpane_To_Props, TweakpaneSupport, AnimationTimeline, Vector, Size, Shape, Brush_ParameterTweakpane, Utils } from "@carstennichte/cc-toolbox";
+import { TweakpaneSupport_Props, Tweakpane_Items } from "@carstennichte/cc-toolbox/dist/TweakpaneSupport";
 
 /**
  * Der Accent, ein Kreis, der sich auf die Linie zu bewegen soll.
@@ -12,7 +12,7 @@ export class My_Accent { // implements Pattern.Observer
 
   private parameter: any;
   private animationTimeline: AnimationTimeline;
-  private breathe:Animation_Breathe;
+  private breathe:Breathe;
 
   public state:any;
 
@@ -25,7 +25,7 @@ export class My_Accent { // implements Pattern.Observer
 
     this.animationTimeline = new AnimationTimeline();
 
-    this.breathe = new Animation_Breathe(this.parameter.accent.animation);
+    this.breathe = new Breathe(this.parameter.accent.animation);
     // this.move = new Animation.Move(this.parameter.accent.animation);
 
     this.animationTimeline.items.push(this.breathe);
@@ -128,61 +128,111 @@ export class My_Accent { // implements Pattern.Observer
 
   public static tweakpaneSupport: TweakpaneSupport = {
     provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props) {
+            
       // Inject Tweakpane parameters
       parameter.tweakpane = Object.assign(parameter.tweakpane, {
         // canvas_background_color: "#ff00006F",
         accent_monitor_y: 100
       });
 
-      let brush_defaults = {
-        shape: "Circle",
-        position_x: 0.5,
-        position_y: 0.5,
-        scale: 1.0,
-        scale_x: 1.0,
-        scale_y: 1.0,
-        angle: 0,
-        border: 0.1800,
-        borderColor: "#efefef7F",
-        fillColor: "#efefef7F"
+      // TODO inject_parameterset_to mach ich immer in provide_tweakpane_to - das sollte überall gleich sein.
+      // TODO  inject_parameterset_to sollte evtl in den constructor wandern?
+      My_Accent.tweakpaneSupport.inject_parameterset_to(parameter);
+
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
+          title: props.folder_name_prefix,
+          expanded: false,
+        });
+      }
+
+      let brush_defaults: Brush_ParameterTweakpane = {
+        brush_shape: "Circle",
+        brush_position_x: 0.5, // Die initiale Position des Shapes.
+        brush_position_y: 0.5,
+        brush_scale: 1.0,
+        brush_scale_x: 1.0,
+        brush_scale_y: 1.0,
+        brush_rotate: 0,
+        brush_border: 0.18,
+        brush_borderColor: "#efefef7F",
+        brush_fillColor: "#efefef7F",
       };
 
-      // TODO props.folder_name_prefix + "AccentShape:", pane, null, parameter_tweakpane, "accent", [], brush_defaults
-      let folder = Brush.tweakpaneSupport.provide_tweakpane_to();
+      Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items:{
+          pane: props.items.pane,
+          folder: null,
+          tab: null
+        },
+        folder_name_prefix: props.folder_name_prefix,
+        use_separator: false,
+        parameterSetName: "accent",
+        excludes: [],
+        defaults: brush_defaults,
+      });
 
-      folder.addBlade({
+
+      props.items.folder.addBlade({
         view: "separator",
       });
 
-      
-      Animation_Breathe.provide_tweakpane_to(pane, folder, parameter.tweakpane, "accent");
+      // pane, folder, parameter.tweakpane, "accent"
+      Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items: {
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null
+        },
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "accent"
+      });
 
-      folder.addBlade({
+      props.items.folder.addBlade({
         view: "separator",
       });
 
       // Animation.Move.provide_tweakpane_to(pane, folder, parameter.tweakpane, "accent");
 
-      folder.addMonitor(parameter.tweakpane, 'accent_monitor_y', {
+      props.items.folder.addBinding(parameter.tweakpane, 'accent_monitor_y', {
+        readonly: true,
         label: 'Accent Y',
         multiline: true,
-        lineCount: 5,
+        rows: 5,
       });
     },
     inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
+      
       Object.assign(parameter, {
         accent: {}
       });
 
-      // TODO Brush.inject_parameterset_to(parameter.accent, parameter_tweakpane, "accent");
+      let props_default: TweakpaneSupport_Props = {
+        parameterSetName: "accent",
+        parameterSet: parameter.accent,
+      };
+
+      // Übergebene Props überschreiben die defaults
+      // Utils.set_property_if_exist(props_default, props, "parameterSet");
+      // Utils.set_property_if_exist(props_default, props, "parameterSetName");
+
+      Brush.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+      
+      Breathe.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+
       // TODO AnimationTimer.inject_parameterset_to(parameter.colorset, parameter_tweakpane, "colorset");
-      // TODO Animation.Breathe.inject_parameterset_to(parameter.accent, parameter.tweakpane, "accent");
       // TODO Animation.Move.inject_parameterset_to(parameter.accent, parameter.tweakpane, "accent");
     },
     transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
 
-      // TODO Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, parameter.accent, "accent");
-      // TODO Animation.Breathe.transfer_tweakpane_parameter_to(parameter.accent, parameter.tweakpane, "accent");
+      let props_2: TweakpaneSupport_Props = {
+        parameterSetName: "accent",
+        parameterSet: parameter.accent,
+      };
+
+      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
+      Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
       // TODO Animation.Move.transfer_tweakpane_parameter_to(parameter, parameter.accent, parameter.tweakpane, "accent");
 
     }

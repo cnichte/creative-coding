@@ -41,7 +41,11 @@ import {
   Size,
   Vector,
   Tweakpane_Items,
-} from "@carstennichte/cc-utils";
+  Artwork_Canvas_HTML,
+  Artwork_Animation,
+  Artwork_Canvas,
+  Artwork_ParameterSet,
+} from "@carstennichte/cc-toolbox";
 
 /**
  * Ein Sketch besteht aus:
@@ -185,33 +189,55 @@ class MySketch implements Sketch {
 
 /* when all site content is loaded */
 window.onload = function () {
+
+  //* Aufbau des Parameter Objektes.
+  // TODO Ein dezentes Problem ist, das auch interne Werte mit angegeben werden müssen.
+  //? Theoretisch hab für die Trennung das state objekt ???
+  //? Ich könnte auch ein erweitertes internals Objekt machen... ???
+  
   const artwork_meta: Artwork_Meta = {
-    title: "Shapes",
-    description: "Basic shapes, centered on the canvas.",
+    title: "002 Shape",
+    description: "Basic shape, centered on the canvas.",
     author: "Carsten Nichte",
     version: "1.0.0",
     year: "2022",
   };
 
-  let parameter: any = {
+  // The HTML related Paramters, to identify and position 
+  // the html canvas element
+  const artwork_canvas_html:Artwork_Canvas_HTML = {
+    id: "theCanvas",
+    parent_container_id: "theCanvasContainer",
+    parent_container_class: "canvas_parent_css_class",
+    tweakpane_container_id: "theTweakpaneContainer",
+  }
+
+  const artwork_canvas: Artwork_Canvas = {
+    html: artwork_canvas_html,
+    size: new Size(2000,2000),
+    center: new Vector(1000,1000),
+    clearscreen: true,
+    mouse: new Vector(0, 0),
+  }
+
+  // TODO Das hat noch keine funktion
+  const artwork_animation: Artwork_Animation = {
+    global_halt: false,
+    duration: 60,
+    lastTime: 0,
+    intervall: 0,
+    timeStamp: 0,
+    deltaTime: 0
+  }
+
+  const parameter:Artwork_ParameterSet = {
     artwork: {
       meta: artwork_meta,
-      animation_halt: false,
-      scale: 0,
-      canvas: {
-        id: "theCanvas",
-        parent_container_id: "theCanvasContainer",
-        parent_container_class: "canvas_parent_css_class",
-        tweakpane_container_id: "theTweakpaneContainer",
-        size: new Size(1800, 1800), // TODO Das wird nicht berücksichtigt
-        center: new Vector(900, 900),
-        clearscreen: false,
-        mouse: new Vector(0, 0),
-      },
-    },
-  };
-
-  // TODO: Ich würde hier auch gern ein Format und ne Größe übergeben wollen.
+      canvas: artwork_canvas,
+      scale: 0.7,
+      animation: artwork_animation
+    }
+  }
 
   const artwork = new Artwork(window, document, parameter);
   artwork.run(new MySketch());

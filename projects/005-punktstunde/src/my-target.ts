@@ -1,11 +1,11 @@
-import { AnimationTimer, Animation_Breathe, Brush, Brush_ParameterTweakpane, ColorSet, Format, ObserverSubject, Provide_Tweakpane_To_Props, Shape, TweakpaneSupport, Vector } from "@carstennichte/cc-utils";
-import { TweakpaneSupport_Props, Tweakpane_Items } from "@carstennichte/cc-utils/dist/TweakpaneSupport";
+import { AnimationTimer, Breathe, Brush, Brush_ParameterTweakpane, ColorSet, Format, ObserverSubject, Provide_Tweakpane_To_Props, Shape, Size, TweakpaneSupport, Vector } from "@carstennichte/cc-toolbox";
+import { TweakpaneSupport_Props, Tweakpane_Items } from "@carstennichte/cc-toolbox";
 
 class My_Target extends ObserverSubject {
 
     private parameter: any;
     private animationTimeline: AnimationTimeline;
-    private breathe: Animation_Breathe;
+    private breathe: Breathe;
     // private rotate:
     // private shake:
 
@@ -29,11 +29,11 @@ class My_Target extends ObserverSubject {
 
         this.animationTimeline = new AnimationTimeline();
 
-        this.breathe = new Animation_Breathe(this.parameter.target.animation);
+        this.breathe = new Breathe(this.parameter.target.animation);
         //! this.rotate = new Animation.Rotate(this.parameter.target.animation);
         //! this.shake = new Animation.Shake(this.parameter.target.animation);
 
-        this.animationTimeline.items.push(this.breathe);
+        // this.animationTimeline.items.push(this.breathe);
         // this.animationTimeline.items.push(this.rotate);
         // this.animationTimeline.items.push(this.shake);
 
@@ -102,29 +102,29 @@ class My_Target extends ObserverSubject {
      * @param {*} context 
      * @param {*} parameter 
      */
-    draw(context, parameter) {
+    draw(context:any, parameter:any) {
 
         My_Target.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
-        this.animationTimeline.perform_animations_if(parameter, parameter.target);
+        // this.animationTimeline.perform_animations_if(parameter, parameter.target);
 
         // TODO Use: parameter.target.brush
         let brush = new Brush(parameter.target.brush);
 
-        brush.angle = this.rotate.perform(brush.angle);
+        // brush.angle = this.rotate.perform(brush.angle);
 
         brush.border = Format.transform(brush.border, this.state.format);
         brush.fillColor = this.state.colorset.fillColor;
         brush.borderColor = this.state.colorset.borderColor;
 
         let position_o = brush.position; // = new Vector(parameter.artwork.canvas.size.width * this.parameter.tweakpane.target_position_x, parameter.artwork.canvas.size.height * this.parameter.tweakpane.target_position_y); // // this.move.now.y    
-        position_o = this.shake.perform(position_o);
+        // position_o = this.shake.perform(position_o);
 
 
         let size_o = new Size(400, 400);
 
-        size_o.width = size_o.width * this.breathe.now;
-        size_o.height = size_o.height * this.breathe.now;
+        // size_o.width = size_o.width * this.breathe.now;
+        // size_o.height = size_o.height * this.breathe.now;
 
         //* Recalculate Format-Changes...
         // the calculation does not take into account a pontential change of brush.scale.
@@ -213,7 +213,7 @@ class My_Target extends ObserverSubject {
             folder.addSeparator();
 
             // pane, folder, parameter_tweakpane, "target"
-            Animation_Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
+            Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
                 items: {
                     pane: props.items.pane,
                     folder: null,
@@ -244,16 +244,16 @@ class My_Target extends ObserverSubject {
             });
 
             // parameter.target, parameter.tweakpane, "target"
-            Brush.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName:"target" });
-            AnimationTimer.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName:"colorset" });
-            Animation_Breathe.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName:"target"});
+            // Brush.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName: "target" });
+            // AnimationTimer.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName: "colorset" });
+            // Breathe.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName: "target" });
 
             // Animation.Rotate.inject_parameterset_to(parameter.target, parameter.tweakpane, "target");
             // Animation.Shake.inject_parameterset_to(parameter.target, parameter.tweakpane, "target");
         },
         transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-            Brush.tweakpaneSupport.transfer_tweakpane_parameter_to( parameter, { parameterSetName:"target" } );
-            Animation_Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, parameter.tweakpane, "target");
+            // Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, { parameterSetName: "target" });
+            // Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, parameter.tweakpane, "target");
             // Animation.Rotate.transfer_tweakpane_parameter_to(parameter.target, parameter.tweakpane, "target");
             // Animation.Shake.transfer_tweakpane_parameter_to(parameter.target, parameter.tweakpane, "target");
         }

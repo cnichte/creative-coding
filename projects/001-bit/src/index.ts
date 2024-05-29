@@ -1,18 +1,12 @@
 /**
- * Title    : Artwork No. 4 - Entities
+ * Title    : Example Artwork No. 1 - Pixel
  * Project  : Creative Coding
- * File     : projects/004-entities/index.js
- * Version  : 1.7.0
- * Published: https://carsten-nichte.de/art/portfolio/entities/
- * 
- * made with 
- * https://github.com/mattdesl/canvas-sketch
- * https://github.com/mattdesl/canvas-sketch-util
- * 
- * Cell-Patterns -> zB. Linie im Grid zeichnen oder einen Buchstaben...
- * also etwas mit dem Grid darstellen.
- * 
- ** In the projects folder open the Terminal, and:
+ * File     : projects/001-pixel/index.js
+ * Version  : 0.1.0
+ * Published: -
+ *
+ *
+ * In the projects folder open the Terminal, and:
  *
  * Start Server: `yarn run start`
  * Build html:   `yarn run build`
@@ -21,16 +15,15 @@
  * Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
  * https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
  * https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1
- * 
+ *
  * In short:
  * Do not sell the code, or creative stuff made with this code.
  * You are allowed to make someone happy, and give away the works you have created for free.
  * learn, code, and have fun.
- * 
+ *
  * @author Carsten Nichte - 2022
- * 
+ *
  */
-
 import { Pane } from "tweakpane";
 
 import "./css/artwork.css";
@@ -39,42 +32,26 @@ import "./css/tweakpane.css";
 import {
   Artwork,
   Artwork_Meta,
-  BackgroundShape,
+  Background,
   ColorSet,
   Format,
   SceneGraph,
   Sketch,
   ObserverSubject,
+  ParameterObject,
   Size,
   Vector,
-  Grid_Manager,
-  Entity_Manager,
   Tweakpane_Items,
   Artwork_Animation,
   Artwork_Canvas,
-  Artwork_ParameterSet,
   Artwork_Canvas_HTML,
+  Artwork_ParameterSet,
 } from "@carstennichte/cc-toolbox";
 
-
-interface RandomizedColors {
-  canvasColor: string;
-
-  backgroundFillColor: string;
-  backgroundBorderColor: string;
-
-  gridFillColor: string;
-  gridBorderColor: string;
-
-  cellFillColor: string;
-  cellBorderColor: string;
-
-  cellContentFillColor: string;
-  cellContentBorderColor: string;
-
-  accentFillColor: string;
-  accentBorderColor: string;
-}
+/*
+   Background,
+   BackgroundShape,
+ */
 
 /**
  * Ein Sketch besteht aus:
@@ -90,34 +67,13 @@ class MySketch implements Sketch {
 
   private ctx: any;
 
-  private background: BackgroundShape | null;
-  private format: Format | null;
-  private colorSet: ColorSet | null;
+  private background: Background;
+  private format: Format;
+  private colorSet: ColorSet;
 
   private animation_halt: boolean;
 
-  private scene: SceneGraph | null;
-
-  private parameter: any = {};
-  private entity_manager: Entity_Manager | null;
-  private randomized: RandomizedColors = {
-    canvasColor: "#ffffffff",
-
-    backgroundFillColor: '#ffffffff',
-    backgroundBorderColor: '#efefefff',
-
-    gridFillColor: '#ffffffff',
-    gridBorderColor: '#2a27ebff',
-
-    cellFillColor: '#ffffffff',
-    cellBorderColor: '#000000ff',
-
-    cellContentFillColor: '#ffffffff',
-    cellContentBorderColor: '#000000ff',
-
-    accentFillColor: '#ffffffff',
-    accentBorderColor: '#ac1325ff'
-  }
+  private scene: SceneGraph;
 
   /**
    * Creates an instance of Sketch.
@@ -132,9 +88,6 @@ class MySketch implements Sketch {
     this.colorSet = null;
 
     this.animation_halt = false;
-
-    this.entity_manager = null;
-    // this.parameter = Object.assign(this.parameter, parameter);
 
     // Lets set up the Scene
     this.scene = null;
@@ -166,30 +119,15 @@ class MySketch implements Sketch {
     ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
       items: tweakpane_items,
       folder_name_prefix: "",
-      use_separator: false,
+      use_separator: true,
       parameterSetName: "",
       excludes: [],
       defaults: {},
     });
 
-    // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
-
-    // Inject ParameterSets and init with Tweakpane-Parameters
-    BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
+    // provide tweakpanes...
+    Background.tweakpaneSupport.provide_tweakpane_to(parameter, {
       items: tweakpane_items,
-      folder_name_prefix: "Background ",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
-
-    Entity_Manager.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: {
-        pane: tweakpane_items.pane,
-        folder: null,
-        tab: null
-      },
       folder_name_prefix: "",
       use_separator: false,
       parameterSetName: "",
@@ -197,26 +135,22 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
-    // create my Artwork-Objects
-    this.background = new BackgroundShape(parameter);
 
-    this.entity_manager = new Entity_Manager(parameter);
 
-    // Background listens to Format changes
+    // create my artwork objects
+    this.background = new Background(parameter);
+
+    // inform Background about format changes
     format.addObserver(this.background);
-    format.addObserver(this.entity_manager);
 
-    // Quadrat listens to ColorSet changes
+    // use some colors
     this.colorSet = new ColorSet(parameter);
-    this.colorSet.addObserver(this.background);
-    this.colorSet.addObserver(this.entity_manager);
-    this.colorSet.animationTimer.addListener(this.background);
-    this.colorSet.animationTimer.addListener(this.entity_manager);
+    this.colorSet.addObserver(this.background); // calls update
+    this.colorSet.animationTimer.addListener(this.background); // calls animate_slow
 
-    // Lets set up the Scene
+    // lets set up the scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
-    this.scene.push(this.entity_manager);
   } // prepare
 
   /**
@@ -229,44 +163,43 @@ class MySketch implements Sketch {
    * @memberof MySketch
    */
   animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
+
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
     // transfert all the tweakpane-parameters to the parameter-sets
-    BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
+    Background.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
     ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
     // check the colorSets animation-timer.
     // calls all Listeners animate_slow Method when time is up.
     // TODO anbinden: this.animation_halt = parameter.artwork...
-    if (this.colorSet != null)
-      this.colorSet.animationTimer.check_AnimationTimer(
-        timeStamp,
-        deltaTime,
-        this.animation_halt,
-        parameter.colorset
-      );
+    this.colorSet.animationTimer.check_AnimationTimer(
+      timeStamp,
+      deltaTime,
+      this.animation_halt,
+      parameter.colorset
+    );
 
     // pick color and inform Observers
-    if (this.colorSet != null)
-      this.colorSet.check_ObserverSubject({
-        groupname: parameter.tweakpane.colorset_groupname,
-        mode: parameter.tweakpane.colorset_mode,
-        variant: parameter.tweakpane.colorset_variante,
-        number: parameter.tweakpane.colorset_number,
-      });
+    this.colorSet.check_ObserverSubject({
+      groupname: parameter.tweakpane.colorset_groupname,
+      mode: parameter.tweakpane.colorset_mode,
+      variant: parameter.tweakpane.colorset_variante,
+      number: parameter.tweakpane.colorset_number,
+    });
 
     // update, animate, draw
-    if (this.scene != null) this.scene.draw(ctx, parameter);
+    this.scene.draw(ctx, parameter);
   } // animate
 } // class MySketch
 
 /* when all site content is loaded */
 window.onload = function () {
   const artwork_meta: Artwork_Meta = {
-    title: "004 Entities",
-    description: "Random free floating entities over a background-shape.",
+    title: "001 Bit",
+    description: "Bit is the Base of this CC Project",
     author: "Carsten Nichte",
-    version: "0.9.0",
+    version: "1.0.0",
     year: "2022",
   };
 
@@ -278,11 +211,11 @@ window.onload = function () {
     parent_container_class: "canvas_parent_css_class",
     tweakpane_container_id: "theTweakpaneContainer",
   }
-  
+
   const artwork_canvas: Artwork_Canvas = {
     html: artwork_canvas_html,
-    size: new Size(2000,2000),
-    center: new Vector(1000,1000),
+    size: new Size(1000,1000),
+    center: new Vector(500,500),
     clearscreen: true,
     mouse: new Vector(0, 0),
   }
@@ -305,8 +238,6 @@ window.onload = function () {
       animation: artwork_animation
     }
   }
-
-  // TODO: Ich würde hier auch gern ein Format und ne Größe übergeben wollen.
 
   const artwork = new Artwork(window, document, parameter);
   artwork.run(new MySketch());

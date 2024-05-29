@@ -19,7 +19,7 @@
     "xml-loader": "^1.2.1"
   },
   "dependencies": {
-    "@carstennichte/cc-utils": "workspace:^",
+    "@carstennichte/cc-toolbox": "workspace:^",
     "@tweakpane/plugin-essentials": "^0.2.1",
     "tweakpane": "^4.0.3"
   }

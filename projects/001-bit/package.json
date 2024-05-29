@@ -1,5 +1,5 @@
 {
-  "name": "@carstennichte/002-shape",
+  "name": "@carstennichte/001-bit",
   "packageManager": "yarn@4.1.1",
   "scripts": {
     "watch": "webpack --watch --config ./config/dev.webpack.config.js",
