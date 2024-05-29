@@ -1,4 +1,4 @@
-# cc-utils
+# cc-toolbox
 
 * Project : Creative Coding
 * Title : cc-toolbox
@@ -17,10 +17,10 @@
 Some Common Classes / Objects i use in my Creative Code Projects, are packed in the following Modules:
 
 * Artwork - Die Hauptklasse.
-    * Exporter              -
-    * Format                - Provides Screen- & Paper-Formats.
-    * ParameterObject       - Handles all the Parameter stuff (ua. for Tweakpane) like import and export, zipping, etc ??? EXPORTER
-    * SceneGraph - All the Agents to draw are arganized in a SceneGraph.
+  * Exporter              -
+  * Format                - Provides Screen- & Paper-Formats.
+  * ParameterObject       - Handles all the Parameter stuff (ua. for Tweakpane) like import and export, zipping, etc ??? EXPORTER
+  * SceneGraph - All the Agents to draw are arganized in a SceneGraph.
 
 ### Animation
 
@@ -31,8 +31,8 @@ Some Common Classes / Objects i use in my Creative Code Projects, are packed in 
 ### Things to paint with 
 
 * Brush          - A thing to paint with. 
-    * Shape      - A collectoin of basic Shapes to draw. 
-    * Characters -
+  * Shape      - A collectoin of basic Shapes to draw. 
+  * Characters -
 * ColorSet       - to color something from a collection of colors.
 
 ### Supporting Classes
