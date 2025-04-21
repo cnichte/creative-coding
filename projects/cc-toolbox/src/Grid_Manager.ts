@@ -15,9 +15,52 @@ Border: brush_fillColor - funktioniert
  */
 
 // Grid.ts - aktualisierte Version
-import { v4 as uuidv4 } from 'uuid';
+/**
+ * Title    : Grid
+ * Project  : Creative Coding
+ * File     : projects/cc-toolbox/Grid.js
+ * Version  : 1.0.0
+ * Published: https://github.com/cnichte/creative-coding/
+ *
+ * These are little canvases arranged in a Grid.
+ * All the Shapes could be drawn on this Grid.
+ * And all the basic Operations like scale and rotate could be performed.
+ * 
+ * We have three Classes here:
+ *
+ *  - Grid_Manager - Manages the Grid
+ *  - Grid_Cell - Represents the Cells in the Grid
+ *  - Grid_Painter - Draws something onto the Grid. 
+ *  TODO grid_address = Coordinate() <- grid_coordinate
+ * 
+ * and the usual support methods:
+ * 
+ *  - Grid_Manager.tweakpane_support.inject_parameterset_to() - Fills the ParamterSet into the Parameter-Object.
+ *  - Grid_Manager.tweakpane_support.provide_tweakpane_to() - Provides a Tweakpane
+ *  - Grid_Manager.tweakpane_support.transfer_tweakpane_parameter_to() - Swaps the paramter-Set
+ *
+ * made with 
+ * https://github.com/mattdesl/canvas-sketch
+ * https://github.com/mattdesl/canvas-sketch-util
+ * 
+ *
+ ** Licence
+ * Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+ * https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+ * https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1
+ * 
+ * In short:
+ * Do not sell the code, or creative stuff made with this code.
+ * You are allowed to make someone happy, and give away the works you have created for free.
+ * learn, code, and have fun.
+ * 
+ * @author Carsten Nichte - 2022
+ * 
+ */
 
-import { Brush, type Brush_ParameterTweakpane } from './Brush';
+// Grid_Manager.ts
+import { v4 as uuidv4 } from 'uuid';
+import { Brush } from './Brush';
 import { ColorSet } from './ColorSet';
 import type ColorSetType from './ColorSetType';
 import { Coordinate } from './Coordinate';
@@ -26,11 +69,12 @@ import { ObserverSubject, type Observer } from './ObserverPattern';
 import { SceneGraph, type Drawable } from './SceneGraph';
 import { Shape } from './Shape';
 import { Size } from './Size';
-import type { Provide_Tweakpane_To_Props, TweakpaneSupport, TweakpaneSupport_Props, Tweakpane_Items } from './TweakpaneSupport';
 import { Vector } from './Vector';
+import { Grid_Manager_TweakpaneSupport } from './Grid_Manager_TweakpaneSupport';
+import type { TweakpaneSupport } from './TweakpaneSupport';
+
 
 export class Grid_Manager extends ObserverSubject {
-
   check_ObserverSubject(params: any): void {
     throw new Error('Method not implemented.');
   }
@@ -38,16 +82,12 @@ export class Grid_Manager extends ObserverSubject {
   private parameter: any;
   private randomized: any;
   private sceneGraph: SceneGraph;
+  private sceneGraph_lines: SceneGraph; // new: separates lines layer
 
   public state: any;
 
-  /**
-   * Creates a scaled Grid, with cols, rows.
-   * The Cell size depends on the Canvas size.
-   */
   constructor(parameter: any) {
     super();
-
     this.parameter = parameter;
     this.state = {
       grid: {
@@ -61,11 +101,13 @@ export class Grid_Manager extends ObserverSubject {
       borderColor: "000000FF"
     };
 
-    this.sceneGraph = new SceneGraph();
+    this.sceneGraph = new SceneGraph(); // draws shapes (brush content)
+    this.sceneGraph_lines = new SceneGraph(); // draws grid lines only
   }
 
   reset() {
     this.sceneGraph.clear();
+    this.sceneGraph_lines.clear();
     super.clear();
     this.state.grid.cols = -1;
     this.state.grid.rows = -1;
@@ -77,12 +119,13 @@ export class Grid_Manager extends ObserverSubject {
   }
 
   add_some_cols() {
-    for (let row = 0; row < this.sceneGraph.getCount(); row++) {
-      for (let col = Number(this.sceneGraph.getColsCount(row)); col < Number(this.parameter.grid.cols); col++) {
+    for (let row: number = 0; row < this.sceneGraph.getCount(); row++) {
+      for (let col: number = Number(this.sceneGraph.getColsCount(row)); col < this.parameter.grid.cols; col++) {
         const cell = new Grid_Cell(this.parameter, new Coordinate(row, col));
         super.addObserver(cell);
         cell.state = Object.assign(cell.state, this.state);
         this.sceneGraph.push(cell, row);
+        this.sceneGraph_lines.push(cell, row); // draw cell outlines in separate layer
       }
     }
   }
@@ -93,6 +136,7 @@ export class Grid_Manager extends ObserverSubject {
         const cell = new Grid_Cell(this.parameter, new Coordinate(row, col));
         cell.state = Object.assign(cell.state, this.state);
         this.sceneGraph.push(cell, row);
+        this.sceneGraph_lines.push(cell, row);
         super.addObserver(cell);
       }
     }
@@ -144,7 +188,7 @@ export class Grid_Manager extends ObserverSubject {
   }
 
   draw(context: any, parameter: any) {
-    Grid_Manager.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter); // [EXISTING]
+    Grid_Manager.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
     if (this.state.grid.cols !== parameter.grid.cols ||
         this.state.grid.rows !== parameter.grid.rows) {
@@ -155,125 +199,16 @@ export class Grid_Manager extends ObserverSubject {
       super.notifyAll(this, this.state.grid);
     }
 
-    if (parameter.grid.show) { // [ADDED] Nur wenn aktiviert
-      this.sceneGraph.draw(context, parameter, new Coordinate(this.state.grid.rows, this.state.grid.cols));
+    // draw content (shapes in cells) always
+    this.sceneGraph.draw(context, parameter, new Coordinate(this.state.grid.rows, this.state.grid.cols));
+
+    // draw grid (outlines) only if enabled
+    if (parameter.grid.show) {
+      this.sceneGraph_lines.draw(context, parameter, new Coordinate(this.state.grid.rows, this.state.grid.cols));
     }
   }
 
-  // [UNCHANGED] tweakpaneSupport bleibt wie bisher
-
-  public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props):Tweakpane_Items {
-
-      parameter.tweakpane = Object.assign(parameter.tweakpane, {
-
-        grid_show: true,
-        grid_rows: 5,
-        grid_cols: 5
-
-      });
-
-      let brush_defaults: Brush_ParameterTweakpane = {
-        brush_shape: "Rect",
-        brush_position_x: 0.5, // Die initiale Position des Shapes.
-        brush_position_y: 0.5,
-        brush_scale: 1.0,
-        brush_scale_x: 1.0,
-        brush_scale_y: 1.0,
-        brush_rotate: 0,
-        brush_border: 0.0070,
-        brush_borderColor: "#efefef7F",
-        brush_fillColor: "#efefef7F",
-      };
-
-      if (props.items.folder == null) {
-        props.items.folder = props.items.pane.addFolder({
-          title: 'Grid ',
-          expanded: false,
-          // view: 'color',
-          // alpha: true
-        });
-      }
-
-      props.items.folder.addBinding(parameter.tweakpane, 'grid_show', {
-        label: 'Show',
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, 'grid_cols', {
-        label: 'Cols',
-        min: 1,
-        max: 100,
-        step: 1
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, 'grid_rows', {
-        label: 'Rows',
-        min: 1,
-        max: 100,
-        step: 1
-      });
-
-      props.items.folder.addBlade({
-        view: "separator",
-      });
-
-      // TODO folder_name_prefix + "Grid:", props.pane, folder, parameter.tweakpane, "grid", [], brush_defaults
-      let brush_tp_props: Provide_Tweakpane_To_Props = {
-        items:{
-          pane: props.items.pane,
-          folder: null,
-          tab: null
-        },
-        folder_name_prefix: "Grid ",
-        use_separator: false,
-        parameterSetName: 'grid',
-        excludes: [],
-        defaults: brush_defaults,
-      };
-
-      Grid_Manager.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      props.items.folder = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, brush_tp_props);
-
-      return props.items;
-    },
-    inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-      return Object.assign(parameter, {
-        grid: {
-          show: parameter.tweakpane.grid_show, // true
-          rows: parameter.tweakpane.grid_rows, // 5
-          cols: parameter.tweakpane.grid_cols, // 5
-          brush: {
-            shape: "Rect",
-            angle: 0,
-            scale: 1.0,
-            border: parameter.tweakpane.cellBorder,
-            borderColor: parameter.tweakpane.cellBorderColor,
-            fillColor: parameter.tweakpane.cellFillColor
-          }
-        }
-      });
-    },
-    transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-      parameter.grid.show = parameter.tweakpane.grid_show;
-
-      parameter.grid.rows = parameter.tweakpane.grid_rows;
-      parameter.grid.cols = parameter.tweakpane.grid_cols;
-
-      parameter.grid.brush.shape = parameter.tweakpane.grid_brush_shape;
-      parameter.grid.brush.scale = parameter.tweakpane.grid_brush_scale;
-      // parameter.tweakpane.grid_brush_scale_x;
-      // parameter.tweakpane.grid_brush_scale_y;
-      parameter.grid.brush.angle = parameter.tweakpane.grid_brush_rotate;
-
-      // parameter.tweakpane.grid_brush_position_x;
-      // parameter.tweakpane.grid_brush_position_y;
-
-      parameter.grid.brush.border = parameter.artwork.canvas.size.width * parameter.tweakpane.grid_brush_border;
-      parameter.grid.brush.fillColor = parameter.tweakpane.grid_brush_fillColor;
-      parameter.grid.brush.borderColor = parameter.tweakpane.grid_brush_borderColor;
-    }
-  }
+  public static tweakpaneSupport: TweakpaneSupport = Grid_Manager_TweakpaneSupport;
 }
 
 export class Grid_Cell implements Drawable, Observer {

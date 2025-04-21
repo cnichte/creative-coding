@@ -33,7 +33,7 @@ export { Format,
     type Format_ParameterSet,
     type Format_ParameterSet_Values,
     type Check_ObserverSubject_Format_Parameter } from "./Format";
-export { Grid_Manager } from "./Grid";
+export { Grid_Manager } from "./Grid_Manager";
 export { Mathematics } from "./Mathematics";
 export { ObserverSubject, type Observer } from "./ObserverPattern";
 export { ParameterObject } from "./ParameterObject";
