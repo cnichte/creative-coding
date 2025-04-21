@@ -4,6 +4,7 @@
  * https://github.com/kgolid/chromotome/blob/master/palettes/ranganath.js
  */
 
+// coloarset/orbifold.ts
 import type ColorSetType from "../ColorSetType";
 
 const orbifold: ColorSetType[] = [

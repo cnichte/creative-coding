@@ -56,6 +56,7 @@
  * @author Carsten Nichte - 2022
  */
 
+ // Brush.ts
 import { Pane } from "tweakpane";
 const Color = require("canvas-sketch-util/color");
 // const { Vector } = require('./index.js');

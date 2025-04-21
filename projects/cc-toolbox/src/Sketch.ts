@@ -38,6 +38,7 @@
  * @author Carsten Nichte - 2022
  */
 
+ // Sketch.ts
 import { Pane } from "tweakpane";
 
 //* --------------------------------------------------------------------

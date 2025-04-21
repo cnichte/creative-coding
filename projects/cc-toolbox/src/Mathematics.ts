@@ -25,6 +25,7 @@
  * @author Carsten Nichte - 2022
  */
 
+ // Mathematics.ts
 import { Vector } from "./Vector";
 
 const EPSILON = Number.EPSILON;

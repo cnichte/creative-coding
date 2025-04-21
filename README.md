@@ -29,7 +29,7 @@ Navigate to one of the projects folder in the Terminal, and from there:
 * YARN 2
 * Webpack 5
 * Typescript 5.2
-* <https://cocopon.github.io/tweakpane/>
+* <https://github.com/cocopon/tweakpane>
 * <https://github.com/mattdesl/canvas-sketch-util>
 
 ## Licence

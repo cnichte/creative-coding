@@ -20,6 +20,7 @@
  * @author Carsten Nichte - 2022
  */
 
+// Characters.ts
 const random = require('canvas-sketch-util/random');
 
 export class Characters {

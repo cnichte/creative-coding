@@ -37,6 +37,7 @@
  * @author Carsten Nichte - 2022
  */
 
+ // Shape.ts
 import { AnimationTimer } from "./AnimationTimer";
 import { Brush } from "./Brush";
 import { Size } from "./Size";

@@ -7,7 +7,7 @@
     "email": "c.nichte@t-online.de",
     "url": "https://carsten-nichte.de/index/"
   },
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "yarn@4.7.0",
   "workspaces": [
     "projects/*"
   ],

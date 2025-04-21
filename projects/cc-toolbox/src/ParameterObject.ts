@@ -20,6 +20,7 @@
  * @author Carsten Nichte - 2022
  */
 
+ // ParameterObject.ts
 export class ParameterObject {
 
   /**

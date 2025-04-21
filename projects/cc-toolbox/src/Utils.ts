@@ -1,5 +1,5 @@
 export class Utils {
-
+// Utils.ts
     /**
      * Überschreibt das proprty in default, wenn das source objekt exist,
      * und das source property exist.

@@ -36,6 +36,7 @@
  * @author Carsten Nichte - 2022
  */
 
+// SceneGraph.ts
 import { Coordinate } from "./Coordinate";
 import { AnimationTimer } from "./AnimationTimer";
 
@@ -46,8 +47,9 @@ export interface Drawable {
 export class SceneGraph {
 
   public graph: Drawable[][]; // Its a 2D Storage by default.
-  public animation_timeline = new AnimationTimeline();
-  public animation_timer = new AnimationTimer();
+  
+  //! public animation_timeline = new AnimationTimeline();
+  //! public animation_timer = new AnimationTimer(); // Der sitzt in jedem Objekt?
   
   /**
    * Creates an instance of SceneGraph.

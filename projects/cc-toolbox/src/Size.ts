@@ -22,6 +22,8 @@ import { Vector } from "./Vector";
  *
  * @author Carsten Nichte - 2022
  */
+
+ // Size.ts
 export class Size {
   public width: number;
   public height: number;

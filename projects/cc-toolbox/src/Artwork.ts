@@ -34,6 +34,8 @@
  *
  * @author Carsten Nichte - 2022
  */
+
+ // Artwork.ts
  import { Pane } from "tweakpane";
  import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 

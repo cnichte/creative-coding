@@ -1,47 +1,50 @@
-# Konzepte
+# Readme Development
 
-* Ein (Static) Artwork entsteht in dem ich ein Parameter Objekt übergebe welches das Artwork initialisiert und aufbaut. 
-* Die Tweakpane kann man im finalen Artwork komplett weglassen / deaktivieren, wenn man mag. Dafür muss ein globaler Schalter her. 
-* Daraus folgt auch: Agenten sollten sich immer aus dem Parameter-Set bedienen, und nicht aus der Tweakpane. Um die Daten vorher aus der TP in das PS zu transportieren ist der swap da. 
+## Konzepte
+
+- Ein (Static) Artwork entsteht in dem ich ein Parameter Objekt übergebe welches das Artwork initialisiert und aufbaut.
+- Die Tweakpane kann man im finalen Artwork komplett weglassen / deaktivieren, wenn man mag. Dafür muss ein globaler Schalter her.
+- Daraus folgt auch: Agenten sollten sich immer aus dem Parameter-Set bedienen, und nicht aus der Tweakpane. Um die Daten vorher aus der TP in das PS zu transportieren ist der swap da.
 
 ---
 
 Das Verhalten der Tweakpane-items: pane, folder, tab.
 
-* folder==null -> legt folder in der pane an und packt alles rein.
-* folder!=null -> legt alles in den übergebenen folder.
-  * Der übergebene Folder kann auch ein tab.pane[x] sein
-  * Bei bedarf kann ein Separator eingefügt werden.
-* Zurück gegeben wird am besten der zuletzt verwendete/erzeugte Folder/Tab
+- folder==null -> legt folder in der pane an und packt alles rein.
+- folder!=null -> legt alles in den übergebenen folder.
+  - Der übergebene Folder kann auch ein tab.pane[x] sein
+  - Bei bedarf kann ein Separator eingefügt werden.
+- Zurück gegeben wird am besten der zuletzt verwendete/erzeugte Folder/Tab
 
-# Setup a minimalistic Dev Enviroment with JARN 2 and Webpack 5
+### Setup a minimalistic Dev Enviroment with JARN 2 and Webpack 5
 
+```bash
 Post-resolution validation
 ➤ YN0002: │ @carstennichte/creative-coding@workspace:. doesn't provide html-webpack-plugin (p84341), requested by html-inline-script-webpack-plugin.
 ➤ YN0086: │ Some peer dependencies are incorrectly met; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+```
 
-
-* https://github.com/icelam/html-inline-script-webpack-plugin/issues/493
-* https://www.npmjs.com/package/html-inline-script-webpack-plugin
-* npm install --save-dev html-inline-script-webpack-plugin
-* npm i html-inline-script-webpack-plugin
-* yarn add html-inline-script-webpack-plugin   <---- so gings
+- <https://github.com/icelam/html-inline-script-webpack-plugin/issues/493>
+- <https://www.npmjs.com/package/html-inline-script-webpack-plugin>
+- npm install --save-dev html-inline-script-webpack-plugin
+- npm i html-inline-script-webpack-plugin
+- yarn add html-inline-script-webpack-plugin   <---- so gings
 
 ---
 
-* Hier läuft ein YARN-Workspace (bzw. Monorepo nach npm nomenklatur),
-* Typescript and Webpack.
-* https://yarnpkg.com/features/workspaces
+- Hier läuft ein YARN-Workspace (bzw. Monorepo nach npm nomenklatur),
+- Typescript and Webpack.
+- <https://yarnpkg.com/features/workspaces>
 
-## Projekt archivieren mit ZIP
+#### Projekt archivieren mit ZIP
 
 Das Projekt flott in ein zip archiv verpacken (ohne das Projektverzeichnis selber, und node_modules, und das Ziparchiv selber natürlich.)
 
-```
+```bash
 zip -r creativeCoding-Backup-$(date +"%Y-%m-%d").zip . -x '*node_modules*' '*.yarn*' '*.git*' '*.vscode*' '*.zip'
 ```
 
-## Projekt zur Hugo-Webseite transportieren
+#### Projekt zur Hugo-Webseite transportieren
 
 Dazu hab ich das Skript `copy.sh` geschrieben das die datei kopiert und umbenennt:
 
@@ -66,44 +69,44 @@ Kopiert `projects/001-pixel/dist/production/index.bundle.js`
 
 nach `/Users/cnichte/develop-software/01-active/carsten-nichte.de - static website/assets/js/cc-code/001-pixel.js`
 
-## YARN 2
+### YARN 2
 
-- https://yarnpkg.com/getting-started/install
-- Viele Infos: https://medium.com/swlh/getting-started-with-yarn-2-and-typescript-43321a3acdee
+- <https://yarnpkg.com/getting-started/install>
+- Viele Infos: <https://medium.com/swlh/getting-started-with-yarn-2-and-typescript-43321a3acdee>
 
-### Install YARN 2
+#### Install YARN 2
 
 ```bash
 corepack enable
 yarn init -2
 ```
 
-### Update YARN 2
+#### Update YARN 2
 
 ```bash
 yarn set version berry
 yarn install
 ```
 
-- https://yarnpkg.com/cli
+- <https://yarnpkg.com/cli>
 
 einfach `yarn` eintippen. Man wird darauf hingewiesen das es eine neue Version gibt.
 
 Update zB. mit:
 
-```
+```bash
 yarn set version 4.0.2
 yarn install
 ```
 
-## Update mit YARN / NPM, npm aktualisieren
+### Update mit YARN / NPM, npm aktualisieren
 
 So sollte man das machen:
 
 ```bash
-# https://yarnpkg.com/cli/up
+## https://yarnpkg.com/cli/up
 yarn up -i
-# https://yarnpkg.com/cli/upgrade-interactive
+## https://yarnpkg.com/cli/upgrade-interactive
 yarn upgrade-interactive
 ```
 
@@ -128,7 +131,7 @@ npx npm-check-updates -u --interactive --format group
  npm install ??
 ```
 
-## Create a release (gilt das auch für yarn?)
+### Create a release (gilt das auch für yarn?)
 
 ```bash
 # first build, also to update the d.ts
@@ -141,7 +144,7 @@ npm version minor
 npm version patch
 ```
 
-### Add typescript & enable VSCode integration
+#### Add typescript & enable VSCode integration
 
 ```bash
 yarn add typescript --dev
@@ -150,11 +153,11 @@ ggfs: yarn add ignore-loader --dev
 yarn dlx @yarnpkg/sdks vscode
 ```
 
-- https://yarnpkg.com/getting-started/editor-sdks
+- <https://yarnpkg.com/getting-started/editor-sdks>
 
-## Monorepo / Workspaces
+### Monorepo / Workspaces
 
-### Add workspaces to `package.json`
+#### Add workspaces to `package.json`
 
 ```json
 {
@@ -163,7 +166,7 @@ yarn dlx @yarnpkg/sdks vscode
 }
 ```
 
-### creating project
+#### creating project
 
 Starting a new library inside a monorepo directly, without manually creating directories for it:
 
@@ -171,19 +174,19 @@ Starting a new library inside a monorepo directly, without manually creating dir
 yarn projects/000-shapes init
 ```
 
-- Weitere Rezepte: https://yarnpkg.com/getting-started/recipes
+- Weitere Rezepte: <https://yarnpkg.com/getting-started/recipes>
 
-## Webpack 5
+### Webpack 5
 
-- https://medium.com/dataseries/yarn-2-and-typescript-adding-webpack-9dd9d24001f7
-- https://webpack.js.org/guides/getting-started/#basic-setup
-- https://webpack.js.org/configuration/
+- <https://medium.com/dataseries/yarn-2-and-typescript-adding-webpack-9dd9d24001f7>
+- <https://webpack.js.org/guides/getting-started/#basic-setup>
+- <https://webpack.js.org/configuration/>
 
-### Beispiel vorbereiten
+#### Beispiel vorbereiten
 
 Im Projekt-Verzeichnis `projects/000-shapes`:
 
-#### `dist/index.html` anlegen
+##### `dist/index.html` anlegen
 
 ```html
 <!DOCTYPE html>
@@ -199,10 +202,10 @@ Im Projekt-Verzeichnis `projects/000-shapes`:
 </html>
 ```
 
-#### `src/index.js` anlegen
+##### `src/index.js` anlegen
 
 ```js
-/** index.js für den Webpack Test */
+/*- index.js für den Webpack Test */
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -218,7 +221,7 @@ function component() {
 document.body.appendChild(component());
 ```
 
-#### `config/webpack.config.js` anlegen
+##### `config/webpack.config.js` anlegen
 
 ```js
 const path = require("path");
@@ -233,7 +236,7 @@ module.exports = {
 };
 ```
 
-#### scripte im Projekt anlegen
+##### scripte im Projekt anlegen
 
 ```json
   "scripts": {
@@ -243,7 +246,7 @@ module.exports = {
   },
 ```
 
-### Webpack installieren
+#### Webpack installieren
 
 Im Root Verzeichnis:
 
@@ -281,9 +284,9 @@ funktioniert!
 4. Die Webseite zeigt `Hello Webpack: cbee67a8-a761-4f52-8f38-93e9447fc6ac`.
 5. Bei jedem reload wird eine neue UUID erzeugt.
 
-### Webpack Assets
+#### Webpack Assets
 
-- https://webpack.js.org/guides/asset-management/
+- <https://webpack.js.org/guides/asset-management/>
 
 ```bash
 yarn add style-loader css-loader --prefer-dev
@@ -300,7 +303,7 @@ yarn add style-loader css-loader --prefer-dev
   },
 ```
 
-#### Images und Fonts und Data (csv, json, json5, toml, yaml, xml)
+##### Images und Fonts und Data (csv, json, json5, toml, yaml, xml)
 
 ```bash
 yarn add csv-loader xml-loader --prefer-dev
@@ -311,7 +314,7 @@ yarn remove toml yamljs json5
 
 da geht einiges, auch mit custom parsern.
 
-#### Bundles
+##### Bundles
 
 Um die Index Datei automatisch zu erzeugen...
 
@@ -319,37 +322,37 @@ Um die Index Datei automatisch zu erzeugen...
 yarn add html-webpack-plugin --prefer-dev
 ```
 
-#### The Manifest
+##### The Manifest
 
-- https://github.com/shellscape/webpack-manifest-plugin
-- https://webpack.js.org/concepts/manifest
-- https://webpack.js.org/guides/caching
+- <https://github.com/shellscape/webpack-manifest-plugin>
+- <https://webpack.js.org/concepts/manifest>
+- <https://webpack.js.org/guides/caching>
 
-### Development
+#### Development
 
-- https://webpack.js.org/guides/development/
+- <https://webpack.js.org/guides/development/>
 
 devtool: 'inline-source-map',
 
 Maps your compiled code back to your original source code, damit man sehen kann wo die fehler im Browser wrklich aufreten.
 
-- https://webpack.js.org/guides/development/#choosing-a-development-tool
+- <https://webpack.js.org/guides/development/#choosing-a-development-tool>
 
 choose one:
 
-- webpack's Watch Mode - https://webpack.js.org/configuration/watch/#watch
+- webpack's Watch Mode - <https://webpack.js.org/configuration/watch/#watch>
   - "watch": "webpack --watch",
   - The only downside is that you have to refresh your browser in order to see the changes.
-- webpack-dev-server - https://github.com/webpack/webpack-dev-server
-- webpack-dev-middleware - https://github.com/webpack/webpack-dev-middleware
+- webpack-dev-server - <https://github.com/webpack/webpack-dev-server>
+- webpack-dev-middleware - <https://github.com/webpack/webpack-dev-middleware>
 
-### Live reload mit webpack-dev-server
+#### Live reload mit webpack-dev-server
 
 ```bash
 yarn add webpack-dev-server --prefer-dev
 ```
 
-```
+```js
   devServer: {
     static: './dist',
   },
@@ -358,63 +361,63 @@ yarn add webpack-dev-server --prefer-dev
   },
 ```
 
-- https://webpack.js.org/configuration/dev-server/
+- <https://webpack.js.org/configuration/dev-server/>
 
-#### Cache
+##### Cache
 
-- https://webpack.js.org/configuration/cache/
+- <https://webpack.js.org/configuration/cache/>
 
 Zwischenspeichern der generierten Webpack-Module und -Chunks, um die Erstellungsgeschwindigkeit zu erhöhen.
 
 Hier nutze ich den default.
 
-#### Devtool
+##### Devtool
 
-- https://webpack.js.org/configuration/devtool/
+- <https://webpack.js.org/configuration/devtool/>
 
 Diese Option steuert, ob und wie Source Maps erzeugt werden.
 
 Hier nutze ich den default.
 
-#### Extends
+##### Extends
 
-- https://webpack.js.org/configuration/extending-configurations/
+- <https://webpack.js.org/configuration/extending-configurations/>
 
 Eine Konfiguration als Basis verwenden und erweitern.
 
 Das nutze ich natürlich um Konfiguartionen für prod und dev an zu legen.
 
-#### Target
+##### Target
 
-- https://webpack.js.org/configuration/target/
+- <https://webpack.js.org/configuration/target/>
 
 Weist webpack an, Laufzeitcode für eine bestimmte Umgebung zu generieren.
 
 Ist in meinem Fall "web".
 
-#### Minify
+##### Minify
 
 Alles in eine kompakte html Datei packen
 
-- https://webpack.js.org/guides/production/
-- https://webpack.js.org/plugins/terser-webpack-plugin/
+- <https://webpack.js.org/guides/production/>
+- <https://webpack.js.org/plugins/terser-webpack-plugin/>
 
-#### Alles in eine große HTML Datei packen...
+##### Alles in eine große HTML Datei packen
 
-- https://github.com/jantimon/html-webpack-plugin
+- <https://github.com/jantimon/html-webpack-plugin>
 
 Das nutze ich allerdings schon, aber es bindet die bundle.js nicht ein.
 
 ...
 
-- https://webpack.js.org/configuration/cache/
+- <https://webpack.js.org/configuration/cache/>
 
-## Fragen & Probleme
+### Fragen & Probleme
 
 - Woher kommt auf einmal das `node_modules` Verzeichnis?
 - Das skript `yarn run start` läuft noch nicht (document is not defined). Das ist klar, denn document gibts nicht in der Node-Umgebung, sondern nur in der Browser-Umgebung.
 
-# Neues Projekt
+## Neues Projekt
 
 Ich will cc-utils als library einbinden...
 
@@ -440,48 +443,48 @@ yarn add @carstennichte/cc-utils
 
 er findet nix...
 
-## Authoring a Library
+### Authoring a Library
 
-- https://webpack.js.org/guides/author-libraries/#expose-the-library
-- https://webpack.js.org/guides/author-libraries/#externalize-lodash
-  - https://webpack.js.org/configuration/externals/ - Benutzt die Bibliothek weitere externe Bibliotheken, dann man die als `external` deklarieren. Sie werden dann nicht mit einkompiliert. Es wird vorausgesetzt das der Benutzer sich die installiert.
+- <https://webpack.js.org/guides/author-libraries/#expose-the-library>
+- <https://webpack.js.org/guides/author-libraries/#externalize-lodash>
+  - <https://webpack.js.org/configuration/externals/> - Benutzt die Bibliothek weitere externe Bibliotheken, dann man die als `external` deklarieren. Sie werden dann nicht mit einkompiliert. Es wird vorausgesetzt das der Benutzer sich die installiert.
 
 ... das funktioniert noch nicht...
 
-- https://stackoverflow.com/questions/43037590/field-browser-doesnt-contain-a-valid-alias-configuration
-- https://webpack.js.org/configuration/resolve/#resolve
-- https://webpack.js.org/configuration/resolve/#resolveextensions
+- <https://stackoverflow.com/questions/43037590/field-browser-doesnt-contain-a-valid-alias-configuration>
+- <https://webpack.js.org/configuration/resolve/#resolve>
+- <https://webpack.js.org/configuration/resolve/#resolveextensions>
 
   resolve: {
   extensions: ['.ts', '.js'],
   }
 
 export from index.js
-https://stackoverflow.com/questions/34072598/es6-exporting-importing-in-index-file
+<https://stackoverflow.com/questions/34072598/es6-exporting-importing-in-index-file>
 
 führt nicht zum ziel... er findet nix.
 
 - Was bedeutet umd...
-- https://webpack.js.org/configuration/output/#type-umd
-- https://github.com/umdjs/umd
+- <https://webpack.js.org/configuration/output/#type-umd>
+- <https://github.com/umdjs/umd>
 
 Wie kann ich eine Bibliothek mit Klassen publizieren?
 
-- https://stackoverflow.com/questions/44456500/webpack-library-how-to-configure-webpack-to-expose-classes
-- https://github.com/riversun/making-library-with-webpack
-- https://www.seancdavis.com/posts/export-es6-class-globally-webpack/
+- <https://stackoverflow.com/questions/44456500/webpack-library-how-to-configure-webpack-to-expose-classes>
+- <https://github.com/riversun/making-library-with-webpack>
+- <https://www.seancdavis.com/posts/export-es6-class-globally-webpack/>
 
-https://marcobotto.com/blog/compiling-and-bundling-typescript-libraries-with-webpack/
-https://www.reddit.com/r/webpack/comments/9i2zj8/need_help_with_creating_a_library_that_exposes/
-https://medium.com/self-modifying-code/exposing-classes-functions-and-other-fun-stuff-with-webpack-8592821d4ec8
-https://rubenr.dev/library-generation-webpack/
+<https://marcobotto.com/blog/compiling-and-bundling-typescript-libraries-with-webpack/>
+<https://www.reddit.com/r/webpack/comments/9i2zj8/need_help_with_creating_a_library_that_exposes/>
+<https://medium.com/self-modifying-code/exposing-classes-functions-and-other-fun-stuff-with-webpack-8592821d4ec8>
+<https://rubenr.dev/library-generation-webpack/>
 
 und diese output.library option...
-https://webpack.js.org/configuration/output/#outputlibrary
+<https://webpack.js.org/configuration/output/#outputlibrary>
 
 ------------ AAAARGH...
 
-https://webpack.js.org/guides/author-libraries/#final-steps
+<https://webpack.js.org/guides/author-libraries/#final-steps>
 
 package.json -> "main": "dist/webpack-numbers.js",
 
@@ -495,13 +498,13 @@ FERTIG !!!
 
 Wenn nix geht: delete `node_modules` and run `yarn -install`
 
-# Ein Projekt aufsetzen
+## Ein Projekt aufsetzen
 
 und canas-sketch ablösen
 
-## Tweakpane
+### Tweakpane
 
-- https://tweakpane.github.io/docs/
+- <https://tweakpane.github.io/docs/>
 
 @tweakpane/core are additional type definitions for development in TypeScript
 
@@ -512,9 +515,9 @@ yarn add @tweakpane/plugin-essentials
 ? canvas-sketch-util
 ```
 
-## In cc-utils:
+### In cc-utils
 
-- https://github.com/mattdesl/canvas-sketch-util/tree/master
+- <https://github.com/mattdesl/canvas-sketch-util/tree/master>
 
 var wrap = require('./lib/wrap');
 
@@ -524,7 +527,7 @@ yarn add jszip file-saver
 yarn add load-asset   <--- das wollte ich irgendwo einsetzen (suche mal in den alten quellen)
 ```
 
-# Umbau auf Typescript
+## Umbau auf Typescript
 
 Das Projekt ist so konfiguriert das, `.map` und `.d.ts` Dateien erzeugt werden. Die `ts` und `.d.ts` Dateien werden (von webpack) in je einer großen Datei zusammen gefasst, und alles im `dist` Verzeichnis abgelegt. Dazu ist ein Zusammenspiel aus den drei Konfiguratios Dateien notwendig:
 
@@ -532,7 +535,7 @@ Das Projekt ist so konfiguriert das, `.map` und `.d.ts` Dateien erzeugt werden. 
 - webpack.config.js
 - package.json
 
-## Fehlermeldungen in dem Zusammenhang
+### Fehlermeldungen in dem Zusammenhang
 
 ```bash
 TS7016: Could not find a declaration file for module '@carstennichte/cc-utils'. '/Users/cnichte/Documents/develop-software/creative-coding/projects/cc-utils/dist/cc-utils.js' implicitly has an 'any' type.
@@ -574,24 +577,22 @@ und in `/cc-utils/package.json` den Verweis auf die types nicht vergressen:
   "types": "dist/index.d.ts",
 ```
 
-# Weitere interessante Themen
+## Weitere interessante Themen
 
 Inline Source extension for the HTML Webpack Plugin
-https://github.com/DustinJackson/html-webpack-inline-source-plugin
+<https://github.com/DustinJackson/html-webpack-inline-source-plugin>
 
 html-webpack-inline-source-plugin alternative
 
-https://github.com/jantimon/html-webpack-plugin/issues/1379
+<https://github.com/jantimon/html-webpack-plugin/issues/1379>
 
 Eigenes Template für index.html verwenden…
-https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates
+<https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates>
 
 Multipart... noch nicht probiert...
-https://github.com/webpack/webpack/tree/main/examples/multi-part-library
+<https://github.com/webpack/webpack/tree/main/examples/multi-part-library>
 
-
-
-# canvas fullscreen toogle
+## canvas fullscreen toogle
 
 ```js
 
@@ -610,7 +611,7 @@ function fullscreen(){
 canvas.addEventListener("click",fullscreen)
 ```
 
-## EXAMPLE index.js
+### EXAMPLE index.js
 
 ```js
 import Icon from "./images/icon.jpg";
@@ -620,17 +621,17 @@ import MyCSV from "./data/data.csv";
 
 import printMe from "./print.js";
 
-//* Add the image to our existing div.
+//- Add the image to our existing div.
 const myIcon = new Image();
 myIcon.src = Icon;
 element_div.appendChild(myIcon);
 
-//* Usimg Data
+//- Usimg Data
 console.log(MyData);
 console.log(MyCSV);
 console.log(MyJson);
 
-//* using a bundle
+//- using a bundle
 const btn = document.createElement("button");
 btn.innerHTML = "Click me and check the console!";
 btn.onclick = printMe;

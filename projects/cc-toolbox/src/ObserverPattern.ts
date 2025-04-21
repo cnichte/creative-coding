@@ -30,6 +30,7 @@
  * @author Carsten Nichte - 2022
  */
 
+ // ObserverPattern.ts
 export interface Observer {
   update(
     observerSubject: ObserverSubject,

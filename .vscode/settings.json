@@ -6,5 +6,6 @@
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "liveServer.settings.CustomBrowser": "chrome",
-  "livePreview.customExternalBrowser": "Chrome"
+  "livePreview.customExternalBrowser": "Chrome",
+  "explorer.sortOrder": "modified"
 }

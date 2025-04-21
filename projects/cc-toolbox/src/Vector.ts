@@ -21,6 +21,8 @@
  * 
  * @author Carsten Nichte - 2022
  */
+
+ // Vector.ts
 export class Vector {
 
   public x: number;

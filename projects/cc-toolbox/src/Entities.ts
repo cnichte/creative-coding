@@ -37,6 +37,7 @@
  *
  */
 
+ // Entities.ts
 import { Brush, type Brush_ParameterTweakpane } from "./Brush";
 import { ColorSet, type ColorSet_ParameterSet } from "./ColorSet";
 import { Format } from "./Format";

@@ -54,7 +54,7 @@
  *
  * @author Carsten Nichte - 2022
  */
-
+// Format.ts
 const Color = require("canvas-sketch-util/color");
 
 import { Pane } from "tweakpane";

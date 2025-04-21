@@ -1,4 +1,4 @@
-# Make it executable chmod a+x /Users/cnichte/develop-software/01-active/creative-coding/copy.sh
+# Make it executable chmod a+x /Users/cnichte/develop-software/01-active/creative-coding/production/creative-coding/copy.sh
 # https://stackoverflow.com/questions/8352851/shell-how-to-call-one-shell-script-from-another-shell-script
 
 # Transport My Creative-Code To Hugo 
@@ -9,6 +9,6 @@ fi
 # File / Folder exists
 # if [ -f "/Users/cnichte/develop-software/01-active/creative-coding/projects/$1" ]; then
     echo "Transport And Rename '$1' Code to Hugo..."
-    cp /Users/cnichte/develop-software/01-active/creative-coding/projects/$1/dist/production/index.bundle.js "/Users/cnichte/develop-software/01-active/carsten-nichte.de - static website/assets/js/cc-code/$1.js"
+    cp /Users/cnichte/develop-software/01-active/creative-coding/production/creative-coding/projects/$1/dist/production/index.bundle.js "/Users/cnichte/develop-software/01-active/webseiten/carsten-nichte.de/production/carsten-nichte.de/assets/js/cc-code/$1.js"
 # fi
 

@@ -38,6 +38,7 @@
  * 
  */
 
+ // Grid-deprecated.js
 const Color = require('canvas-sketch-util/color');
 const random = require('canvas-sketch-util/random');
 

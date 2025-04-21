@@ -28,7 +28,9 @@
  * 
  * @author Carsten Nichte - 2022
  */
-export class Coordinate {
+
+ // Coordinate.ts
+ export class Coordinate {
 
     public row:number;
     public col:number;

@@ -25,6 +25,8 @@
  * @class AnimationTimeline_Item
  * @author Carsten Nichte - 2022
  */
+
+ //* AnimationTimeline_Item.ts
 export abstract class AnimationTimeline_Item {
   protected startTime: number;
   protected endTime: number;
