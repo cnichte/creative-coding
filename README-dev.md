@@ -6,6 +6,29 @@
 - Die Tweakpane kann man im finalen Artwork komplett weglassen / deaktivieren, wenn man mag. Dafür muss ein globaler Schalter her.
 - Daraus folgt auch: Agenten sollten sich immer aus dem Parameter-Set bedienen, und nicht aus der Tweakpane. Um die Daten vorher aus der TP in das PS zu transportieren ist der swap da.
 
+Ziele kurz gesagt:
+
+- Ein Artwork aus dem paramter-objekt rekonstruieren.
+- Bein Animationen will ich Vor- und Zurückspulen und anhalten können.
+- Das bedeutet das ich im paramter-objekt auch Werte über die Zeit speichern muss.
+
+Die Frage ist ob der momentan weg über `tweakpaneSupport` mit dem swappen der werte elegant und performant ist, oder ob es da bessere Konzepte gibt.
+
+- Auf die neue Logik umgebaute Projekte:
+  - umgebaut
+    - 001-bit
+    - 002-shape
+  - teilweise
+    - 003-grid - teilweise
+    - 004-entities - teilweise
+      - scharze quadrate bewegen sich
+      - aber keine änderung über Tweakpane möglich
+  - noch nicht
+    - 005-punktstunde (noch nicht umgebaut?)
+    - 006-particles
+    - 007-quadrate
+    - 008-duette
+
 ---
 
 Das Verhalten der Tweakpane-items: pane, folder, tab.

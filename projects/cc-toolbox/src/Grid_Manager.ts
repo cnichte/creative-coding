@@ -189,22 +189,24 @@ export class Grid_Manager extends ObserverSubject {
 
   draw(context: any, parameter: any) {
     Grid_Manager.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-
-    if (this.state.grid.cols !== parameter.grid.cols ||
-        this.state.grid.rows !== parameter.grid.rows) {
+  
+    const gridChanged = (
+      this.state.grid.cols !== parameter.grid.cols ||
+      this.state.grid.rows !== parameter.grid.rows
+    );
+  
+    if (gridChanged) {
       this.add_some();
       this.remove_some();
       this.state.grid.cols = parameter.grid.cols;
       this.state.grid.rows = parameter.grid.rows;
       super.notifyAll(this, this.state.grid);
     }
-
-    // draw content (shapes in cells) always
-    this.sceneGraph.draw(context, parameter, new Coordinate(this.state.grid.rows, this.state.grid.cols));
-
-    // draw grid (outlines) only if enabled
-    if (parameter.grid.show) {
-      this.sceneGraph_lines.draw(context, parameter, new Coordinate(this.state.grid.rows, this.state.grid.cols));
+  
+    // 🟥 Linien zeichnen – nur wenn show == true
+    if (parameter.grid.show === true) {
+      // optional: bei Änderung Lines-Graph syncen
+      this.sceneGraph.draw(context, parameter, new Coordinate(this.state.grid.rows, this.state.grid.cols));
     }
   }
 

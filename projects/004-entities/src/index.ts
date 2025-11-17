@@ -234,6 +234,7 @@ class MySketch implements Sketch {
     // transfert all the tweakpane-parameters to the parameter-sets
     BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
     ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
+    Entity_Manager.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
     // check the colorSets animation-timer.
     // calls all Listeners animate_slow Method when time is up.

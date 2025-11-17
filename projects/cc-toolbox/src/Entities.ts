@@ -63,6 +63,13 @@ export class Entity_Manager extends ObserverSubject {
   private randomized: any;
 
   public state: any;
+  private get_entity_count(): number {
+    const colsCount = this.sceneGraph.getColsCount(0);
+    if (typeof colsCount === "number") {
+      return colsCount;
+    }
+    return 0;
+  }
 
   check_ObserverSubject(params: any): void {
     throw new Error("Method not implemented.");
@@ -219,14 +226,15 @@ export class Entity_Manager extends ObserverSubject {
    */
   add_or_remove_some(parameter: any) {
     let count = parameter.entity.count;
+    const entitiesInScene = this.get_entity_count();
 
     if (this.lastCount != count) {
       // the count may have changed: add or remove some entities
 
       // Add or remove, they should fade out or fade in.
-      if (this.sceneGraph.getCount() > count) {
+      if (entitiesInScene > count) {
         // remove some
-        let diff = this.sceneGraph.getCount() - count;
+        let diff = entitiesInScene - count;
         for (var i = 0; i < diff; i++) {
           let d: Drawable | Drawable[] = this.sceneGraph.get(0);
           if (Array.isArray(d)) {
@@ -239,9 +247,9 @@ export class Entity_Manager extends ObserverSubject {
             // (d as Drawable)
           }
         }
-      } else if (this.sceneGraph.getCount() < count) {
+      } else if (entitiesInScene < count) {
         // add some
-        let diff = count - this.sceneGraph.getCount();
+        let diff = count - entitiesInScene;
         for (var i = 0; i < diff; i++) {
           const min =
             this.parameter.tweakpane.entity_sizeRange.min *
@@ -284,8 +292,7 @@ export class Entity_Manager extends ObserverSubject {
     this.add_or_remove_some(parameter);
 
     let the_distance =
-      this.parameter.artwork.canvas.size.width *
-      parameter.tweakpane.entity_distanceFactor;
+      this.parameter.artwork.canvas.size.width * parameter.entity.distanceFactor;
 
     if (typeof this.state.format !== "undefined")
       the_distance = Format.transform(the_distance, this.state.format);
@@ -293,13 +300,14 @@ export class Entity_Manager extends ObserverSubject {
     // connecting the lines
     // TODO: 1. Die Linien sollen nicht bis zum Zentrum gehen sondern am Radius enden.
     // TODO: 2. Shapes die sich innerhalb eines anderen befinden sollen keine Linie haben?
-    for (let i = 0; i < this.sceneGraph.getCount(); i++) {
-      const entity: Entity = this.sceneGraph.get(i) as Entity;
+    const entityCount = this.get_entity_count();
+    for (let i = 0; i < entityCount; i++) {
+      const entity: Entity = this.sceneGraph.get(0, i) as Entity;
 
-      for (let j = i + 1; j < this.sceneGraph.getCount(); j++) {
+      for (let j = i + 1; j < entityCount; j++) {
         // j=i+1 -> dont draw twice
 
-        const other: Entity = this.sceneGraph.get(j) as Entity;
+        const other: Entity = this.sceneGraph.get(0, j) as Entity;
 
         let entity_position = entity.position;
         let other_position = other.position;
@@ -360,7 +368,7 @@ export class Entity_Manager extends ObserverSubject {
       parameter.tweakpane = Object.assign(parameter.tweakpane, {
         entity_bounceMode: true,
         entity_count: 40,
-        entity_distanceFactor: 0.2,
+        entity_distanceFactor: 0.0,
         entity_nature: "uniform", // 'individual'
         entity_sizeRange: {
           min: 0.01,
@@ -461,6 +469,13 @@ export class Entity_Manager extends ObserverSubject {
           sizeRange: parameter.tweakpane.entity_sizeRange,
         },
       });
+
+      const brush_props: TweakpaneSupport_Props = {
+        parameterSetName: "entity",
+        parameterSet: parameter.entity,
+      };
+
+      Brush.tweakpaneSupport.inject_parameterset_to(parameter, brush_props);
     },
     transfer_tweakpane_parameter_to: function (
       parameter: any,
@@ -473,22 +488,15 @@ export class Entity_Manager extends ObserverSubject {
       parameter.entity.nature = parameter.tweakpane.entity_nature;
       parameter.entity.sizeRange = parameter.tweakpane.entity_sizeRange;
 
-      parameter.entity.brush.shape = parameter.tweakpane.entity_brush_shape;
-      parameter.entity.brush.scale = parameter.tweakpane.entity_brush_scale;
-      // parameter.tweakpane.entity_brush_scale_x;
-      // parameter.tweakpane.entity_brush_scale_y;
-      parameter.entity.brush.angle = parameter.tweakpane.entity_brush_rotate;
+      const brush_props: TweakpaneSupport_Props = {
+        parameterSetName: "entity",
+        parameterSet: parameter.entity,
+      };
 
-      // parameter.tweakpane.entity_brush_position_x;
-      // parameter.tweakpane.entity_brush_position_y;
-
-      parameter.entity.brush.border =
-        parameter.artwork.canvas.size.width *
-        parameter.tweakpane.entity_brush_border;
-      parameter.entity.brush.fillColor =
-        parameter.tweakpane.entity_brush_fillColor;
-      parameter.entity.brush.borderColor =
-        parameter.tweakpane.entity_brush_borderColor;
+      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(
+        parameter,
+        brush_props
+      );
     },
   };
 } // class Manager

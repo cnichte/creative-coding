@@ -4,7 +4,9 @@
   "scripts": {
     "watch": "webpack --watch --config ./config/dev.webpack.config.js",
     "start": "webpack serve --open --config ./config/dev.webpack.config.js",
-    "build": "webpack --config ./config/prod.webpack.config.js"
+    "clean": "rm -rf dist",
+    "build": "webpack --config ./config/prod.webpack.config.js",
+    "prebuild": "yarn workspace @carstennichte/cc-toolbox build"
   },
   "devDependencies": {
     "@tweakpane/core": "^2.0.3",

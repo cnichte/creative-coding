@@ -9,6 +9,7 @@
   "main": "dist/cc-toolbox.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "webpack --config ./webpack.config.js"
   },
   "devDependencies": {

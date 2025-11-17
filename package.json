@@ -11,6 +11,10 @@
   "workspaces": [
     "projects/*"
   ],
+  "scripts": {
+    "ncu-me": "ncu -i --format group",
+    "tree": "tree -a -L 3 ./ > directory-structure.txt"
+  },
   "devDependencies": {
     "@yarnpkg/pnpify": "^4.0.1",
     "ts-loader": "^9.5.1",

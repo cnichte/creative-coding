@@ -4,6 +4,7 @@
   "scripts": {
     "watch": "webpack --watch --config ./config/dev.webpack.config.js",
     "start": "webpack serve --open --config ./config/dev.webpack.config.js",
+    "clean": "rm -rf dist",
     "build": "webpack --config ./config/prod.webpack.config.js"
   },
   "devDependencies": {
