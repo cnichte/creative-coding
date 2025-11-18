@@ -1,5 +1,10 @@
 # Readme Development
 
+```
+    "001-bit",
+    "002-shape",
+```
+
 ## Konzepte
 
 - Ein (Static) Artwork entsteht in dem ich ein Parameter Objekt übergebe welches das Artwork initialisiert und aufbaut.

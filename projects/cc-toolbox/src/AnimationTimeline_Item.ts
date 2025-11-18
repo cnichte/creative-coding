@@ -55,6 +55,18 @@ export abstract class AnimationTimeline_Item {
 
     let total_duration = 60; // TODO (parameter.settings.duration -> einführen:  parameter.artwork.animation.duration) In seconds. From canvas-sketch settings.
 
+    if (
+      animation.timeline == null ||
+      typeof animation.timeline !== "object" ||
+      !("startTime" in animation.timeline) ||
+      !("endTime" in animation.timeline)
+    ) {
+      animation.timeline = {
+        startTime: 0,
+        endTime: 1,
+      };
+    }
+
     this.startTime = animation.timeline.startTime; // 0-1 (0 to 100%)
     this.endTime = animation.timeline.endTime; // 0-1 (0 to 100%)
 

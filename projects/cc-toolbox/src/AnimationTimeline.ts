@@ -143,23 +143,42 @@ export class AnimationTimeline {
       };
 
       // animation.timeline
-      if (props.parameterSetName != null) {
+      if (props.parameterSetName != null && props.parameterSetName.length > 0) {
+        if (typeof parameter[props.parameterSetName] !== "object") {
+          parameter[props.parameterSetName] = {};
+        }
+
         if (!("animation" in parameter[props.parameterSetName])) {
           Object.assign(parameter[props.parameterSetName], {
             animation: {},
           });
         }
-      } else {
-        console.log("kein parametersetName vorhanden.");
       }
 
       // parameter ist hier in der Regel ein ausgewähltes Parameterset
       // dem eine animation hinzugefügt werden
       // TODO: Support an Array of (not overlapping) Timeslots for this Item.
       // This means that an animation for an item can be executed in several time periods.
-      Object.assign(props.parameterSet, {
-        timeline: al_pset,
-      });
+      let targetSet = props.parameterSet;
+      if (!targetSet) {
+        if (
+          props.parameterSetName != null &&
+          props.parameterSetName.length > 0 &&
+          typeof parameter[props.parameterSetName] === "object"
+        ) {
+          targetSet = parameter[props.parameterSetName];
+        } else {
+          targetSet = parameter;
+        }
+      }
+
+      props.parameterSet = targetSet;
+
+      if (!("timeline" in targetSet) || targetSet.timeline == null) {
+        Object.assign(targetSet, {
+          timeline: al_pset,
+        });
+      }
     },
     /**
      ** --------------------------------------------------------------------
@@ -179,10 +198,16 @@ export class AnimationTimeline {
 
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 
-      // parameter ist hier in der Regel ein ausgewähltes Parameterset
-      // dem eine animation hinzugefügt werden
-      target.startTime = source[tp_prefix + "timeline"].min;
-      target.endTime = source[tp_prefix + "timeline"].max;
+      const timelineBinding = source[tp_prefix + "timeline"];
+      if (
+        timelineBinding !== undefined &&
+        typeof timelineBinding === "object" &&
+        "min" in timelineBinding &&
+        "max" in timelineBinding
+      ) {
+        target.startTime = timelineBinding.min;
+        target.endTime = timelineBinding.max;
+      }
     },
     /**
      ** --------------------------------------------------------------------
@@ -219,4 +244,3 @@ export class AnimationTimeline {
     },
   };
 } // class AnimationTimeline
-

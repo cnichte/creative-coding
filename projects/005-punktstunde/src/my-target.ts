@@ -1,261 +1,252 @@
-import { AnimationTimer, Breathe, Brush, Brush_ParameterTweakpane, ColorSet, Format, ObserverSubject, Provide_Tweakpane_To_Props, Shape, Size, TweakpaneSupport, Vector } from "@carstennichte/cc-toolbox";
-import { TweakpaneSupport_Props, Tweakpane_Items } from "@carstennichte/cc-toolbox";
+import {
+  AnimationTimeline,
+  Breathe,
+  Brush,
+  Brush_ParameterTweakpane,
+  ColorSet,
+  Format,
+  Rotate,
+  Shake,
+  Shape,
+  Size,
+  TweakpaneSupport,
+  type Provide_Tweakpane_To_Props,
+  type TweakpaneSupport_Props,
+  type Tweakpane_Items,
+  Vector,
+  ObserverSubject,
+} from "@carstennichte/cc-toolbox";
 
-class My_Target extends ObserverSubject {
+export class My_Target extends ObserverSubject {
+  private parameter: any;
+  private animationTimeline: AnimationTimeline;
+  private breathe: Breathe;
+  private rotate: Rotate;
+  private shake: Shake;
 
-    private parameter: any;
-    private animationTimeline: AnimationTimeline;
-    private breathe: Breathe;
-    // private rotate:
-    // private shake:
+  public state: any;
 
-    public state: any;
+  constructor(parameter: any) {
+    super();
 
-    check_ObserverSubject(params: any): void {
-        throw new Error("Method not implemented.");
+    this.parameter = parameter;
+
+    this.animationTimeline = new AnimationTimeline();
+    this.breathe = new Breathe(this.parameter.target.animation);
+    this.rotate = new Rotate(this.parameter.target.animation);
+    this.shake = new Shake(this.parameter.target.animation);
+
+    this.animationTimeline.push(this.breathe);
+    this.animationTimeline.push(this.rotate);
+    this.animationTimeline.push(this.shake);
+
+    this.state = {
+      colorset: {
+        mode: parameter.colorset.mode,
+        groupname: parameter.colorset.group,
+        variant: -1,
+        number: -1,
+        cs_object: null,
+        borderColor: "#EFEFEFFF",
+        fillColor: "#EFEFEFFF",
+      },
+      format: {
+        position_lefttop: new Vector(0, 0),
+        size: parameter.artwork.canvas.size.clone(),
+        fak: new Vector(1, 1),
+        fencing: true,
+        preserveAspectRatio: true,
+      },
+    };
+  }
+
+  check_ObserverSubject(): void {
+    // not needed
+  }
+
+  notify(data = {}) {
+    this.state = Object.assign(this.state, data);
+    this.notifyAll(this, this.state);
+  }
+
+  update(source: any) {
+    if (source instanceof Format) {
+      this.state.format = source.state.format;
     }
-
-
-    /**
-     * 
-     * @param {Object} parameter 
-     */
-    constructor(parameter: any) {
-        super();
-
-        this.parameter = parameter;
-
-        //! My_Target.inject_parameterset_to(this.parameter, this.parameter.tweakpane);
-
-        this.animationTimeline = new AnimationTimeline();
-
-        this.breathe = new Breathe(this.parameter.target.animation);
-        //! this.rotate = new Animation.Rotate(this.parameter.target.animation);
-        //! this.shake = new Animation.Shake(this.parameter.target.animation);
-
-        // this.animationTimeline.items.push(this.breathe);
-        // this.animationTimeline.items.push(this.rotate);
-        // this.animationTimeline.items.push(this.shake);
-
-        this.state = {
-            colorset: {
-                mode: parameter.colorset.mode, // "custom, colorset, random, chaos"
-
-                groupname: parameter.colorset.group, // The name of The colorset
-                variant: -1, // A name could return more then one colorset. This is to choose one of them. 
-                number: -1, // A colorset has more than one color. This is to choose a specific.
-
-                cs_object: null, // The ColorSet-Object
-
-                borderColor: "#EFEFEFFF", // parameter.target.brush.borderColor, // Three default colors, extracted for easy access
-                fillColor: "#EFEFEFFF" // parameter.target.brush.fillColor
-            },
-            format: {
-                // This is the area "cropped" by the format.
-                position_lefttop: new Vector(0, 0), // canvas_position_crop
-                size: parameter.artwork.canvas.size.clone(), // canvas_size_crop
-
-                fak: new Vector(1, 1),
-                fencing: true,
-                preserveAspectRatio: true
-            }
-        }
-
-
-    } // method constructor
-
-    notify(data = {}) {
-        this.state = Object.assign(this.state, data);
-        this.notifyAll(this, this.state);
+    if (source instanceof ColorSet) {
+      this.state.colorset = source.state.colorset;
     }
+  }
 
-    /**
-     * This is called by the AnimationTimer.
-     *
-     * @param {Class} source 
-     */
-    animate_slow(source: any) {
-        if (source instanceof ColorSet) {
+  animate_slow(): void {
+    // not used yet
+  }
 
-        }
-    }
+  draw(context: any, parameter: any) {
+    My_Target.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
-    /**
-     * Is called from the ObserverSubject.
-     * 
-     * @param {Object} state
-     */
-    update(source: any) {
-        if (source instanceof Format) {
-            // We look for the format properties
-            // because the Quadrat-Object should fit in the new Area.
-            this.state.format = source.state.format;
-        }
-        if (source instanceof ColorSet) {
-            this.state.colorset = source.state.colorset;
-        }
-    }
+    this.animationTimeline.perform_animations_if(parameter, parameter.target);
 
-    /**
-     * Zeichnet den Zielpunkt (und ein rotes Kreuz)
-     *
-     * @param {*} context 
-     * @param {*} parameter 
-     */
-    draw(context:any, parameter:any) {
+    const brush = new Brush(parameter.target.brush);
+    brush.border = Format.transform(brush.border, this.state.format);
+    brush.fillColor = this.state.colorset.fillColor;
+    brush.borderColor = this.state.colorset.borderColor;
+    brush.angle = this.rotate.perform(brush.angle);
 
-        My_Target.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
+    const canvasSize = parameter.artwork.canvas.size;
+    const canvasVector = new Vector(canvasSize.width, canvasSize.height);
 
-        // this.animationTimeline.perform_animations_if(parameter, parameter.target);
+    let position_px = canvasVector.multiply(brush.position);
+    position_px = this.shake.perform(position_px);
 
-        // TODO Use: parameter.target.brush
-        let brush = new Brush(parameter.target.brush);
+    const size_base = new Size(
+      canvasSize.width * 0.8,
+      canvasSize.height * 0.02,
+      Math.min(canvasSize.width, canvasSize.height) * 0.01
+    );
+    let size_px = this.breathe.perform(size_base);
 
-        // brush.angle = this.rotate.perform(brush.angle);
+    const formatted_position = Format.transform_position(
+      position_px,
+      this.state.format
+    );
+    size_px = Format.transform_size(size_px, this.state.format);
 
-        brush.border = Format.transform(brush.border, this.state.format);
-        brush.fillColor = this.state.colorset.fillColor;
-        brush.borderColor = this.state.colorset.borderColor;
+    parameter.tweakpane.target_monitor_y = `x: ${position_px.x.toFixed(
+      2
+    )}\ny: ${position_px.y.toFixed(2)}`;
 
-        let position_o = brush.position; // = new Vector(parameter.artwork.canvas.size.width * this.parameter.tweakpane.target_position_x, parameter.artwork.canvas.size.height * this.parameter.tweakpane.target_position_y); // // this.move.now.y    
-        // position_o = this.shake.perform(position_o);
+    Shape.draw(context, formatted_position, size_px, brush, true);
+  }
 
+  public static tweakpaneSupport: TweakpaneSupport = {
+    provide_tweakpane_to(parameter: any, props: Provide_Tweakpane_To_Props) {
+      My_Target.tweakpaneSupport.inject_parameterset_to(parameter);
 
-        let size_o = new Size(400, 400);
+      parameter.tweakpane = Object.assign(parameter.tweakpane, {
+        target_monitor_y: "",
+      });
 
-        // size_o.width = size_o.width * this.breathe.now;
-        // size_o.height = size_o.height * this.breathe.now;
+      if (props.items.folder == null) {
+        props.items.folder = props.items.pane.addFolder({
+          title: props.folder_name_prefix + "Target",
+          expanded: false,
+        });
+      }
 
-        //* Recalculate Format-Changes...
-        // the calculation does not take into account a pontential change of brush.scale.
-        // It is set to 1.0 in the parameters
+      const brush_defaults: Brush_ParameterTweakpane = {
+        brush_shape: "Rect",
+        brush_position_x: 0.5,
+        brush_position_y: 0.5,
+        brush_scale: 1.0,
+        brush_scale_x: 1.0,
+        brush_scale_y: 0.1,
+        brush_rotate: 0,
+        brush_border: 0.08,
+        brush_borderColor: "#efefef7F",
+        brush_fillColor: "#efefef7F",
+      };
 
-        let new_op = Format.transform_position(position_o, this.state.format);
-        let new_os = Format.transform_size(size_o, this.state.format);
-
-        // Zu verfolgender Punkt
-        Shape.draw(context, new_op, new_os, brush, true);
-
-
-        //! Koordinatensystem zum testen
-        /*
-            // Koordinatensystem zeichnen (Quadranten) 
-            let b = new Brush();
-            b.shape = "Line";
-            b.angle = 0;
-            b.scale = 1.0;
-            b.border = Format.transform(20, this.state.format);
-            b.fillColor = "red";
-            b.borderColor = "red";
-        
-            // Horizontal
-            let position_center = new Vector(parameter.artwork.canvas.size.width * 0.5, parameter.artwork.canvas.size.height * 0.5);
-        
-            let size_horizontal = new Size(parameter.artwork.canvas.size.width, 0);
-        
-            let new_position_horizontal = Format.transform_position(position_center, this.state.format);
-            let new_size_horizontal = Format.transform_size(size_horizontal, this.state.format);
-        
-            //    Shape.draw(context, new_position_horizontal, new_size_horizontal, b, true);
-        
-            // Vertikal
-            let size_vertikal = new Size(0, parameter.artwork.canvas.size.height);
-        
-            let new_position_vertikal = Format.transform_position(position_center, this.state.format);
-            let new_size_vertikal = Format.transform_size(size_vertikal, this.state.format);
-        
-            b.fillColor = "blue";
-            b.borderColor = "blue";
-        
-            //     Shape.draw(context, new_position_vertikal, new_size_vertikal, b, true);
-        */
-    } // method draw
-
-
-    public static tweakpaneSupport: TweakpaneSupport = {
-        provide_tweakpane_to: function (parameter: any, props: Provide_Tweakpane_To_Props): Tweakpane_Items {
-            // Inject Tweakpane parameters
-            parameter.tweakpane = Object.assign(parameter.tweakpane, {
-                target_monitor_y: 100,
-            });
-
-
-            let brush_props = {
-
-            }
-
-            let brush_defaults: Brush_ParameterTweakpane = {
-                brush_shape: "Circle",
-                brush_position_x: 0.5, // Die initiale Position des Shapes.
-                brush_position_y: 0.5,
-                brush_scale: 1.0,
-                brush_scale_x: 1.0,
-                brush_scale_y: 1.0,
-                brush_rotate: 0,
-                brush_border: 0.18,
-                brush_borderColor: "#efefef7F",
-                brush_fillColor: "#efefef7F",
-            };
-
-            let folder = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
-                items: {
-                    pane: props.items.pane,
-                    folder: null,
-                    tab: null
-                },
-                folder_name_prefix: "TargetShape: ",
-                use_separator: false,
-                parameterSetName: "target",
-                excludes: [],
-                defaults: brush_defaults,
-            });
-
-            folder.addSeparator();
-
-            // pane, folder, parameter_tweakpane, "target"
-            Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
-                items: {
-                    pane: props.items.pane,
-                    folder: null,
-                    tab: null
-                },
-                folder_name_prefix: "Targetshape: ",
-                use_separator: false,
-                parameterSetName: "target"
-            });
-
-            folder.addSeparator();
-
-            // Animation.Rotate.provide_tweakpane_to(pane, folder, parameter_tweakpane, "target");
-            // folder.addSeparator();
-            // Animation.Shake.provide_tweakpane_to(pane, folder, parameter_tweakpane, "target");
-
-            folder.addMonitor(parameter.tweakpane, 'target_monitor_y', {
-                label: 'Target Y',
-                multiline: true,
-                lineCount: 5,
-            });
-
-            return folder;
+      Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items: {
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null,
         },
-        inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-            Object.assign(parameter, {
-                target: {}
-            });
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "target",
+        excludes: [],
+        defaults: brush_defaults,
+      });
 
-            // parameter.target, parameter.tweakpane, "target"
-            // Brush.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName: "target" });
-            // AnimationTimer.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName: "colorset" });
-            // Breathe.tweakpaneSupport.inject_parameterset_to(parameter, { parameterSetName: "target" });
+      props.items.folder.addBlade({ view: "separator" });
 
-            // Animation.Rotate.inject_parameterset_to(parameter.target, parameter.tweakpane, "target");
-            // Animation.Shake.inject_parameterset_to(parameter.target, parameter.tweakpane, "target");
+      Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items: {
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null,
         },
-        transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-            // Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, { parameterSetName: "target" });
-            // Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, parameter.tweakpane, "target");
-            // Animation.Rotate.transfer_tweakpane_parameter_to(parameter.target, parameter.tweakpane, "target");
-            // Animation.Shake.transfer_tweakpane_parameter_to(parameter.target, parameter.tweakpane, "target");
-        }
-    }
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "target",
+      });
+
+      props.items.folder.addBlade({ view: "separator" });
+
+      Rotate.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items: {
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null,
+        },
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "target",
+      });
+
+      props.items.folder.addBlade({ view: "separator" });
+
+      Shake.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items: {
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null,
+        },
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "target",
+      });
+
+      props.items.folder.addBinding(parameter.tweakpane, "target_monitor_y", {
+        label: "Target",
+        readonly: true,
+        multiline: true,
+        rows: 3,
+      });
+
+      return props.items;
+    },
+    inject_parameterset_to(parameter: any) {
+      if (!("target" in parameter)) {
+        Object.assign(parameter, {
+          target: {},
+        });
+      }
+
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "target",
+        parameterSet: parameter.target,
+      };
+
+      Brush.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+      Breathe.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+      Rotate.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+      Shake.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+    },
+    transfer_tweakpane_parameter_to(parameter: any) {
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "target",
+        parameterSet: parameter.target,
+      };
+
+      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(
+        parameter,
+        props_default
+      );
+      Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(
+        parameter,
+        props_default
+      );
+      Rotate.tweakpaneSupport.transfer_tweakpane_parameter_to(
+        parameter,
+        props_default
+      );
+      Shake.tweakpaneSupport.transfer_tweakpane_parameter_to(
+        parameter,
+        props_default
+      );
+    },
+  };
 }

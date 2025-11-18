@@ -1,5 +1,19 @@
-import { Breathe, Brush, ColorSet, Format, Provide_Tweakpane_To_Props, TweakpaneSupport, AnimationTimeline, Vector, Size, Shape, Brush_ParameterTweakpane, Utils } from "@carstennichte/cc-toolbox";
-import { TweakpaneSupport_Props, Tweakpane_Items } from "@carstennichte/cc-toolbox/dist/TweakpaneSupport";
+import {
+  AnimationTimeline,
+  Breathe,
+  Brush,
+  Brush_ParameterTweakpane,
+  ColorSet,
+  Format,
+  Move,
+  type Provide_Tweakpane_To_Props,
+  Shape,
+  Size,
+  TweakpaneSupport,
+  type TweakpaneSupport_Props,
+  type Tweakpane_Items,
+  Vector,
+} from "@carstennichte/cc-toolbox";
 
 /**
  * Der Accent, ein Kreis, der sich auf die Linie zu bewegen soll.
@@ -13,6 +27,7 @@ export class My_Accent { // implements Pattern.Observer
   private parameter: any;
   private animationTimeline: AnimationTimeline;
   private breathe:Breathe;
+  private move: Move;
 
   public state:any;
 
@@ -21,15 +36,13 @@ export class My_Accent { // implements Pattern.Observer
 
     this.parameter = parameter;
 
-    // My_Accent.tweakpaneSupport.inject_parameterset_to(this.parameter, this.parameter.tweakpane);
-
     this.animationTimeline = new AnimationTimeline();
 
     this.breathe = new Breathe(this.parameter.accent.animation);
-    // this.move = new Animation.Move(this.parameter.accent.animation);
+    this.move = new Move(this.parameter.accent.animation);
 
     this.animationTimeline.items.push(this.breathe);
-    // this.animationTimeline.items.push(this.move);
+    this.animationTimeline.items.push(this.move);
 
     this.state = {
       colorset: {
@@ -100,28 +113,36 @@ export class My_Accent { // implements Pattern.Observer
 
     this.animationTimeline.perform_animations_if(parameter, parameter.accent);
 
-    // TODO Use: parameter.accent.brush
     let brush = new Brush(parameter.accent.brush);
     brush.border = Format.transform(brush.border, this.state.format);
     brush.borderColor = this.state.colorset.borderColor;
     brush.fillColor = this.state.colorset.fillColor;
 
+    const canvasSize = parameter.artwork.canvas.size;
+    const canvasVector = new Vector(canvasSize.width, canvasSize.height);
 
-    let position_o = brush.position; // = new Vector(parameter.artwork.canvas.size.width * this.parameter.tweakpane.accent_position_x, parameter.artwork.canvas.size.height * this.parameter.tweakpane.accent_position_y);
+    let position_px = canvasVector.multiply(brush.position);
+    position_px = this.move.perform(position_px);
 
-    // position_o = this.move.perform(position_o);
+    const size_base = new Size(
+      canvasSize.width * 0.12,
+      canvasSize.height * 0.12,
+      Math.min(canvasSize.width, canvasSize.height) * 0.02
+    );
 
-    let size_o = new Size(parameter.artwork.canvas.size.width * 0.2, parameter.artwork.canvas.size.height * 0.2, parameter.artwork.canvas.size.width * 0.02);
-    size_o = this.breathe.perform(size_o);
+    let size_px = this.breathe.perform(size_base);
 
-    // Recalculate Format-Changes...
-    // the calculation does not take into account a pontential change of brush.scale.
-    // It is set to 1.0 in the parameters
-    // object_position, screen_position_lefttop, fak
-    let new_position_o = Format.transform_position(position_o, this.state.format);
-    let new_size_o = Format.transform_size(size_o, this.state.format);
+    const formatted_position = Format.transform_position(
+      position_px,
+      this.state.format
+    );
+    size_px = Format.transform_size(size_px, this.state.format);
 
-    Shape.draw(context, new_position_o, new_size_o, brush, true);
+    parameter.tweakpane.accent_monitor_y = `x: ${position_px.x.toFixed(
+      2
+    )}\ny: ${position_px.y.toFixed(2)}`;
+
+    Shape.draw(context, formatted_position, size_px, brush, true);
 
   } // method draw
 
@@ -159,7 +180,7 @@ export class My_Accent { // implements Pattern.Observer
         brush_fillColor: "#efefef7F",
       };
 
-      Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      const brushItems = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
         items:{
           pane: props.items.pane,
           folder: null,
@@ -173,23 +194,37 @@ export class My_Accent { // implements Pattern.Observer
       });
 
 
-      props.items.folder.addBlade({
+      brushItems.folder?.addBlade({
         view: "separator",
       });
 
-      // pane, folder, parameter.tweakpane, "accent"
-      Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
+      const breatheItems = Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
         items: {
           pane: props.items.pane,
           folder: props.items.folder,
-          tab: null
+          tab: null,
         },
         folder_name_prefix: "",
         use_separator: false,
-        parameterSetName: "accent"
+        parameterSetName: "accent",
       });
 
-      props.items.folder.addBlade({
+      breatheItems.folder?.addBlade({
+        view: "separator",
+      });
+
+      Move.tweakpaneSupport.provide_tweakpane_to(parameter, {
+        items: {
+          pane: props.items.pane,
+          folder: props.items.folder,
+          tab: null,
+        },
+        folder_name_prefix: "",
+        use_separator: false,
+        parameterSetName: "accent",
+      });
+
+      props.items.folder?.addBlade({
         view: "separator",
       });
 
@@ -204,9 +239,11 @@ export class My_Accent { // implements Pattern.Observer
     },
     inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
       
-      Object.assign(parameter, {
-        accent: {}
-      });
+      if (!("accent" in parameter)) {
+        Object.assign(parameter, {
+          accent: {},
+        });
+      }
 
       let props_default: TweakpaneSupport_Props = {
         parameterSetName: "accent",
@@ -218,11 +255,8 @@ export class My_Accent { // implements Pattern.Observer
       // Utils.set_property_if_exist(props_default, props, "parameterSetName");
 
       Brush.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
-      
       Breathe.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
-
-      // TODO AnimationTimer.inject_parameterset_to(parameter.colorset, parameter_tweakpane, "colorset");
-      // TODO Animation.Move.inject_parameterset_to(parameter.accent, parameter.tweakpane, "accent");
+      Move.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
     },
     transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
 
@@ -233,7 +267,7 @@ export class My_Accent { // implements Pattern.Observer
 
       Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
       Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
-      // TODO Animation.Move.transfer_tweakpane_parameter_to(parameter, parameter.accent, parameter.tweakpane, "accent");
+      Move.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
 
     }
   }

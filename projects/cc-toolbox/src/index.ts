@@ -8,7 +8,29 @@ export { AnimationTimeline_Item } from "./AnimationTimeline_Item";
 export { AnimationTimer, type Animable } from "./AnimationTimer";
 
 // Animations
-export { Breathe, type Breathe_Property, type Breathe_Values } from './animation/Breathe';
+export {
+  Breathe,
+  type Breathe_Property,
+  type Breathe_Values,
+} from "./animation/Breathe";
+export {
+  Move,
+  MoveMode,
+  type Move_Property,
+  type Move_Values,
+} from "./animation/Move";
+export {
+  Rotate,
+  RotateMode,
+  type Rotate_Property,
+  type Rotate_Values,
+} from "./animation/Rotate";
+export {
+  Shake,
+  ShakeMode,
+  type Shake_Property,
+  type Shake_Values,
+} from "./animation/Shake";
 
 // and the rest of the API
 export { Artwork, 

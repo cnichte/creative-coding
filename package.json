@@ -12,6 +12,7 @@
     "projects/*"
   ],
   "scripts": {
+    "t": "node ./shell-scripts/transport.mjs",
     "ncu-me": "ncu -i --format group",
     "tree": "tree -a -L 3 ./ > directory-structure.txt"
   },
