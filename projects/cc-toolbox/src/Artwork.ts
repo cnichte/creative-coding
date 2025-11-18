@@ -45,11 +45,12 @@
  import { Size } from "./Size";
  import { Format } from "./Format";
  import { Vector } from "./Vector";
- import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props,
-  type Tweakpane_Items
+import {
+ TweakpaneSupport,
+ type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props,
+ type Tweakpane_Items
 } from "./TweakpaneSupport";
+import { ParameterManager } from "./ParameterManager";
 
 
 export interface Artwork_ParameterSet {
@@ -148,6 +149,8 @@ export class Artwork {
     if (!("tweakpane" in parameter)) {
       Object.assign(parameter, { tweakpane: {} });
     }
+
+    ParameterManager.from(parameter);
 
     //* HTML Content, im wesentlichen das <canvas> Element.
 
@@ -672,5 +675,3 @@ export class Artwork {
     }, // provide_tweakpane_to
   };
 } // class Artwork
-
-

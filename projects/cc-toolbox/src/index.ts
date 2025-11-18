@@ -70,3 +70,7 @@ export { TweakpaneSupport,
     type TweakpaneSupport_Props } from "./TweakpaneSupport";
 export { Utils } from "./Utils";
 export { Vector } from "./Vector";
+export {
+  ParameterManager,
+  type ParameterMappingEntry,
+} from "./ParameterManager";

@@ -26,7 +26,7 @@
  * @author Carsten Nichte - 2022
  */
 
- //* AnimationTimeline_Item.ts
+//* AnimationTimeline_Item.ts
 export abstract class AnimationTimeline_Item {
   protected startTime: number;
   protected endTime: number;
@@ -40,20 +40,29 @@ export abstract class AnimationTimeline_Item {
   }
 
   /**
+   * Prüft ob der typ vorhanden ist und führt die Animation aus.
+   * 
+   * @param parameter
+   * @param animations
+   */
+  public abstract check_type_and_run(parameter: any, animations: any): void; // implementiert zB Breathe
+
+  /**
    * Call this method to check the parameters and 'perform the animation' resp.
    * 'Calculate new/next values for a fast animation' in its timeslot.
    *
    * @param {Object} parameter - Object = {settings:{duration:60},artwork:{animation:{time:10.123, deltaTime:0.001, do_animate:true, global_animation_halt:false}}}
    * @param {Object} animation - The Animation Parameters.
    */
-  public perform_animate_fast_if(
+  public perform_animate_fast_if_in_timeslot(
     parameter: any,
     animation: { timeline: { startTime: any; endTime: any } }
   ): void {
-    let time = parameter.artwork.animation.timeStamp; // in seconds
-    let deltatime = parameter.artwork.animation.deltaTime; // in seconds
+    const animationState = parameter?.artwork?.animation ?? {};
+    let time = animationState.timeStamp ?? 0; // in seconds
+    let deltatime = animationState.deltaTime ?? 0; // in seconds
 
-    let total_duration = 60; // TODO (parameter.settings.duration -> einführen:  parameter.artwork.animation.duration) In seconds. From canvas-sketch settings.
+    let total_duration = animationState.duration ?? 60;
 
     if (
       animation.timeline == null ||

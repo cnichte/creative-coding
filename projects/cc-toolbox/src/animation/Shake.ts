@@ -29,6 +29,7 @@ export interface Shake_Property {
 }
 
 export class Shake extends AnimationTimeline_Item {
+
   public static readonly TWEAKPANE_PREFIX = "_animation_shake";
 
   private mode: ShakeMode;
@@ -69,10 +70,14 @@ export class Shake extends AnimationTimeline_Item {
     return result;
   }
 
-  protected animate_fast(animation: Shake_Values): number {
-    this.mode = animation.mode;
-    this.frequency = animation.frequency;
-    this.amplitude = animation.amplitude;
+  public check_type_and_run(parameter: any, animations: any): void {
+    throw new Error("Method not implemented.");
+  }
+
+  protected animate_fast(values:Shake_Values): number {
+    this.mode = values.mode;
+    this.frequency = values.frequency;
+    this.amplitude = values.amplitude;
 
     this.phase += this.frequency;
     const sinValue = Math.sin(this.phase);
@@ -142,12 +147,10 @@ export class Shake extends AnimationTimeline_Item {
       );
     },
     inject_parameterset_to(parameter: any, props: TweakpaneSupport_Props) {
-      if (!props.parameterSet) {
-        return;
-      }
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
 
-      if (!("animation" in props.parameterSet)) {
-        Object.assign(props.parameterSet, { animation: {} });
+      if (!("animation" in targetSet)) {
+        Object.assign(targetSet, { animation: {} });
       }
 
       const tp_prefix = TweakpaneSupport.create_tp_prefix(
@@ -167,13 +170,13 @@ export class Shake extends AnimationTimeline_Item {
         },
       };
 
-      Object.assign(props.parameterSet.animation, {
+      Object.assign(targetSet.animation, {
         shake: defaults,
       });
 
       const atl_props: TweakpaneSupport_Props = {
         parameterSetName: tp_prefix,
-        parameterSet: props.parameterSet.animation.shake,
+        parameterSet: targetSet.animation.shake,
       };
 
       AnimationTimeline.tweakpaneSupport.inject_parameterset_to(
@@ -185,13 +188,13 @@ export class Shake extends AnimationTimeline_Item {
       parameter: any,
       props: TweakpaneSupport_Props
     ) {
-      if (!props.parameterSet) return;
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
 
       const tp_prefix = TweakpaneSupport.create_tp_prefix(
         props.parameterSetName + Shake.TWEAKPANE_PREFIX
       );
       const canvasSize = parameter.artwork.canvas.size;
-      const target = props.parameterSet.animation.shake as Shake_Values;
+      const target = targetSet.animation.shake as Shake_Values;
 
       target.mode = parameter.tweakpane[tp_prefix + "mode"];
       target.frequency = parameter.tweakpane[tp_prefix + "frequency"];

@@ -263,6 +263,7 @@ export class Brush implements Brush_ParameterSet {
         parameterSetName: "",
       }
     ): void {
+      const targetParent = TweakpaneSupport.ensureParameterSet(parameter, props);
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 
       let parameterSet: Brush_ParameterSet = {
@@ -285,16 +286,9 @@ export class Brush implements Brush_ParameterSet {
         },
       };
 
-      // TODO parameterSetName="" => fehler überall fixen
-      if (props.parameterSetName == null || props.parameterSetName === "") {
-        Object.assign(parameter, {
-          brush: parameterSet,
-        });
-      } else {
-        Object.assign(parameter[props.parameterSetName], {
-          brush: parameterSet,
-        });
-      }
+      Object.assign(targetParent, {
+        brush: parameterSet,
+      });
     },
     /**
      ** --------------------------------------------------------------------
@@ -311,14 +305,7 @@ export class Brush implements Brush_ParameterSet {
     ): void {
 
       let source: any = parameter.tweakpane; // prefixable
-      let target: any;
-
-      // parameter[props.parameterSetName]
-      if (props.parameterSet != null) {
-        target = props.parameterSet;
-      } else {
-        target = parameter;
-      }
+      let target: any = TweakpaneSupport.ensureParameterSet(parameter, props);
 
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 

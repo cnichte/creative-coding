@@ -13,4 +13,9 @@ module.exports = {
   optimization: {
     runtimeChunk: 'single',
   },
+  resolve: {
+    alias: {
+      "@carstennichte/cc-toolbox": path.resolve(__dirname, "../../cc-toolbox/src"),
+    },
+  },
 };

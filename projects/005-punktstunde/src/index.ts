@@ -51,7 +51,7 @@
   Vector,
   Tweakpane_Items,
 } from "@carstennichte/cc-toolbox";
-import { My_Accent } from "./my-accent";
+//! import { My_Accent } from "./my-accent";
 import { My_Target } from "./my-target";
 
 interface RandomizedColors {
@@ -97,7 +97,7 @@ class MySketch implements Sketch {
 
   private parameter: any = {};
   
-  private my_accent:My_Accent|null;
+  //! private my_accent:My_Accent|null;
   private my_target:My_Target|null;
 
   private randomized: RandomizedColors = {
@@ -133,7 +133,7 @@ class MySketch implements Sketch {
 
     this.animation_halt = false;
 
-    this.my_accent = null;
+    //! this.my_accent = null;
     this.my_target = null;
     // this.parameter = Object.assign(this.parameter, parameter);
 
@@ -183,7 +183,8 @@ class MySketch implements Sketch {
       excludes: [],
       defaults: {},
     });
-
+//! DEBUG
+    /*
     My_Accent.tweakpaneSupport.provide_tweakpane_to(parameter,{
       items: {
         pane: tweakpane_items.pane,
@@ -194,7 +195,7 @@ class MySketch implements Sketch {
       use_separator: false,
       parameterSetName: "accent"
     });
-
+*/
     My_Target.tweakpaneSupport.provide_tweakpane_to(parameter,{
       items: {
         pane: tweakpane_items.pane,
@@ -209,28 +210,28 @@ class MySketch implements Sketch {
     // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);
     
-    this.my_accent = new My_Accent(parameter);
+    //! this.my_accent = new My_Accent(parameter);
     this.my_target = new My_Target(parameter);
 
     // Background listens to Format changes
     format.addObserver(this.background);
-    format.addObserver(this.my_accent);
+    //! format.addObserver(this.my_accent);
     format.addObserver(this.my_target);
 
     // Quadrat listens to ColorSet changes
     this.colorSet = new ColorSet(parameter);
     this.colorSet.addObserver(this.background);
-    this.colorSet.addObserver(this.my_accent);
+    //! this.colorSet.addObserver(this.my_accent);
     this.colorSet.addObserver(this.my_target);
     this.colorSet.animationTimer.addListener(this.background);
-    this.colorSet.animationTimer.addListener(this.my_accent);
+    //! this.colorSet.animationTimer.addListener(this.my_accent);
     this.colorSet.animationTimer.addListener(this.my_target);
 
     // Lets set up the Scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
     if (this.my_target) this.scene.push(this.my_target);
-    this.scene.push(this.my_accent);
+    //! this.scene.push(this.my_accent);
   } // prepare
 
   /**
@@ -249,7 +250,7 @@ class MySketch implements Sketch {
     BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
     ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
-    My_Accent.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
+    //! My_Accent.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
     My_Target.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
 
     // check the colorSets animation-timer.

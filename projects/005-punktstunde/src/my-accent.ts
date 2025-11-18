@@ -13,6 +13,7 @@ import {
   type TweakpaneSupport_Props,
   type Tweakpane_Items,
   Vector,
+  ParameterManager,
 } from "@carstennichte/cc-toolbox";
 
 /**
@@ -110,6 +111,9 @@ export class My_Accent { // implements Pattern.Observer
   draw(context: any, parameter: any) {
 
     My_Accent.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
+
+    const accentParams = ParameterManager.from(parameter).get("accent");
+    console.log("accent params", accentParams);
 
     this.animationTimeline.perform_animations_if(parameter, parameter.accent);
 
@@ -238,37 +242,45 @@ export class My_Accent { // implements Pattern.Observer
       });
     },
     inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-      
-      if (!("accent" in parameter)) {
-        Object.assign(parameter, {
-          accent: {},
-        });
-      }
-
-      let props_default: TweakpaneSupport_Props = {
+      const props_default: TweakpaneSupport_Props = {
         parameterSetName: "accent",
-        parameterSet: parameter.accent,
       };
+      const accentSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
 
-      // Übergebene Props überschreiben die defaults
-      // Utils.set_property_if_exist(props_default, props, "parameterSet");
-      // Utils.set_property_if_exist(props_default, props, "parameterSetName");
+      if (!("brush" in accentSet)) accentSet.brush = {};
+      if (!("animation" in accentSet)) accentSet.animation = {};
 
-      Brush.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
-      Breathe.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
-      Move.tweakpaneSupport.inject_parameterset_to(parameter, props_default);
+      Brush.tweakpaneSupport.inject_parameterset_to(parameter, {
+        parameterSetName: "accent",
+        parameterSet: accentSet,
+      });
+      Breathe.tweakpaneSupport.inject_parameterset_to(parameter, {
+        parameterSetName: "accent",
+        parameterSet: accentSet,
+      });
+      Move.tweakpaneSupport.inject_parameterset_to(parameter, {
+        parameterSetName: "accent",
+        parameterSet: accentSet,
+      });
     },
     transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props | undefined): void {
-
-      let props_2: TweakpaneSupport_Props = {
+      const props_default: TweakpaneSupport_Props = {
         parameterSetName: "accent",
-        parameterSet: parameter.accent,
       };
+      const accentSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
 
-      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
-      Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
-      Move.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, props_2);
-
+      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
+        parameterSetName: "accent",
+        parameterSet: accentSet,
+      });
+      Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
+        parameterSetName: "accent",
+        parameterSet: accentSet,
+      });
+      Move.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
+        parameterSetName: "accent",
+        parameterSet: accentSet,
+      });
     }
   }
 

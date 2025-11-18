@@ -86,14 +86,17 @@ export class Breathe extends AnimationTimeline_Item {
   }
   /**
    * Is called from AnimationTimeline.perform_animations_if()
-   *
+   * 
+   * Prüft ob der Typ der Animation
+   * im Parameterset vor kommt führt die Animation aus.
+   * 
    * @param {Object} parameter
    * @param {Object} animations
    */
-  perform_animation_if(parameter: any, animations: any): void {
+  check_type_and_run(parameter: any, animations: any): void {
     if ("animation" in animations) {
       if ("breathe" in animations.animation) {
-        super.perform_animate_fast_if(parameter, animations.animation.breathe);
+        super.perform_animate_fast_if_in_timeslot(parameter, animations.animation.breathe);
       }
     }
   }
@@ -104,10 +107,11 @@ export class Breathe extends AnimationTimeline_Item {
    *
    * @returns long  breathe.now - the calulated animation value
    */
-  animate_fast(animation: Breathe_Values): number {
-    this.increment = animation.increment;
-    this.min = animation.min;
-    this.max = animation.max;
+  animate_fast(values: Breathe_Values): number {
+
+    this.increment = values.increment;
+    this.min = values.min;
+    this.max = values.max;
     if (this.now > this.max) this.now = this.max;
     if (this.now < this.min) this.now = this.min;
 
@@ -167,13 +171,14 @@ export class Breathe extends AnimationTimeline_Item {
       }
     ): void {
 
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
       let pt: any = parameter.tweakpane; // prefixable
       let tp_prefix = TweakpaneSupport.create_tp_prefix(
         props.parameterSetName + Breathe.TWEAKPANE_PREFIX
       );
 
-      if (!("animation" in props.parameterSet)) {
-        Object.assign(props.parameterSet, {
+      if (!("animation" in targetSet)) {
+        Object.assign(targetSet, {
           animation: {},
         });
       }
@@ -190,11 +195,11 @@ export class Breathe extends AnimationTimeline_Item {
         breathe: breathe_values
       }
 
-      Object.assign(props.parameterSet.animation, breathe_prop);
+      Object.assign(targetSet.animation, breathe_prop);
 
       let atl_props: TweakpaneSupport_Props = {
         parameterSetName: props.parameterSetName,
-        parameterSet: props.parameterSet.animation.breathe,
+        parameterSet: targetSet.animation.breathe,
       };
 
       // TODO das geht so nicht, weil AnimationTimeline auch zugriff auf parameter.tweakpane braucht!
@@ -215,6 +220,7 @@ export class Breathe extends AnimationTimeline_Item {
       }
     ): void {
 
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName + Breathe.TWEAKPANE_PREFIX);
 
       // TODO
@@ -222,7 +228,7 @@ export class Breathe extends AnimationTimeline_Item {
       // parameterset.animation.breathe.max = parameter.tweakpane[tp_prefix + "depth"].max;
       // parameterset.animation.breathe.increment = parameter.tweakpane[tp_prefix + "increment"];
       let atl_props: TweakpaneSupport_Props = {
-        parameterSet: props.parameterSet.animation.breathe,
+        parameterSet: targetSet.animation.breathe,
         parameterSetName: tp_prefix,
       };
 

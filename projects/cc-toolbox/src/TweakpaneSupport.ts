@@ -25,6 +25,7 @@
 import { Pane } from "tweakpane";
 import { TabApi } from "tweakpane";
 import { FolderApi } from "tweakpane";
+import { ParameterManager } from "./ParameterManager";
 
 /**
  * Die Parameter für die Methode provide_tweakpane_to, als Objekt.
@@ -175,5 +176,27 @@ export abstract class TweakpaneSupport implements TweakpaneSupportType {
     }else {
       return "";
     }
+  }
+
+  /**
+   * Helper to ensure that a parameter set exists on the parameter object.
+   * Returns the resolved parameter set and caches it inside props.
+   */
+  public static ensureParameterSet(
+    parameter: any,
+    props: TweakpaneSupport_Props = {}
+  ): any {
+    if (props.parameterSet) {
+      return props.parameterSet;
+    }
+
+    const manager = ParameterManager.from(parameter);
+    const name = props.parameterSetName ?? "";
+
+    const target =
+      name === "" ? parameter : manager.ensure(name);
+
+    props.parameterSet = target;
+    return target;
   }
 }

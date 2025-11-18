@@ -721,6 +721,14 @@ export class ColorSet extends ObserverSubject {
       parameter: any,
       props: TweakpaneSupport_Props
     ): void {
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "colorset",
+      };
+      const parameterSetParent = TweakpaneSupport.ensureParameterSet(
+        parameter,
+        props_default
+      );
+
       let parameterSet: ColorSet_ParameterSet = {
         mode: parameter.tweakpane.colorset_mode,
         groupname: parameter.tweakpane.colorset_groupname,
@@ -735,12 +743,11 @@ export class ColorSet extends ObserverSubject {
         backgroundColor: "",
       };
 
-      Object.assign(parameter, {
-        colorset: parameterSet,
-      });
+      Object.assign(parameterSetParent, parameterSet);
 
       let props1: TweakpaneSupport_Props = {
         parameterSetName: "colorset",
+        parameterSet: parameterSetParent,
       };
 
       // TODO AnimationTimer nicht hier sondern in AnimationTimer.provide_tweakpane_to initialisieren?
@@ -759,14 +766,22 @@ export class ColorSet extends ObserverSubject {
       parameter: any,
       props: TweakpaneSupport_Props
     ): void {
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "colorset",
+      };
+      const parameterSetParent = TweakpaneSupport.ensureParameterSet(
+        parameter,
+        props_default
+      );
       let pt: ColorSet_ParameterTweakpane = parameter.tweakpane;
-      parameter.colorset.mode = pt.colorset_mode;
-      parameter.colorset.groupname = pt.colorset_groupname;
-      parameter.colorset.variant = pt.colorset_variante;
-      parameter.colorset.number = pt.colorset_number;
+      parameterSetParent.mode = pt.colorset_mode;
+      parameterSetParent.groupname = pt.colorset_groupname;
+      parameterSetParent.variant = pt.colorset_variante;
+      parameterSetParent.number = pt.colorset_number;
 
       let props1: TweakpaneSupport_Props = {
         parameterSetName: "colorset",
+        parameterSet: parameterSetParent,
       };
 
       AnimationTimer.tweakpaneSupport.transfer_tweakpane_parameter_to(

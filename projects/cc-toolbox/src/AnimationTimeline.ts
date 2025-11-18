@@ -83,11 +83,6 @@ export class AnimationTimeline {
     this.items.push(item);
   }
 
-  
-  public perform_animations_if_new():void {
-    console.log("Das wird die neue Logik...");
-  }
-
   /**
    * Performs all registered Animation-Items in theire timeslot.
    *
@@ -98,8 +93,8 @@ export class AnimationTimeline {
    */
   public perform_animations_if(parameter: any, animations: any) {
     if (!parameter.artwork.animation.global_halt) {
-      this.items.forEach((item) => {
-        item.perform_animate_fast_if(parameter, animations);
+      this.items.forEach((item:AnimationTimeline_Item) => {
+        item.check_type_and_run(parameter, animations); // abstrakte Methode in AnimationTimeline_Item, impelentiert jede Method selber
       });
     }
   }
@@ -142,37 +137,8 @@ export class AnimationTimeline {
         endTime: 1.0, // parameter.tweakpane[tp_prefix + "timeline"].max
       };
 
-      // animation.timeline
-      if (props.parameterSetName != null && props.parameterSetName.length > 0) {
-        if (typeof parameter[props.parameterSetName] !== "object") {
-          parameter[props.parameterSetName] = {};
-        }
-
-        if (!("animation" in parameter[props.parameterSetName])) {
-          Object.assign(parameter[props.parameterSetName], {
-            animation: {},
-          });
-        }
-      }
-
-      // parameter ist hier in der Regel ein ausgewähltes Parameterset
-      // dem eine animation hinzugefügt werden
-      // TODO: Support an Array of (not overlapping) Timeslots for this Item.
-      // This means that an animation for an item can be executed in several time periods.
-      let targetSet = props.parameterSet;
-      if (!targetSet) {
-        if (
-          props.parameterSetName != null &&
-          props.parameterSetName.length > 0 &&
-          typeof parameter[props.parameterSetName] === "object"
-        ) {
-          targetSet = parameter[props.parameterSetName];
-        } else {
-          targetSet = parameter;
-        }
-      }
-
-      props.parameterSet = targetSet;
+      const targetSet =
+        props.parameterSet ?? TweakpaneSupport.ensureParameterSet(parameter, props);
 
       if (!("timeline" in targetSet) || targetSet.timeline == null) {
         Object.assign(targetSet, {
@@ -193,8 +159,16 @@ export class AnimationTimeline {
         parameterSetName:""
       }
     ): void {
+      const targetSet =
+        props.parameterSet ?? TweakpaneSupport.ensureParameterSet(parameter, props);
       let source: any = parameter.tweakpane; // prefixable
-      let target: AnimationTimeline_ParameterSet = props.parameterSet;
+      let target: AnimationTimeline_ParameterSet = targetSet.timeline;
+      if (!target) {
+        target = targetSet.timeline = {
+          startTime: 0,
+          endTime: 1,
+        };
+      }
 
       let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
 

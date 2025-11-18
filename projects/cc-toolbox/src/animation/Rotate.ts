@@ -60,20 +60,25 @@ export class Rotate extends AnimationTimeline_Item {
     return angle + this.angle;
   }
 
-  protected animate_fast(animation: Rotate_Values): number {
-    this.mode = animation.mode;
-    this.increment = animation.increment;
+  public check_type_and_run(parameter: any, animations: any): void {
+    throw new Error("Method not implemented.");
+  }
+
+  protected animate_fast(values: Rotate_Values): number {
+
+    this.mode = values.mode;
+    this.increment = values.increment;
     if (
-      !animation.boundary ||
-      animation.boundary.min === undefined ||
-      animation.boundary.max === undefined
+      !values.boundary ||
+      values.boundary.min === undefined ||
+      values.boundary.max === undefined
     ) {
-      animation.boundary = { min: -30, max: 30 };
+      values.boundary = { min: -30, max: 30 };
     }
 
     this.boundary = {
-      min: animation.boundary.min,
-      max: animation.boundary.max,
+      min: values.boundary.min,
+      max: values.boundary.max,
     };
 
     switch (this.mode) {
@@ -161,11 +166,9 @@ export class Rotate extends AnimationTimeline_Item {
       );
     },
     inject_parameterset_to(parameter: any, props: TweakpaneSupport_Props) {
-      if (!props.parameterSet) {
-        return;
-      }
-      if (!("animation" in props.parameterSet)) {
-        Object.assign(props.parameterSet, { animation: {} });
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
+      if (!("animation" in targetSet)) {
+        Object.assign(targetSet, { animation: {} });
       }
 
       const tp_prefix = TweakpaneSupport.create_tp_prefix(
@@ -198,13 +201,13 @@ export class Rotate extends AnimationTimeline_Item {
         },
       };
 
-      Object.assign(props.parameterSet.animation, {
+      Object.assign(targetSet.animation, {
         rotate: defaults,
       });
 
       const atl_props: TweakpaneSupport_Props = {
         parameterSetName: tp_prefix,
-        parameterSet: props.parameterSet.animation.rotate,
+        parameterSet: targetSet.animation.rotate,
       };
 
       AnimationTimeline.tweakpaneSupport.inject_parameterset_to(
@@ -213,12 +216,12 @@ export class Rotate extends AnimationTimeline_Item {
       );
     },
     transfer_tweakpane_parameter_to(parameter: any, props: TweakpaneSupport_Props) {
-      if (!props.parameterSet) return;
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
 
       const tp_prefix = TweakpaneSupport.create_tp_prefix(
         props.parameterSetName + Rotate.TWEAKPANE_PREFIX
       );
-      const target = props.parameterSet.animation.rotate as Rotate_Values;
+      const target = targetSet.animation.rotate as Rotate_Values;
 
       target.mode = parameter.tweakpane[tp_prefix + "mode"];
       target.increment = parameter.tweakpane[tp_prefix + "increment"];

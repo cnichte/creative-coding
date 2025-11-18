@@ -74,12 +74,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@carstennichte/003-particles@workspace:projects/006-particles":
-  version: 0.0.0-use.local
-  resolution: "@carstennichte/003-particles@workspace:projects/006-particles"
-  languageName: unknown
-  linkType: soft
-
 "@carstennichte/004-entities@workspace:projects/004-entities":
   version: 0.0.0-use.local
   resolution: "@carstennichte/004-entities@workspace:projects/004-entities"
@@ -100,9 +94,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@carstennichte/004-punktstunde@workspace:projects/005-punktstunde":
+"@carstennichte/005-punktstunde@workspace:projects/005-punktstunde":
   version: 0.0.0-use.local
-  resolution: "@carstennichte/004-punktstunde@workspace:projects/005-punktstunde"
+  resolution: "@carstennichte/005-punktstunde@workspace:projects/005-punktstunde"
   dependencies:
     "@carstennichte/cc-toolbox": "workspace:^"
     "@tweakpane/core": "npm:^2.0.3"
@@ -120,9 +114,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@carstennichte/005-quadrate@workspace:projects/007-quadrate":
+"@carstennichte/006-particles@workspace:projects/006-particles":
   version: 0.0.0-use.local
-  resolution: "@carstennichte/005-quadrate@workspace:projects/007-quadrate"
+  resolution: "@carstennichte/006-particles@workspace:projects/006-particles"
+  languageName: unknown
+  linkType: soft
+
+"@carstennichte/007-quadrate@workspace:projects/007-quadrate":
+  version: 0.0.0-use.local
+  resolution: "@carstennichte/007-quadrate@workspace:projects/007-quadrate"
   languageName: unknown
   linkType: soft
 

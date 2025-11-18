@@ -110,10 +110,10 @@ class Animation_Move extends AnimationTimeline_Item {
    * @param {Object} parameter 
    * @param {Object} animations 
    */
-  perform_animation_if(parameter: any, animations: any) {
+  check_type_and_run(parameter: any, animations: any) {
     if ('animation' in animations) {
       if ('move' in animations.animation) {
-        super.perform_animate_fast_if(parameter, animations.animation.move); //TODO ??? animate_fast_if
+        super.perform_animate_fast_if_in_timeslot(parameter, animations.animation.move); //TODO ??? animate_fast_if
       }
     }
   }

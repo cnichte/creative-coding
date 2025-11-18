@@ -2,7 +2,7 @@
 
 ## Vorbemerkung
 
-Meine ersten Artworks basierten auf [canvas-sketch](https://github.com/mattdesl/canvas-sketch) - das hat sich aber schnell als zu unstrukturiert und chaotisch heraus gestellt, und nicht passend für daswas ich will.
+Meine ersten Artworks basierten auf [canvas-sketch](https://github.com/mattdesl/canvas-sketch) - das hat sich aber schnell als zu unstrukturiert und chaotisch heraus gestellt, und nicht passend für das was ich will.
 
 ## Das Ziel
 
@@ -33,11 +33,11 @@ Um die Übersicht nicht zu verlieren möchte ich streng typisiert arbeiten mit S
     - Viele Parameter-Sets bilden ein Parameter-Objekt.
     - Damit ist ein Artwork vollständig beschrieben.
     - Das Parameter-Objekt sollte man speichern können, und laden - dann sollte das Artwork angezeigt werden.
-    - Es gibt nur eine Source of truth - das Parameter-Objekt .
+    - Es gibt nur eine "Source of truth": Das Parameter-Objekt.
 - Über eine Tweakpane können Parameter manuell eingestellt werden um das Artwork in Echtzeit zu beeinflussen.
   - Jeder Agent (oder jede Gruppe von Agenten verfügt über ein Tweakpane-Panel)
   - Perspektivisch kann das zb durch Gestensteuerung, oder anderen Input von der Außenwelt ersetzt werden.
-  - Save als default - !!! (Pro Option, oder/und insgesamt)
+  - Save Einstellungen als default! Pro Option, oder/und insgesamt ??
 
 ### Z Achse
 
@@ -49,12 +49,12 @@ Um die Übersicht nicht zu verlieren möchte ich streng typisiert arbeiten mit S
 
 Alle Parameter werden in einem Parameter-Objekt gespeichert.
 Im Parameter-Objekt stecken viele ParameterSet-Objekte.
-Alle Tweakpane-Parameter in das Parameter-Objekt übertragen.
+Alle Tweakpane-Parameter werden in das Parameter-Objekt übertragen.
 dazu gilt:
 
-Der Name des ParameterSet-Objekts spiegelt den Namen des Objekts wieder, das damit versorgt wird. Das schafft hoffentlich Übersicht.
-Das Parameter-Objekt wird immer komplett übergeben, und jedes Objekt nimmt sich daraus das, was es braucht.
-Das Parameter-Objekt hat die Form:
+- Der Name des ParameterSet-Objekts spiegelt den Namen des Objekts wieder, das damit versorgt wird. Das schafft hoffentlich Übersicht.
+- Das Parameter-Objekt wird immer komplett übergeben, und jedes Objekt nimmt sich daraus das, was es braucht.
+- Das Parameter-Objekt hat die Form:
 
 ```js
 let parameter = {
@@ -102,7 +102,7 @@ Ich arbeite mit beliebig vielen prefixen um auch tiefer verschachtelte Propertie
 ### Tweakpane und Datentransport
 
 - Tweakpane unterstützt nur eine flache Struktur, mein Value-Objekte ist aber verschachtelt.
-  - jeder Agent und jedes ander Objekt hat sein eigenes Parameterset.
+  - jeder Agent und jedes andere Objekt hat sein eigenes Parameterset.
   - die Daten müssen also gemappt werden.
   - Dazu arbeite ich mit prefixen
   - Hinzu kommt das die Tweakpane Parameter an tieferen Stellen in mein value-object eingehängt werden müssen.
@@ -112,9 +112,51 @@ Ich arbeite mit beliebig vielen prefixen um auch tiefer verschachtelte Propertie
   - Es geht im grunde darum veränderliche parameter in das Artwork ein zu schleusen, und an die richtigen stellen im artwork zu bringen.
   - Das können im Endeffekt auch Sensor-Werte aus der aussenwelt sein
 
-## Verschiedenes
+### Vier Elemente
 
-- Playhead
+Ich hab vier Elemente mit denen ich arbeite:
+
+Drawable — Dinge die gezeichnet, und schnell animiert werden.
+Animable — Dinge die (langsam) animiert werden.
+Observable — Dinge die beobachtet werden.
+Observer — Dinge, die andere Dinge beobachten.
+anders ausgedrückt:
+
+- Einen SceneGraph mit seiner draw() Methode.
+- Den langsamen Timer mit seiner animate_slow() Methode.
+- Das Observer-Pattern das auf Veränderungen von Eigenschaften in einem Observable-Object reagiert, und alle registrierten Observer-Objekte informiert — was bedeutet deren update() Methode auf zu rufen.
+- Was brauche ich sonst noch?
+  - Ich brauche eine Effekt-Pipeline… ?
+
+### Das State-Objekt
+
+Parameter — bzw. Veränderungen an Parametern — werden auch über Statusveränderungen (state) von Observable-Objekten an die Observer-Objekte weiter gereicht, in dem deren update Methode aufgerufen, und die Quelle als Klasse / Objekt übergeben wird.
+
+```js
+let state = {
+  parameterSet_1:{
+    eigenschaft_1a:"wert A"
+  },
+  parameterSet_2:{
+    eigenschaft_2a:"wert B"
+  }
+}
+```
+
+- Anwendung des State-Objektes:
+  - Property Changes
+  - und das Observer Pattern
+
+Siehe am Beispiel ColorSet und Quadrate.
+
+### Verschiedenes
+
+- Animation - Das Modul stellt einen AnimationTimer, eine Animation Timeline sowie Animationen bereit.
+- AnimationTimer - Eine Klasse, um langsame Animationen durchzuführen.
+- AnimationTimeline - Eine Zeitleiste die zu gegebenen Zeitpunkten Animationen startet und stoppt.
+- Animations - Verschiedene einfache Animationen die auf Formen angewendet werden können.
+
+- Playhead (fehlt noch)
   - Play, Stop
   - Record (save, load)
   - Skip: Forwards, Backwards

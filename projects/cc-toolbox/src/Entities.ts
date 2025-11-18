@@ -460,19 +460,22 @@ export class Entity_Manager extends ObserverSubject {
       parameter: any,
       props?: TweakpaneSupport_Props | undefined
     ): void {
-      Object.assign(parameter, {
-        entity: {
-          bounceMode: parameter.tweakpane.entity_bounceMode,
-          count: parameter.tweakpane.entity_count,
-          distanceFactor: parameter.tweakpane.entity_distanceFactor,
-          nature: parameter.tweakpane.entity_nature,
-          sizeRange: parameter.tweakpane.entity_sizeRange,
-        },
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "entity",
+      };
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
+
+      Object.assign(targetSet, {
+        bounceMode: parameter.tweakpane.entity_bounceMode,
+        count: parameter.tweakpane.entity_count,
+        distanceFactor: parameter.tweakpane.entity_distanceFactor,
+        nature: parameter.tweakpane.entity_nature,
+        sizeRange: parameter.tweakpane.entity_sizeRange,
       });
 
       const brush_props: TweakpaneSupport_Props = {
         parameterSetName: "entity",
-        parameterSet: parameter.entity,
+        parameterSet: targetSet,
       };
 
       Brush.tweakpaneSupport.inject_parameterset_to(parameter, brush_props);
@@ -481,16 +484,20 @@ export class Entity_Manager extends ObserverSubject {
       parameter: any,
       props?: TweakpaneSupport_Props | undefined
     ): void {
-      parameter.entity.bounceMode = parameter.tweakpane.entity_bounceMode;
-      parameter.entity.count = parameter.tweakpane.entity_count;
-      parameter.entity.distanceFactor =
-        parameter.tweakpane.entity_distanceFactor;
-      parameter.entity.nature = parameter.tweakpane.entity_nature;
-      parameter.entity.sizeRange = parameter.tweakpane.entity_sizeRange;
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "entity",
+      };
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
+
+      targetSet.bounceMode = parameter.tweakpane.entity_bounceMode;
+      targetSet.count = parameter.tweakpane.entity_count;
+      targetSet.distanceFactor = parameter.tweakpane.entity_distanceFactor;
+      targetSet.nature = parameter.tweakpane.entity_nature;
+      targetSet.sizeRange = parameter.tweakpane.entity_sizeRange;
 
       const brush_props: TweakpaneSupport_Props = {
         parameterSetName: "entity",
-        parameterSet: parameter.entity,
+        parameterSet: targetSet,
       };
 
       Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(

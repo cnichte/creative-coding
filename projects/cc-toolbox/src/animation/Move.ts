@@ -79,18 +79,22 @@ export class Move extends AnimationTimeline_Item {
     return (this.current ?? position).clone();
   }
 
-  protected animate_fast(animation: Move_Values): number {
+  public check_type_and_run(parameter: any, animations: any): void {
+    throw new Error("Method not implemented.");
+  }
+
+  protected animate_fast(values: Move_Values): number {
     if (
-      !animation.to ||
-      typeof animation.to.x !== "number" ||
-      typeof animation.to.y !== "number"
+      !values.to ||
+      typeof values.to.x !== "number" ||
+      typeof values.to.y !== "number"
     ) {
-      animation.to = new Vector(0.5, 0.5);
+      values.to = new Vector(0.5, 0.5);
     }
 
-    this.mode = animation.mode;
-    this.speed = animation.step;
-    this.target = animation.to.clone();
+    this.mode = values.mode;
+    this.speed = values.step;
+    this.target = values.to.clone();
 
     if (this.current == null) {
       return 0;
@@ -182,12 +186,10 @@ export class Move extends AnimationTimeline_Item {
       );
     },
     inject_parameterset_to(parameter: any, props: TweakpaneSupport_Props) {
-      if (!props.parameterSet) {
-        return;
-      }
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
 
-      if (!("animation" in props.parameterSet)) {
-        Object.assign(props.parameterSet, { animation: {} });
+      if (!("animation" in targetSet)) {
+        Object.assign(targetSet, { animation: {} });
       }
 
       const tp_prefix = TweakpaneSupport.create_tp_prefix(
@@ -222,13 +224,13 @@ export class Move extends AnimationTimeline_Item {
         },
       };
 
-      Object.assign(props.parameterSet.animation, {
+      Object.assign(targetSet.animation, {
         move: defaults,
       });
 
       const atl_props: TweakpaneSupport_Props = {
         parameterSetName: tp_prefix,
-        parameterSet: props.parameterSet.animation.move,
+        parameterSet: targetSet.animation.move,
       };
 
       AnimationTimeline.tweakpaneSupport.inject_parameterset_to(
@@ -236,15 +238,18 @@ export class Move extends AnimationTimeline_Item {
         atl_props
       );
     },
-    transfer_tweakpane_parameter_to(parameter: any, props: TweakpaneSupport_Props) {
-      if (!props.parameterSet) return;
+    transfer_tweakpane_parameter_to(
+      parameter: any,
+      props: TweakpaneSupport_Props
+    ) {
+      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
 
       const tp_prefix = TweakpaneSupport.create_tp_prefix(
         props.parameterSetName + Move.TWEAKPANE_PREFIX
       );
 
       const canvasSize = parameter.artwork.canvas.size;
-      const target = props.parameterSet.animation.move as Move_Values;
+      const target = targetSet.animation.move as Move_Values;
       target.mode = parameter.tweakpane[tp_prefix + "mode"];
       target.step =
         parameter.tweakpane[tp_prefix + "step"] *

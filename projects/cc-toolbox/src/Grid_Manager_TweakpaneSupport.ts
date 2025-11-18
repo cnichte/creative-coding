@@ -1,11 +1,11 @@
 // Grid_Manager_TweakpaneSupport.ts
 
 import { Brush, type Brush_ParameterTweakpane } from "./Brush";
+import { TweakpaneSupport } from "./TweakpaneSupport";
 import type {
   Provide_Tweakpane_To_Props,
-  TweakpaneSupport,
   TweakpaneSupport_Props,
-  Tweakpane_Items
+  Tweakpane_Items,
 } from "./TweakpaneSupport";
 
 export const Grid_Manager_TweakpaneSupport: TweakpaneSupport = {
@@ -60,35 +60,45 @@ export const Grid_Manager_TweakpaneSupport: TweakpaneSupport = {
     return props.items;
   },
 
-  inject_parameterset_to: function (parameter: any, _props?: TweakpaneSupport_Props): void {
-    Object.assign(parameter, {
-      grid: {
-        show: parameter.tweakpane.grid_show,
-        rows: parameter.tweakpane.grid_rows,
-        cols: parameter.tweakpane.grid_cols,
-        brush: {
-          shape: "Rect",
-          angle: 0,
-          scale: 1.0,
-          border: parameter.tweakpane.cellBorder,
-          borderColor: parameter.tweakpane.cellBorderColor,
-          fillColor: parameter.tweakpane.cellFillColor
-        }
-      }
+  inject_parameterset_to: function (parameter: any, props?: TweakpaneSupport_Props): void {
+    const props_default: TweakpaneSupport_Props = {
+      parameterSetName: "grid",
+    };
+    const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
+
+    Object.assign(targetSet, {
+      show: parameter.tweakpane.grid_show,
+      rows: parameter.tweakpane.grid_rows,
+      cols: parameter.tweakpane.grid_cols,
+      brush: targetSet.brush || {
+        shape: "Rect",
+        angle: 0,
+        scale: 1.0,
+        border: parameter.tweakpane.cellBorder,
+        borderColor: parameter.tweakpane.cellBorderColor,
+        fillColor: parameter.tweakpane.cellFillColor,
+      },
     });
   },
 
-  transfer_tweakpane_parameter_to: function (parameter: any, _props?: TweakpaneSupport_Props): void {
-    parameter.grid.show = parameter.tweakpane.grid_show;
-    parameter.grid.rows = parameter.tweakpane.grid_rows;
-    parameter.grid.cols = parameter.tweakpane.grid_cols;
+  transfer_tweakpane_parameter_to: function (parameter: any, props?: TweakpaneSupport_Props): void {
+    const props_default: TweakpaneSupport_Props = {
+      parameterSetName: "grid",
+    };
+    const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
 
-    parameter.grid.brush.shape = parameter.tweakpane.grid_brush_shape;
-    parameter.grid.brush.scale = parameter.tweakpane.grid_brush_scale;
-    parameter.grid.brush.angle = parameter.tweakpane.grid_brush_rotate;
+    targetSet.show = parameter.tweakpane.grid_show;
+    targetSet.rows = parameter.tweakpane.grid_rows;
+    targetSet.cols = parameter.tweakpane.grid_cols;
 
-    parameter.grid.brush.border = parameter.artwork.canvas.size.width * parameter.tweakpane.grid_brush_border;
-    parameter.grid.brush.fillColor = parameter.tweakpane.grid_brush_fillColor;
-    parameter.grid.brush.borderColor = parameter.tweakpane.grid_brush_borderColor;
+    targetSet.brush = targetSet.brush || {};
+    targetSet.brush.shape = parameter.tweakpane.grid_brush_shape;
+    targetSet.brush.scale = parameter.tweakpane.grid_brush_scale;
+    targetSet.brush.angle = parameter.tweakpane.grid_brush_rotate;
+
+    targetSet.brush.border =
+      parameter.artwork.canvas.size.width * parameter.tweakpane.grid_brush_border;
+    targetSet.brush.fillColor = parameter.tweakpane.grid_brush_fillColor;
+    targetSet.brush.borderColor = parameter.tweakpane.grid_brush_borderColor;
   }
 };

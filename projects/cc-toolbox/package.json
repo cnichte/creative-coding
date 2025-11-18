@@ -10,7 +10,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "webpack --config ./webpack.config.js"
+    "build:dev": "webpack --mode development --config ./webpack.config.js",
+    "build:prod": "webpack --mode production --config ./webpack.config.js",
+    "build": "yarn build:prod"
   },
   "devDependencies": {
     "webpack": "^5.88.2",

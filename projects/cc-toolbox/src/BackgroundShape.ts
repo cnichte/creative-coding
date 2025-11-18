@@ -230,13 +230,19 @@ export class BackgroundShape extends Background {
         ),
       };
 
-      Object.assign(parameter, {
-        backgroundshape: _parameterSet,
-      });
+      const props_default: TweakpaneSupport_Props = {
+        parameterSetName: "backgroundshape",
+      };
+      const targetSet = TweakpaneSupport.ensureParameterSet(
+        parameter,
+        props_default
+      );
+
+      Object.assign(targetSet, _parameterSet);
 
       let props1: TweakpaneSupport_Props = {
         parameterSetName: "backgroundshape",
-        parameterSet: parameter.backgroundshape,
+        parameterSet: targetSet,
       };
 
       Brush.tweakpaneSupport.inject_parameterset_to(parameter, props1);
@@ -259,7 +265,9 @@ export class BackgroundShape extends Background {
     ): void {
       let tweakpane_props: TweakpaneSupport_Props = {
         parameterSetName: "backgroundshape",
-        parameterSet: parameter.backgroundshape,
+        parameterSet: TweakpaneSupport.ensureParameterSet(parameter, {
+          parameterSetName: "backgroundshape",
+        }),
       };
 
       // TODO Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter.accent, parameter.tweakpane, "accent");

@@ -1,11 +1,13 @@
 {
-  "name": "@carstennichte/004-punktstunde",
+  "name": "@carstennichte/005-punktstunde",
   "packageManager": "yarn@4.1.1",
   "scripts": {
     "watch": "webpack --watch --config ./config/dev.webpack.config.js",
     "start": "webpack serve --open --config ./config/dev.webpack.config.js",
     "clean": "rm -rf dist",
-    "build": "webpack --config ./config/prod.webpack.config.js"
+    "build:dev": "webpack --config ./config/dev.webpack.config.js",
+    "build:prod": "webpack --config ./config/prod.webpack.config.js",
+    "build": "yarn build:prod"
   },
   "devDependencies": {
     "@tweakpane/core": "^2.0.3",

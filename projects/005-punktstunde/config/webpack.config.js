@@ -8,7 +8,15 @@ module.exports = {
     index: "./src/index.ts",
     print: "./src/print.ts",
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map', //! for debug: statt  inline-source-map -> source-map
+//! start debug
+  resolve: {
+    extensions: [".ts", ".js"],
+    alias: {
+      "@carstennichte/cc-toolbox": path.resolve(__dirname, "../../cc-toolbox/src"),
+    },
+  },
+//! end debug
   devServer: {
     static: './dist',
   },

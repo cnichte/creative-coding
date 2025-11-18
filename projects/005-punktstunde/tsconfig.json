@@ -24,6 +24,10 @@
 
     // ???
     "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@carstennichte/cc-toolbox": ["../cc-toolbox/src"]
+    },
 
     // This compiler run should only output d.ts files
     // https://www.typescriptlang.org/tsconfig#emitDeclarationOnly
