@@ -1,9 +1,26 @@
 # Readme Development
 
-```
-    "001-bit",
-    "002-shape",
-```
+Reihenfolge veröffentlichung jetzt:
+
+- Bit
+- Entities
+- Grid
+- Shape
+
+So wäre es logischer
+
+- Bit
+- Shape
+- Grid
+- Entities
+
+Aber ich sollte mit dem komplexen anfangen, also die Reihenfolge rumdrehen.
+
+- ...
+- Entities
+- Grid
+- Shape
+- Bit (vernachlässigbar)
 
 ## Konzepte
 

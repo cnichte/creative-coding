@@ -16,8 +16,11 @@
     "ncu-me": "ncu -i --format group",
     "tree": "tree -a -L 3 ./ > directory-structure.txt",
     "build:all": "yarn workspaces foreach -pt --exclude @carstennichte/006-particles --exclude @carstennichte/007-quadrate --exclude @carstennichte/008-duette run build:prod",
-    "b": "yarn workspace @carstennichte/005-punktstunde @carstennichte/cc-toolbox build:dev start",
-    "dev:005": "yarn workspace @carstennichte/cc-toolbox build:dev && yarn workspace @carstennichte/005-punktstunde build:dev && yarn workspace @carstennichte/005-punktstunde start"
+    "dev:5": "yarn workspace @carstennichte/cc-toolbox build:dev && yarn workspace @carstennichte/005-punktstunde build:dev && yarn workspace @carstennichte/005-punktstunde start",
+    "dev:4": "yarn workspace @carstennichte/cc-toolbox build:dev && yarn workspace @carstennichte/004-entities build:dev && yarn workspace @carstennichte/004-entities start",
+    "dev:3": "yarn workspace @carstennichte/cc-toolbox build:dev && yarn workspace @carstennichte/003-grid build:dev && yarn workspace @carstennichte/003-grid start",
+    "dev:2": "yarn workspace @carstennichte/cc-toolbox build:dev && yarn workspace @carstennichte/002-shape build:dev && yarn workspace @carstennichte/002-shape start",
+    "dev:1": "yarn workspace @carstennichte/cc-toolbox build:dev && yarn workspace @carstennichte/001-bit build:dev && yarn workspace @carstennichte/003-bit start"
   },
   "devDependencies": {
     "@yarnpkg/pnpify": "^4.0.1",

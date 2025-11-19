@@ -168,3 +168,49 @@ Siehe am Beispiel ColorSet und Quadrate.
 - Ein Passepartout in 3d Optik
 - Fotografien unterlegen (später auch via Projektion Mapping überlagern)
 - 2d in den 3d Raum bringen (für Projektion Mapping)
+
+
+## Gererischer realtime_input
+
+- Weil das ist, was über die Tweakpane und den Tweakpane support passiert.
+Ich hab eine Datenquelle, un speise sie in ein bestimmtes property ein (oder eine Menge von properties).
+  - TweakpaneSupport
+    - provide_tweakpane_to
+    - inject_parameterset_to
+    - transfer_tweakpane_parameter_to
+    - ensureParameterSet
+
+- Ich würde das gerne generischer gestalten und in den Hintergrund verlagern, das man sich nicht mehr darum kümmern muss
+
+```txt
+input -----> targets[{}]
+```
+
+- Beispiel `Background_ParameterTweakpane`
+- Es gibt nur eins: `background_color`
+
+Der transport ist manuell verknüpft in `transfert...`:
+
+`parameter.background.color = pt.background_color;`
+
+- Das möchte ich aber nicht immer manuell machen.
+- Ich will nur noch festlegen wer mit wem verbunden ist, und die Zuordnung soll automatscih erfolgen für alle Verknüpfungen.
+
+im Fall von Background - "background_color" (von Tweakpane)
+
+bisher: parameter.background.color = parameter.tweakpane.background_color
+
+Transport_Item{
+input_object = "parameter.tweakpane"
+input_field = "background_color"
+
+target_object = "parameter.background"
+target "color"
+}
+
+Transport_Item_List {
+  list:Transport_Item[]
+}
+
+TransportManager {
+}

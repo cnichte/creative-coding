@@ -1,11 +1,14 @@
 /**
- * Title    : Example Artwork No. 1 - Pixel
+ * Title    : Example Artwork No. 1 - Bit
  * Project  : Creative Coding
- * File     : projects/001-pixel/index.js
+ * File     : projects/001-bit/index.js
  * Version  : 0.1.0
  * Published: -
  *
- *
+ * An simple Example Creative Coding Artwork using the cc-toolbox.
+ * Demonstrates ColorSet, Background, and the Binding to Format and Tweakpane
+ * Observer and Listener Pattern. 
+ * 
  * In the projects folder open the Terminal, and:
  *
  * Start Server: `yarn run start`
@@ -37,8 +40,6 @@ import {
   Format,
   SceneGraph,
   Sketch,
-  ObserverSubject,
-  ParameterObject,
   Size,
   Vector,
   Tweakpane_Items,
@@ -135,8 +136,6 @@ class MySketch implements Sketch {
       defaults: {},
     });
 
-
-
     // create my artwork objects
     this.background = new Background(parameter);
 
@@ -154,7 +153,7 @@ class MySketch implements Sketch {
   } // prepare
 
   /**
-   * This is called by the SketchRunners ainmationLoop Method.
+   * This is called by the SketchRunners animationLoop Method.
    *
    * @param {Object} ctx
    * @param {Object} parameter

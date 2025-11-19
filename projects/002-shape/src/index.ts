@@ -5,6 +5,8 @@
  * Version  : 0.1.0
  * Published: -
  *
+ * Erweiterung von 001-bit um ein Shape.
+ * Dieses Shape gehört zum Background und wir in allen folgenden Artworks genutzt.
  *
  * In the projects folder open the Terminal, and:
  *
