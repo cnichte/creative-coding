@@ -45,12 +45,10 @@
  import { Size } from "./Size";
  import { Format } from "./Format";
  import { Vector } from "./Vector";
-import {
- TweakpaneSupport,
- type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props,
- type Tweakpane_Items
-} from "./TweakpaneSupport";
 import { ParameterManager } from "./ParameterManager";
+import { IOManager } from "./IOManager";
+import type { Tweakpane_Items } from "./TweakpaneSupport";
+import { TweakpaneManager } from "./TweakpaneManager";
 
 
 export interface Artwork_ParameterSet {
@@ -96,13 +94,6 @@ export interface Artwork_Animation {
   deltaTime: number;
 }
 
-interface Artwork_ParameterTweakpane {
-  artwork_canvas_width: number;
-  artwork_canvas_height: number;
-  artwork_clearscreen: boolean;
-  artwork_scale: number;
-}
-
 export class Artwork {
   // implements TweakpaneSupport_Interface
   private window: any;
@@ -113,11 +104,13 @@ export class Artwork {
 
   private tweakpane: Pane;
   private tweakpane_items: Tweakpane_Items|null;
+  private tweakpaneManager: TweakpaneManager | null;
 
   private theCanvas: HTMLCanvasElement;
   private ctx: any;
 
   private sketchRunner: SketchRunner;
+  private ioManager: IOManager;
 
   /**
    * Bundles everything that makes up my artwork.
@@ -151,6 +144,7 @@ export class Artwork {
     }
 
     ParameterManager.from(parameter);
+    this.ioManager = IOManager.from(parameter);
 
     //* HTML Content, im wesentlichen das <canvas> Element.
 
@@ -213,27 +207,18 @@ export class Artwork {
 
     this.tweakpane_items = null;
     this.tweakpane.registerPlugin(EssentialsPlugin);
+    this.tweakpaneManager = new TweakpaneManager(
+      this.parameter,
+      this.tweakpane,
+      this.ioManager
+    );
 
     Artwork.provide_meta_to_tweakpane(
       this.tweakpane,
       this.parameter.artwork.meta
     );
 
-    //* init Parameter-Object...
-    // setup gui, and bring the modules parameters into settings.tweakpane.
-    this.tweakpane_items =
-      Artwork.tweakpaneSupport.provide_tweakpane_to(this.parameter, {
-        items: {
-          pane: this.tweakpane,
-          folder: null,
-          tab: null
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "",
-        excludes: [],
-        defaults: {},
-      }); // Artwork.OPEN_TWEAK_PANES
+    this.configureTweakpane();
 
     this.format = new Format(this.parameter);
 
@@ -323,6 +308,93 @@ export class Artwork {
     this.parameter.artwork.canvas.mouse.x = e.x;
     this.parameter.artwork.canvas.mouse.y = e.y;
   } // doFetchMouseMove
+
+  private configureTweakpane() {
+    if (this.tweakpaneManager == null) return;
+
+    const folder = this.tweakpane.addFolder({
+      title: "Canvas",
+      expanded: false,
+    });
+
+    const tab = folder.addTab({
+      pages: [
+        { title: "Properties" },
+        { title: "Format" },
+        { title: "Export" },
+      ],
+    });
+
+    this.tweakpane_items = {
+      pane: this.tweakpane,
+      folder,
+      tab,
+      manager: this.tweakpaneManager,
+    };
+
+    const propertiesPage = tab.pages[0];
+    const formatPage = tab.pages[1];
+    const exportPage = tab.pages[2];
+
+    const canvasModule = this.tweakpaneManager.createModule({
+      id: "artwork",
+      container: propertiesPage,
+      stateDefaults: {
+        artwork_canvas_width: this.parameter.artwork.canvas.size.width,
+        artwork_canvas_height: this.parameter.artwork.canvas.size.height,
+        artwork_scale: this.parameter.artwork.scale,
+        artwork_clearscreen: this.parameter.artwork.canvas.clearscreen,
+      },
+      channelId: "tweakpane",
+    });
+
+    canvasModule.addBinding("artwork_canvas_width", {
+      label: "Width",
+      readonly: true,
+    });
+    canvasModule.addBinding("artwork_canvas_height", {
+      label: "Height",
+      readonly: true,
+    });
+
+    canvasModule.addBlade({
+      view: "separator",
+    });
+
+    canvasModule.addBinding(
+      "artwork_scale",
+      {
+        label: "Scale",
+        min: 0.2,
+        max: 2.0,
+        step: 0.0001,
+      },
+      {
+        target: "artwork.scale",
+      }
+    );
+
+    canvasModule.addBinding(
+      "artwork_clearscreen",
+      {
+        label: "ClearScreen",
+      },
+      {
+        target: "artwork.canvas.clearscreen",
+      }
+    );
+
+    if (this.tweakpaneManager) {
+      Format.registerTweakpane(this.parameter, this.tweakpaneManager, formatPage);
+    }
+
+    Exporter.registerTweakpane(
+      this.parameter,
+      this.tweakpaneManager,
+      exportPage,
+      "exporter"
+    );
+  }
 
   /**
    * This callback function is called, when the Browser window was resized.
@@ -508,170 +580,4 @@ export class Artwork {
     return parameter_default;
   } // get_default_paramterset
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
-
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof Artwork
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-
-      //* Das ParameterSet wurde im Konstruktor hinzugefügt.
-      // Da hier nix prefixable ist, brauch ich hier nichts weiter zu tun.
-      // Da das aber ne statische Methode ist, 
-      // und  der Konstruktor nicht aufgerufen worden sein muss
-      // Prüfe ich ob das ParameterSet-Objekt vorhanden ist:
-      if (!("artwork" in parameter)) {
-        Object.assign(parameter, Artwork.get_default_paramterset() );
-      }
-
-    }, // inject_parameterset_to
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-
-      // Das erwarte ich hier:
-      let pt: Artwork_ParameterTweakpane = parameter.tweakpane;
-
-      // Clear Screen
-      parameter.artwork.canvas.clearscreen = pt.artwork_clearscreen;
-
-      parameter.artwork.canvas.size = new Size(
-        pt.artwork_canvas_width,
-        pt.artwork_canvas_height
-      );
-
-      parameter.artwork.scale = pt.artwork_scale;
-
-    }, // transfer_tweakpane_parameter_to
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ): Tweakpane_Items {
-
-      //! Entweder, oder: 
-      // a.) Tweakpane inits paramterset in inject_parameterset_to
-      // b.) paramterset inits tweakpane 
-      // Ich will ja ein Objekt übergeben können, also mach ich b.)
-
-      //! 1. Parameter-Set vorhanden?
-      // Das muss ich nur machen wenn der konstruktor nicht aufgerufen wurde.
-      // Da das hier ne statische Methode ist, weiß ich das aber nicht...
-      Artwork.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      //! 2. Startwerte der Tweakpane
-      let parameterTP: Artwork_ParameterTweakpane = {
-        artwork_canvas_width: parameter.artwork.canvas.size.width,
-        artwork_canvas_height: parameter.artwork.canvas.size.height,
-        artwork_clearscreen: parameter.artwork.canvas.clearscreen,
-        artwork_scale: parameter.artwork.scale,
-      };
-      parameter.tweakpane = Object.assign(parameter.tweakpane, parameterTP);
-
-      const folder = props.items.pane.addFolder({
-        title: props.folder_name_prefix + "Canvas",
-        expanded: false,
-      });
-
-      props.items.tab = folder.addTab({
-        pages: [
-          { title: props.folder_name_prefix + "Properties" },
-          { title: 'Format' },
-          { title: 'Export' },
-        ],
-      });
-
-      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_canvas_width", {
-        label: "Width",
-        readonly: true,
-      });
-
-      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_canvas_height", {
-        label: "Height",
-        readonly: true,
-      });
-
-      props.items.tab.pages[0].addBlade({
-        view: "separator",
-      });
-
-      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_scale", {
-        label: "Scale",
-        min: 0.2,
-        max: 2.0,
-        step: 0.0001,
-      });
-
-      props.items.tab.pages[0].addBinding(parameter.tweakpane, "artwork_clearscreen", {
-        label: "ClearScreen",
-      });
-
-      Format.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.tab.pages[1],
-          tab: null
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "",
-        excludes: [],
-        defaults: {},
-      });
-
-      Exporter.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.tab.pages[2],
-          tab: null
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: ""
-      });
-
-      return props.items;
-    }, // provide_tweakpane_to
-  };
 } // class Artwork

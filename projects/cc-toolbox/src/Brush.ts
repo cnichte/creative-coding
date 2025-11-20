@@ -57,19 +57,15 @@
  */
 
  // Brush.ts
-import { Pane } from "tweakpane";
-const Color = require("canvas-sketch-util/color");
-// const { Vector } = require('./index.js');
-
 import { Size } from "./Size";
 import { Shape } from "./Shape";
 import { Vector } from "./Vector";
+import { ParameterManager } from "./ParameterManager";
+import { ColorUtils } from "./ColorUtils";
 import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
-} from "./TweakpaneSupport";
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";
 
 export interface BrushText {
   content: string;
@@ -88,7 +84,7 @@ export interface Brush_ParameterSet {
   angle: number;
 
   position: Vector;
-  scale: number; //! is the size
+  scale: number | Vector; //! is the size
 
   border: number;
 
@@ -115,13 +111,36 @@ export interface Brush_ParameterTweakpane {
   brush_fillColor: string;
 }
 
+interface BrushControlState {
+  brush_shape: string;
+  brush_border: number;
+  brush_position_x: number;
+  brush_position_y: number;
+  brush_scale: number;
+  brush_scale_x: number;
+  brush_scale_y: number;
+  brush_rotate: number;
+  brush_borderColor: string;
+  brush_fillColor: string;
+}
+
+export interface BrushTweakpaneOptions {
+  manager: TweakpaneManager;
+  container: TweakpaneContainer;
+  parameterPath: string | string[];
+  statePath?: string | string[];
+  defaults?: Partial<BrushControlState>;
+  channelId?: string;
+  id?: string;
+}
+
 export class Brush implements Brush_ParameterSet {
   public shape: string;
 
   public angle: number;
 
   public position: Vector;
-  public scale: number;
+  public scale: number | Vector;
 
   public border: number;
 
@@ -200,8 +219,8 @@ export class Brush implements Brush_ParameterSet {
     // this.fillColorAlpha = 125;
     // this.borderColorAlpha = 125;
 
-    this.fillColorAlpha = Color.parse(this.fillColor).alpha;
-    this.borderColorAlpha = Color.parse(this.borderColor).alpha;
+    this.fillColorAlpha = ColorUtils.parse(this.fillColor).alpha;
+    this.borderColorAlpha = ColorUtils.parse(this.borderColor).alpha;
 
     this.text = brush_ps.text;
   } // constructor
@@ -226,262 +245,164 @@ export class Brush implements Brush_ParameterSet {
     nb.border = brush.border;
     nb.fillColor = brush.fillColor;
     nb.borderColor = brush.borderColor;
-    nb.fillColorAlpha = Color.parse(nb.fillColor).alpha;
-    nb.borderColorAlpha = Color.parse(nb.borderColor).alpha;
+    nb.fillColorAlpha = ColorUtils.parse(nb.fillColor).alpha;
+    nb.borderColorAlpha = ColorUtils.parse(nb.borderColor).alpha;
     nb.text = brush.text;
     return nb;
   } // clone
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
+  private static defaultControlState(): BrushControlState {
+    return {
+      brush_shape: "Circle",
+      brush_border: 0.1,
+      brush_position_x: 0.5,
+      brush_position_y: 0.5,
+      brush_scale: 1.0,
+      brush_scale_x: 1.0,
+      brush_scale_y: 1.0,
+      brush_rotate: 0,
+      brush_borderColor: "#000000FF",
+      brush_fillColor: "#FFFFFFFF",
+    };
+  }
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof Brush
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName: "",
-      }
-    ): void {
-      const targetParent = TweakpaneSupport.ensureParameterSet(parameter, props);
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
+  public static registerTweakpane(
+    parameter: any,
+    options: BrushTweakpaneOptions
+  ) {
+    const defaults = {
+      ...Brush.defaultControlState(),
+      ...(options.defaults ?? {}),
+    };
 
-      let parameterSet: Brush_ParameterSet = {
-        shape: parameter.tweakpane[tp_prefix + "brush_shape"],
+    const module = options.manager.createModule({
+      id: options.id ?? "brush",
+      container: options.container,
+      statePath: options.statePath,
+      stateDefaults: defaults,
+      channelId: options.channelId ?? "tweakpane",
+    });
 
-        angle: 0.0,
+    // Ensure color fields are valid to enable color pickers
+    const current = module.getState();
+    module.setState({
+      brush_borderColor:
+        typeof current.brush_borderColor === "string"
+          ? current.brush_borderColor
+          : defaults.brush_borderColor,
+      brush_fillColor:
+        typeof current.brush_fillColor === "string"
+          ? current.brush_fillColor
+          : defaults.brush_fillColor,
+    });
 
-        position: new Vector(0, 0),
-        scale: 1.0,
+    module.addBinding("brush_shape", {
+      label: "Shape",
+      options: Shape.ShapeNames,
+    });
 
-        border: 0.0,
-        fillColor: "#ffffffFF",
-        borderColor: "#000000FF",
-        fillColorAlpha: "",
-        borderColorAlpha: "",
-        text: {
-          content: "T",
-          fontSize: 100,
-          fontFamily: "serif",
-        },
-      };
+    module.addBinding("brush_border", {
+      label: "Border",
+      min: 0,
+      max: 1,
+      step: 0.0001,
+    });
 
-      Object.assign(targetParent, {
-        brush: parameterSet,
-      });
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName: "",
-      }
-    ): void {
+    module.addBinding("brush_position_x", {
+      label: "Pos X",
+      min: 0.0001,
+      max: 1.0,
+      step: 0.0001,
+    });
 
-      let source: any = parameter.tweakpane; // prefixable
-      let target: any = TweakpaneSupport.ensureParameterSet(parameter, props);
+    module.addBinding("brush_position_y", {
+      label: "Pos Y",
+      min: 0.0001,
+      max: 1.0,
+      step: 0.0001,
+    });
 
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
+    module.addBinding("brush_scale", {
+      label: "Scale",
+      min: 0.001,
+      max: 10,
+      step: 0.0001,
+    });
 
-      // TODO if parameterSetName ==="" überall implementieren
-      if (props.parameterSetName != null && props.parameterSetName !== "") {
-        target.brush.shape = source[tp_prefix + "brush_shape"];
+    module.addBinding("brush_scale_x", {
+      label: "Scale X",
+      min: 0.001,
+      max: 10,
+      step: 0.0001,
+    });
 
-        target.brush.shape = source[tp_prefix + "brush_shape"];
-        
-        // console.log(`position: ${pt[tp_prefix + "brush_position_x"]}, ${pt[tp_prefix + "brush_position_y"]}`, parameter[parameterSetName].brush.position)
-        target.brush.angle = source[tp_prefix + "brush_rotate"];
+    module.addBinding("brush_scale_y", {
+      label: "Scale Y",
+      min: 0.001,
+      max: 10,
+      step: 0.0001,
+    });
 
-        // Die Position ist ein Prozentualer Anteil von von canvas.size
-        target.brush.position = new Vector(
-            source[tp_prefix + "brush_position_x"],
-            source[tp_prefix + "brush_position_y"]
-        );
+    module.addBinding("brush_rotate", {
+      label: "Rotate",
+      min: -360,
+      max: 360,
+      step: 0.0001,
+    });
 
-        // TODO rethink scale
-        // Beim Kreis wirkt sich scale_x mit auf die Border aus.
-        // Beim Rechteck nicht. Das ist also für jedes Shape etwas anders
-        // und sollte vielleicht in die jeweilige Shape Klasse rein <--- ist drin !!!
-        // TODO: Transparenz geht auch nur bei Rect?
+    module.addBinding("brush_borderColor", {
+      label: "BorderColor",
+      color: { type: "float" },
+    });
 
-        // TODO Format-Transformation - size bzw. scale
-        // let size1:Size = Format.transform_size(size, parameter.format); // this.state.format
-        // console.log(`transform ${size.width}, ${size.height} -> ${size1.width}, ${size1.height}`);
-        // brush.border = Format.transform( brush.border, parameter.format); 
+    module.addBinding("brush_fillColor", {
+      label: "FillColor",
+      color: { type: "float" },
+    });
 
-        // brush.scale und arwork.scale werden berücksichtigt
-        target.brush.scale = new Vector(
-          source[tp_prefix + "brush_scale_x"] * parameter.artwork.scale,
-          source[tp_prefix + "brush_scale_y"] * parameter.artwork.scale,
-          source[tp_prefix + "brush_scale_x"] * parameter.artwork.scale * 0.5 // TODO das könnte noch falsch sein
-        ).multiply(source[tp_prefix + "brush_scale"]); // .multiply(parameter.format.fak) 
+    Brush.applyState(parameter, options.parameterPath, module.getState());
+    module.onUpdate((state) => {
+      Brush.applyState(parameter, options.parameterPath, state);
+    });
 
-        target.brush.border =
-          Size.get_shorter_side(parameter.artwork.canvas.size) * // berücksichtigt Format
-          source[tp_prefix + "brush_border"] *
-          source[tp_prefix + "brush_scale"] *
-          source[tp_prefix + "brush_scale_x"] *
-          parameter.artwork.scale;
+    return module;
+  }
 
-        target.brush.borderColor = source[tp_prefix + "brush_borderColor"];
-        target.brush.fillColor = source[tp_prefix + "brush_fillColor"];
-      }
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ): Tweakpane_Items {
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
+  private static applyState(
+    parameter: any,
+    path: string | string[],
+    state: BrushControlState
+  ) {
+    const manager = ParameterManager.from(parameter);
+    const targetParent = manager.ensure(path);
+    if (!targetParent.brush) {
+      targetParent.brush = new Brush();
+    }
 
-      let pd:Brush_ParameterTweakpane = props.defaults;
+    const brush: Brush_ParameterSet = targetParent.brush;
+    brush.shape = state.brush_shape;
+    brush.angle = state.brush_rotate;
+    brush.position = new Vector(state.brush_position_x, state.brush_position_y);
 
-      //! Brush_ParameterTweakpane kann ich hier halt nicht verwenden.
-      // der prefix kann beliebig sein. also bleitbt das hier auch any
-      // Das ganze nenne ich prefixable.
-      let obj: any = {};
-      obj[tp_prefix + "brush_shape"] = pd.brush_shape;
-      obj[tp_prefix + "brush_border"] = pd.brush_border;
-      obj[tp_prefix + "brush_position_x"] = pd.brush_position_x;
-      obj[tp_prefix + "brush_position_y"] = pd.brush_position_y;
-      obj[tp_prefix + "brush_scale"] = pd.brush_scale;
-      obj[tp_prefix + "brush_scale_x"] = pd.brush_scale_x;
-      obj[tp_prefix + "brush_scale_y"] = pd.brush_scale_y;
-      obj[tp_prefix + "brush_rotate"] = pd.brush_rotate;
-      obj[tp_prefix + "brush_borderColor"] = pd.brush_borderColor;
-      obj[tp_prefix + "brush_fillColor"] = pd.brush_fillColor;
+    const baseScaleX = state.brush_scale_x * parameter.artwork.scale;
+    const baseScaleY = state.brush_scale_y * parameter.artwork.scale;
+    brush.scale = new Vector(
+      baseScaleX,
+      baseScaleY,
+      baseScaleX * 0.5
+    ).multiply(state.brush_scale);
 
-      parameter.tweakpane = Object.assign(parameter.tweakpane, obj);
+    brush.border =
+      Size.get_shorter_side(parameter.artwork.canvas.size) *
+      state.brush_border *
+      state.brush_scale *
+      state.brush_scale_x *
+      parameter.artwork.scale;
 
-      if (props.items.folder == null) {
-        props.items.folder = props.items.pane.addFolder({
-          title: props.folder_name_prefix + "Brush",
-          expanded: false,
-        });
-      }
+    brush.borderColor = state.brush_borderColor;
+    brush.fillColor = state.brush_fillColor;
 
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_shape", {
-        label: "Shape",
-        options: Shape.ShapeNames,
-      });
+    targetParent.brush = brush;
+  }
 
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_border", {
-        label: "Border",
-        min: 0,
-        max: 1,
-        step: 0.0001,
-      });
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "brush_position_x",
-        {
-          label: "Pos X",
-          min: 0.0001,
-          max: 1.0,
-          step: 0.0001,
-        }
-      );
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "brush_position_y",
-        {
-          label: "Pos Y",
-          min: 0.0001,
-          max: 1.0,
-          step: 0.0001,
-        }
-      );
-
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_scale", {
-        label: "Scale",
-        min: 0,
-        max: 1.0,
-        step: 0.0001,
-      });
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "brush_scale_x",
-        {
-          label: "Scale X",
-          min: 0,
-          max: 2.0,
-          step: 0.0001,
-        }
-      );
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "brush_scale_y",
-        {
-          label: "Scale Y",
-          min: 0,
-          max: 2.0,
-          step: 0.0001,
-        }
-      );
-
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "brush_rotate", {
-        label: "Rotate",
-        min: 0,
-        max: 360,
-        step: 1,
-      });
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "brush_fillColor",
-        {
-          label: "Fill",
-        }
-      );
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "brush_borderColor",
-        {
-          label: "Border",
-        }
-      );
-
-      return props.items;
-    },
-  };
 } // class Brush

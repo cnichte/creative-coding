@@ -3,11 +3,11 @@ import {
   type AnimationTimeline_ParameterSet,
 } from "../AnimationTimeline";
 import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
+import { ParameterManager } from "../ParameterManager";
 import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-} from "../TweakpaneSupport";
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "../TweakpaneManager";
 
 export enum RotateMode {
   nothing = "nothing",
@@ -61,7 +61,12 @@ export class Rotate extends AnimationTimeline_Item {
   }
 
   public check_type_and_run(parameter: any, animations: any): void {
-    throw new Error("Method not implemented.");
+    if ("animation" in animations && "rotate" in animations.animation) {
+      super.perform_animate_fast_if_in_timeslot(
+        parameter,
+        animations.animation.rotate
+      );
+    }
   }
 
   protected animate_fast(values: Rotate_Values): number {
@@ -107,138 +112,117 @@ export class Rotate extends AnimationTimeline_Item {
     return this.angle;
   }
 
-  public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to(parameter: any, props: Provide_Tweakpane_To_Props) {
-      const tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Rotate.TWEAKPANE_PREFIX
-      );
-
-      parameter.tweakpane[tp_prefix + "mode"] = RotateMode.weighing;
-      parameter.tweakpane[tp_prefix + "increment"] = 2;
-      parameter.tweakpane[tp_prefix + "boundary"] = {
+  public static ensureParameterSet(
+    parameter: any,
+    path: string | string[] = "animation.rotate"
+  ) {
+    const manager = ParameterManager.from(parameter);
+    const defaults: Rotate_Values = {
+      mode: RotateMode.weighing,
+      increment: 2,
+      boundary: {
         min: -30,
         max: 30,
-      };
-
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "mode", {
-        label: "Rotate",
-        options: RotateMode,
-      });
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "increment",
-        {
-          label: "Speed",
-          min: 0.1,
-          max: 20,
-          step: 0.1,
-        }
-      );
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "boundary",
-        {
-          label: "Boundary",
-          min: -180,
-          max: 180,
-          step: 1,
-        }
-      );
-
-      const timeline_defaults: AnimationTimeline_ParameterSet = {
+      },
+      timeline: {
         startTime: 0,
         endTime: 1,
-      };
+      },
+    };
 
-      const atl_props: Provide_Tweakpane_To_Props = {
-        items: props.items,
-        folder_name_prefix: "",
-        use_separator: true,
-        parameterSetName: tp_prefix,
-        defaults: timeline_defaults,
-      };
+    return manager.ensure(path, defaults);
+  }
 
-      AnimationTimeline.tweakpaneSupport.provide_tweakpane_to(
-        parameter,
-        atl_props
-      );
-    },
-    inject_parameterset_to(parameter: any, props: TweakpaneSupport_Props) {
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
-      if (!("animation" in targetSet)) {
-        Object.assign(targetSet, { animation: {} });
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager,
+    container: TweakpaneContainer,
+    id: string,
+    label = "Rotate",
+    parameterPath: string | string[] = "animation.rotate",
+    timelinePath: string | string[] = "animation.timeline"
+  ) {
+    const rotatePath = Array.isArray(parameterPath)
+      ? parameterPath.filter((segment) => segment).join(".")
+      : parameterPath;
+    const timelineTargetPath = Array.isArray(timelinePath)
+      ? timelinePath.filter((segment) => segment).join(".")
+      : timelinePath;
+
+    const rotate = Rotate.ensureParameterSet(parameter, parameterPath);
+
+    const module = manager.createModule({
+      id,
+      container,
+      stateDefaults: {
+        rotate_mode: rotate.mode ?? RotateMode.weighing,
+        rotate_increment: rotate.increment ?? 2,
+        rotate_boundary_min: rotate.boundary?.min ?? -30,
+        rotate_boundary_max: rotate.boundary?.max ?? 30,
+      },
+      channelId: "tweakpane",
+    });
+
+    module.addBinding(
+      "rotate_mode",
+      {
+        label,
+        options: RotateMode,
+      },
+      { target: `${rotatePath}.mode` }
+    );
+
+    module.addBinding(
+      "rotate_increment",
+      {
+        label: "Speed",
+        min: 0.1,
+        max: 20,
+        step: 0.1,
+      },
+      { target: `${rotatePath}.increment` }
+    );
+
+    module.addBinding(
+      "rotate_boundary_min",
+      {
+        label: "Boundary Min",
+        min: -180,
+        max: 0,
+        step: 1,
+      },
+      {
+        target: `${rotatePath}.boundary`,
+        transform: (value, state) => ({
+          min: value,
+          max: (state as any).rotate_boundary_max,
+        }),
       }
+    );
 
-      const tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Rotate.TWEAKPANE_PREFIX
-      );
-
-      if (!(tp_prefix + "mode" in parameter.tweakpane)) {
-        parameter.tweakpane[tp_prefix + "mode"] = RotateMode.weighing;
+    module.addBinding(
+      "rotate_boundary_max",
+      {
+        label: "Boundary Max",
+        min: 0,
+        max: 180,
+        step: 1,
+      },
+      {
+        target: `${rotatePath}.boundary`,
+        transform: (value, state) => ({
+          min: (state as any).rotate_boundary_min,
+          max: value,
+        }),
       }
-      if (!(tp_prefix + "increment" in parameter.tweakpane)) {
-        parameter.tweakpane[tp_prefix + "increment"] = 2;
-      }
-      if (!(tp_prefix + "boundary" in parameter.tweakpane)) {
-        parameter.tweakpane[tp_prefix + "boundary"] = {
-          min: -30,
-          max: 30,
-        };
-      }
+    );
 
-      const defaults: Rotate_Values = {
-        mode: parameter.tweakpane[tp_prefix + "mode"],
-        increment: parameter.tweakpane[tp_prefix + "increment"],
-        boundary: {
-          min: parameter.tweakpane[tp_prefix + "boundary"].min,
-          max: parameter.tweakpane[tp_prefix + "boundary"].max,
-        },
-        timeline: {
-          startTime: 0,
-          endTime: 1,
-        },
-      };
-
-      Object.assign(targetSet.animation, {
-        rotate: defaults,
-      });
-
-      const atl_props: TweakpaneSupport_Props = {
-        parameterSetName: tp_prefix,
-        parameterSet: targetSet.animation.rotate,
-      };
-
-      AnimationTimeline.tweakpaneSupport.inject_parameterset_to(
-        parameter,
-        atl_props
-      );
-    },
-    transfer_tweakpane_parameter_to(parameter: any, props: TweakpaneSupport_Props) {
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
-
-      const tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Rotate.TWEAKPANE_PREFIX
-      );
-      const target = targetSet.animation.rotate as Rotate_Values;
-
-      target.mode = parameter.tweakpane[tp_prefix + "mode"];
-      target.increment = parameter.tweakpane[tp_prefix + "increment"];
-      target.boundary = {
-        min: parameter.tweakpane[tp_prefix + "boundary"].min,
-        max: parameter.tweakpane[tp_prefix + "boundary"].max,
-      };
-
-      const atl_props: TweakpaneSupport_Props = {
-        parameterSetName: tp_prefix,
-        parameterSet: target,
-      };
-
-      AnimationTimeline.tweakpaneSupport.transfer_tweakpane_parameter_to(
-        parameter,
-        atl_props
-      );
-    },
-  };
+    AnimationTimeline.registerTweakpane(
+      parameter,
+      manager,
+      container,
+      `${id}:timeline`,
+      timelineTargetPath
+    );
+  }
 }

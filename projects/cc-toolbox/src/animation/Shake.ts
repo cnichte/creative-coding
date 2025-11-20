@@ -3,11 +3,11 @@ import {
   type AnimationTimeline_ParameterSet,
 } from "../AnimationTimeline";
 import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
+import { ParameterManager } from "../ParameterManager";
 import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-} from "../TweakpaneSupport";
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "../TweakpaneManager";
 import { Vector } from "../Vector";
 
 export enum ShakeMode {
@@ -71,7 +71,12 @@ export class Shake extends AnimationTimeline_Item {
   }
 
   public check_type_and_run(parameter: any, animations: any): void {
-    throw new Error("Method not implemented.");
+    if ("animation" in animations && "shake" in animations.animation) {
+      super.perform_animate_fast_if_in_timeslot(
+        parameter,
+        animations.animation.shake
+      );
+    }
   }
 
   protected animate_fast(values:Shake_Values): number {
@@ -91,126 +96,102 @@ export class Shake extends AnimationTimeline_Item {
     return 0;
   }
 
-  public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to(parameter: any, props: Provide_Tweakpane_To_Props) {
-      const tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Shake.TWEAKPANE_PREFIX
-      );
+  public static ensureParameterSet(
+    parameter: any,
+    path: string | string[] = "animation.shake"
+  ) {
+    const manager = ParameterManager.from(parameter);
+    const canvas = manager.get("artwork.canvas.size") ?? {
+      width: 1,
+      height: 1,
+    };
+    const minDim = Math.min(canvas.width ?? 1, canvas.height ?? 1) || 1;
 
-      parameter.tweakpane[tp_prefix + "mode"] = ShakeMode.nothing;
-      parameter.tweakpane[tp_prefix + "frequency"] = 0.05;
-      parameter.tweakpane[tp_prefix + "amplitude"] = 0.01;
-
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "mode", {
-        label: "Shake",
-        options: ShakeMode,
-      });
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "frequency",
-        {
-          label: "Frequency",
-          min: 0.001,
-          max: 0.5,
-          step: 0.001,
-        }
-      );
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        tp_prefix + "amplitude",
-        {
-          label: "Amplitude",
-          min: 0,
-          max: 0.1,
-          step: 0.0005,
-        }
-      );
-
-      const timeline_defaults: AnimationTimeline_ParameterSet = {
+    const defaults: Shake_Values = {
+      mode: ShakeMode.nothing,
+      frequency: 0.05,
+      amplitude: 0.01 * minDim,
+      timeline: {
         startTime: 0,
         endTime: 1,
-      };
+      },
+    };
 
-      const atl_props: Provide_Tweakpane_To_Props = {
-        items: props.items,
-        folder_name_prefix: "",
-        use_separator: true,
-        parameterSetName: tp_prefix,
-        defaults: timeline_defaults,
-      };
+    return manager.ensure(path, defaults);
+  }
 
-      AnimationTimeline.tweakpaneSupport.provide_tweakpane_to(
-        parameter,
-        atl_props
-      );
-    },
-    inject_parameterset_to(parameter: any, props: TweakpaneSupport_Props) {
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager,
+    container: TweakpaneContainer,
+    id: string,
+    label = "Shake",
+    parameterPath: string | string[] = "animation.shake",
+    timelinePath: string | string[] = "animation.timeline"
+  ) {
+    const shakePath = Array.isArray(parameterPath)
+      ? parameterPath.filter((segment) => segment).join(".")
+      : parameterPath;
+    const timelineTargetPath = Array.isArray(timelinePath)
+      ? timelinePath.filter((segment) => segment).join(".")
+      : timelinePath;
 
-      if (!("animation" in targetSet)) {
-        Object.assign(targetSet, { animation: {} });
+    const shake = Shake.ensureParameterSet(parameter, parameterPath);
+    const pm = ParameterManager.from(parameter);
+    const canvas = pm.get("artwork.canvas.size") ?? { width: 1, height: 1 };
+    const minDim = Math.min(canvas.width ?? 1, canvas.height ?? 1) || 1;
+
+    const module = manager.createModule({
+      id,
+      container,
+      stateDefaults: {
+        shake_mode: shake.mode ?? ShakeMode.nothing,
+        shake_frequency: shake.frequency ?? 0.05,
+        shake_amplitude: (shake.amplitude ?? 0.01 * minDim) / minDim,
+      },
+      channelId: "tweakpane",
+    });
+
+    module.addBinding(
+      "shake_mode",
+      {
+        label,
+        options: ShakeMode,
+      },
+      { target: `${shakePath}.mode` }
+    );
+
+    module.addBinding(
+      "shake_frequency",
+      {
+        label: "Frequency",
+        min: 0.001,
+        max: 0.5,
+        step: 0.001,
+      },
+      { target: `${shakePath}.frequency` }
+    );
+
+    module.addBinding(
+      "shake_amplitude",
+      {
+        label: "Amplitude",
+        min: 0,
+        max: 0.1,
+        step: 0.0005,
+      },
+      {
+        target: `${shakePath}.amplitude`,
+        transform: (value) => value * minDim,
       }
+    );
 
-      const tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Shake.TWEAKPANE_PREFIX
-      );
-
-      const canvasSize = parameter.artwork.canvas.size;
-      const defaults: Shake_Values = {
-        mode: parameter.tweakpane[tp_prefix + "mode"],
-        frequency: parameter.tweakpane[tp_prefix + "frequency"],
-        amplitude:
-          parameter.tweakpane[tp_prefix + "amplitude"] *
-          Math.min(canvasSize.width, canvasSize.height),
-        timeline: {
-          startTime: 0,
-          endTime: 1,
-        },
-      };
-
-      Object.assign(targetSet.animation, {
-        shake: defaults,
-      });
-
-      const atl_props: TweakpaneSupport_Props = {
-        parameterSetName: tp_prefix,
-        parameterSet: targetSet.animation.shake,
-      };
-
-      AnimationTimeline.tweakpaneSupport.inject_parameterset_to(
-        parameter,
-        atl_props
-      );
-    },
-    transfer_tweakpane_parameter_to(
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ) {
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
-
-      const tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Shake.TWEAKPANE_PREFIX
-      );
-      const canvasSize = parameter.artwork.canvas.size;
-      const target = targetSet.animation.shake as Shake_Values;
-
-      target.mode = parameter.tweakpane[tp_prefix + "mode"];
-      target.frequency = parameter.tweakpane[tp_prefix + "frequency"];
-      target.amplitude =
-        parameter.tweakpane[tp_prefix + "amplitude"] *
-        Math.min(canvasSize.width, canvasSize.height);
-
-      const atl_props: TweakpaneSupport_Props = {
-        parameterSetName: tp_prefix,
-        parameterSet: target,
-      };
-
-      AnimationTimeline.tweakpaneSupport.transfer_tweakpane_parameter_to(
-        parameter,
-        atl_props
-      );
-    },
-  };
+    AnimationTimeline.registerTweakpane(
+      parameter,
+      manager,
+      container,
+      `${id}:timeline`,
+      timelineTargetPath
+    );
+  }
 }

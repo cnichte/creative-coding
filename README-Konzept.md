@@ -23,9 +23,11 @@ Um die Übersicht nicht zu verlieren möchte ich streng typisiert arbeiten mit S
   - Das Framework könnte später einmal einen Editor mit GUI bekommen in dem Module zusammen gesteckt werden, die im Zusammenspiel ein Artwork bilden.
 
 - Alles was auf der 2D-Leinwand gezeichnet werden kann ist ein Agent.
+- Agenten können Agenten enthalten - also zB. Listen von Agenten Managen.
 - Agenten können miteinander kommunizieren, oder mit anderen Komponenten, wenn sie sich dort jeweils als listener registrieren (oder registriert werden).
 - Agenten werden einem Scene-Graph hinzugefügt, der dafür sorgt das alles gezeichnet wird.
   - Brush - ist im Grunde auch ein Agent - Eine Art Basis-Element das gezeichnet werden kann.
+  - Brushes werden von Agenten benutzt um etwas auf die Leinwand zu bringen.
 - Agenten können einer Timeline hinzugefügt werden, damit sie in einem bestimmten Zeitfenster bestimmte Aktionen ausführen.
   - Das werden meist Animationen sein.
   - Die Eigenschaften eines Agenten können über Parameter verstellt werden
@@ -44,6 +46,46 @@ Um die Übersicht nicht zu verlieren möchte ich streng typisiert arbeiten mit S
 - Die Bedeutung der z-Achse.
   - Auf der selben Ebene: Agenten kollidieren.
   - Unterschiedliche Ebenen: Agent 1 bewegt sich vor oder hinter Agent 2.
+
+### Vier Elemente
+
+Ich hab vier Elemente mit denen ich arbeite:
+
+Drawable — Dinge die gezeichnet, und schnell animiert werden.
+Animable — Dinge die (langsam) animiert werden.
+Observable — Dinge die beobachtet werden.
+Observer — Dinge, die andere Dinge beobachten.
+anders ausgedrückt:
+
+- Einen SceneGraph mit seiner draw() Methode.
+- Den langsamen Timer mit seiner animate_slow() Methode.
+- Das Observer-Pattern das auf Veränderungen von Eigenschaften in einem Observable-Object reagiert, und alle registrierten Observer-Objekte informiert — was bedeutet deren update() Methode auf zu rufen.
+- Was brauche ich sonst noch?
+  - Ich brauche eine Effekt-Pipeline… ?
+
+### Verschiedenes
+
+- Animation - Das Modul stellt einen AnimationTimer, eine Animation Timeline sowie Animationen bereit.
+- AnimationTimer - Eine Klasse, um langsame Animationen durchzuführen.
+- AnimationTimeline - Eine Zeitleiste die zu gegebenen Zeitpunkten Animationen startet und stoppt.
+- Animations - Verschiedene einfache Animationen die auf Formen angewendet werden können.
+
+- Playhead (fehlt noch)
+  - Play, Stop
+  - Record (save, load)
+  - Skip: Forwards, Backwards
+  - Reverse, Loop, Flipflop?
+  - speed?
+
+## Die Komponenten
+
+### Sketch
+
+### Artwork
+
+### Agents
+
+### Special-Agents
 
 ### Das Parameter-Objekt
 
@@ -112,105 +154,14 @@ Ich arbeite mit beliebig vielen prefixen um auch tiefer verschachtelte Propertie
   - Es geht im grunde darum veränderliche parameter in das Artwork ein zu schleusen, und an die richtigen stellen im artwork zu bringen.
   - Das können im Endeffekt auch Sensor-Werte aus der aussenwelt sein
 
-### Vier Elemente
+### IO-Manager
 
-Ich hab vier Elemente mit denen ich arbeite:
+Zentrale Schnittstelle zur Verbindung von Echtzeit-Eingaben (zB. Tweakpane, Sensoren) mit Parametersätzen oder beliebigen Handlern. Quellen registrieren sich selbst als Kanäle, und Bindungen beschreiben, wie ihre Werte weitergeleitet werden sollen.
 
-Drawable — Dinge die gezeichnet, und schnell animiert werden.
-Animable — Dinge die (langsam) animiert werden.
-Observable — Dinge die beobachtet werden.
-Observer — Dinge, die andere Dinge beobachten.
-anders ausgedrückt:
+### Tweakpane-Manager
 
-- Einen SceneGraph mit seiner draw() Methode.
-- Den langsamen Timer mit seiner animate_slow() Methode.
-- Das Observer-Pattern das auf Veränderungen von Eigenschaften in einem Observable-Object reagiert, und alle registrierten Observer-Objekte informiert — was bedeutet deren update() Methode auf zu rufen.
-- Was brauche ich sonst noch?
-  - Ich brauche eine Effekt-Pipeline… ?
+Leichte Abstraktion, die den Status der Tweakpane mit dem Parameterobjekt synchronisiert und die Steuerelemente mit dem IO-Manager verbindet. Das Ziel ist: Module beschreiben nur ihre Benutzeroberfläche und Zuordnungen; der Manager kümmert sich um Standardeinstellungen, Container und Kanalverdrahtung.
 
-### Das State-Objekt
+### Scene-Graph
 
-Parameter — bzw. Veränderungen an Parametern — werden auch über Statusveränderungen (state) von Observable-Objekten an die Observer-Objekte weiter gereicht, in dem deren update Methode aufgerufen, und die Quelle als Klasse / Objekt übergeben wird.
-
-```js
-let state = {
-  parameterSet_1:{
-    eigenschaft_1a:"wert A"
-  },
-  parameterSet_2:{
-    eigenschaft_2a:"wert B"
-  }
-}
-```
-
-- Anwendung des State-Objektes:
-  - Property Changes
-  - und das Observer Pattern
-
-Siehe am Beispiel ColorSet und Quadrate.
-
-### Verschiedenes
-
-- Animation - Das Modul stellt einen AnimationTimer, eine Animation Timeline sowie Animationen bereit.
-- AnimationTimer - Eine Klasse, um langsame Animationen durchzuführen.
-- AnimationTimeline - Eine Zeitleiste die zu gegebenen Zeitpunkten Animationen startet und stoppt.
-- Animations - Verschiedene einfache Animationen die auf Formen angewendet werden können.
-
-- Playhead (fehlt noch)
-  - Play, Stop
-  - Record (save, load)
-  - Skip: Forwards, Backwards
-  - Reverse, Loop, Flipflop?
-  - speed?
-
-## Ideen für später
-
-- Ein Passepartout in 3d Optik
-- Fotografien unterlegen (später auch via Projektion Mapping überlagern)
-- 2d in den 3d Raum bringen (für Projektion Mapping)
-
-
-## Gererischer realtime_input
-
-- Weil das ist, was über die Tweakpane und den Tweakpane support passiert.
-Ich hab eine Datenquelle, un speise sie in ein bestimmtes property ein (oder eine Menge von properties).
-  - TweakpaneSupport
-    - provide_tweakpane_to
-    - inject_parameterset_to
-    - transfer_tweakpane_parameter_to
-    - ensureParameterSet
-
-- Ich würde das gerne generischer gestalten und in den Hintergrund verlagern, das man sich nicht mehr darum kümmern muss
-
-```txt
-input -----> targets[{}]
-```
-
-- Beispiel `Background_ParameterTweakpane`
-- Es gibt nur eins: `background_color`
-
-Der transport ist manuell verknüpft in `transfert...`:
-
-`parameter.background.color = pt.background_color;`
-
-- Das möchte ich aber nicht immer manuell machen.
-- Ich will nur noch festlegen wer mit wem verbunden ist, und die Zuordnung soll automatscih erfolgen für alle Verknüpfungen.
-
-im Fall von Background - "background_color" (von Tweakpane)
-
-bisher: parameter.background.color = parameter.tweakpane.background_color
-
-Transport_Item{
-input_object = "parameter.tweakpane"
-input_field = "background_color"
-
-target_object = "parameter.background"
-target "color"
-}
-
-Transport_Item_List {
-  list:Transport_Item[]
-}
-
-TransportManager {
-}
+### Timeline

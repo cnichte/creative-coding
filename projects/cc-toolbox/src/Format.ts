@@ -55,22 +55,12 @@
  * @author Carsten Nichte - 2022
  */
 // Format.ts
-const Color = require("canvas-sketch-util/color");
-
-import { Pane } from "tweakpane";
-import { TabApi } from "tweakpane";
-import { FolderApi } from "tweakpane";
 
 import { ObserverSubject } from "./ObserverPattern";
 import { Shape } from "./Shape";
 import { Size } from "./Size";
-import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
-} from "./TweakpaneSupport";
 import { Vector } from "./Vector";
+import { TweakpaneManager } from "./TweakpaneManager";
 
 
 export interface Format_ParameterSet {
@@ -698,181 +688,133 @@ export class Format extends ObserverSubject {
     return parameter_default;
   } // get_default_paramterset
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
+  public static ensureParameterSet(parameter: any) {
+    if (!("format" in parameter)) {
+      parameter.format = {};
+    }
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof Format
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-      let _parameterSet: Format_ParameterSet_Values = {
-
-        paper: "a4",
-        paper_dpi: 300,
-
-        page_orientation: parameter.tweakpane.format_page_orientation,
-        aspect_ratio: parameter.tweakpane.format_aspect_ratio,
-        keep_aspect_ratio: parameter.tweakpane.format_keep_aspect_ratio,
-        fencing: parameter.tweakpane.format_fencing,
-
-        size: parameter.artwork.canvas.size,
-
-        center: new Vector(
+    const defaults: Format_ParameterSet_Values = {
+      paper: parameter.format.paper ?? "a4",
+      paper_dpi: parameter.format.paper_dpi ?? 300,
+      page_orientation: parameter.format.page_orientation ?? "Portrait",
+      aspect_ratio: parameter.format.aspect_ratio ?? 1.0,
+      keep_aspect_ratio: parameter.format.keep_aspect_ratio ?? true,
+      fencing: parameter.format.fencing ?? true,
+      size:
+        parameter.format.size ??
+        parameter.artwork.canvas.size.clone(),
+      center:
+        parameter.format.center ??
+        new Vector(
           parameter.artwork.canvas.size.width * 0.5,
           parameter.artwork.canvas.size.height * 0.5
         ),
+      fak:
+        parameter.format.fak ?? new Vector(1.0, 1.0, 1.0),
+    };
 
-        fak: new Vector(1.0, 1.0, 1.0) /* A scale Factor, for Objects to fit in the Format. */,
-      };
+    Object.assign(parameter.format, defaults);
+  }
 
-      Object.assign(parameter, {
-        format: _parameterSet,
-      });
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-      let pt: Format_ParameterTweakpane = parameter.tweakpane;
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager,
+    container: any
+  ) {
+    Format.ensureParameterSet(parameter);
 
-      //! Hier darf nix transferiert werden?
-      // doch, weil ich die alten Format-Werte gespeichert habe...
+    const module = manager.createModule({
+      id: "format",
+      container,
+      stateDefaults: {
+        format_paper: parameter.format.paper,
+        format_paper_dpi: parameter.format.paper_dpi,
+        format_width: parameter.artwork.canvas.size.width,
+        format_height: parameter.artwork.canvas.size.height,
+        format_page_orientation: parameter.format.page_orientation,
+        format_aspect_ratio: parameter.format.aspect_ratio,
+        format_keep_aspect_ratio: parameter.format.keep_aspect_ratio,
+        format_fencing: parameter.format.fencing,
+      },
+      channelId: "tweakpane",
+    });
 
-      parameter.format.paper = pt.format_paper;
-      parameter.format.paper_dpi = pt.format_paper_dpi;
-
-      parameter.format.page_orientation = pt.format_page_orientation;
-      parameter.format.aspect_ratio = pt.format_aspect_ratio;
-      parameter.format.keep_aspect_ratio = pt.format_keep_aspect_ratio;
-      parameter.format.fencing = pt.format_fencing;
-
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ): Tweakpane_Items {
-
-      let parameterTP: Format_ParameterTweakpane = {
-        format_paper: "a4",
-        format_paper_dpi: 300,
-
-        format_width: 2000,
-        format_height: 2000,
-        format_page_orientation: "Portrait",
-        format_aspect_ratio: 1.0,
-
-        format_keep_aspect_ratio: true,
-        format_fencing: true,
-      };
-
-      parameter.tweakpane = Object.assign(parameter.tweakpane, parameterTP);
-      Format.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      props.items.pane.on('change', (ev) => {
-        // TODO der schreibt permenent Meta raus Hä??? 
-        // console.log('############ TWEAKPANE changed: ' + JSON.stringify(ev.value));
-      });
-
-      if (props.items.folder == null) {
-        props.items.folder = props.items.pane.addFolder({
-          title: props.folder_name_prefix + "Format",
-        });
-      }
-
-      if (props.use_separator) {
-        props.items.folder.addBlade({
-          view: "separator",
-        });
-      }
-
-      let test = props.items.folder.addBinding(parameter.tweakpane, "format_paper", {
+    module.addBinding(
+      "format_paper",
+      {
         label: "Paper",
-        options: Format.PaperSizes.map(ps => {
-          let item = { text: ps.name, value: ps.name };
-          return item;
-        })
-      });
+        options: Format.PaperSizes.map((ps) => ({
+          text: ps.name,
+          value: ps.name,
+        })),
+      },
+      { target: "format.paper" }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, "format_paper_dpi", {
+    module.addBinding(
+      "format_paper_dpi",
+      {
         label: "Resolution (dpi)",
-      });
+      },
+      { target: "format.paper_dpi" }
+    );
 
-      props.items.folder.addBlade({
-        view: "separator",
-      });
+    module.addBlade({
+      view: "separator",
+    });
 
-      props.items.folder.addBinding(parameter.tweakpane, "format_width", {
+    module.addBinding(
+      "format_width",
+      {
         label: "Width",
-      });
+      },
+      { target: "format.width" }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, "format_height", {
+    module.addBinding(
+      "format_height",
+      {
         label: "Height",
-      });
+      },
+      { target: "format.height" }
+    );
 
-
-      props.items.folder.addBinding(parameter.tweakpane, "format_page_orientation", {
+    module.addBinding(
+      "format_page_orientation",
+      {
         label: "Format",
         options: Format.PageOrientation,
-      });
+      },
+      { target: "format.page_orientation" }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, "format_aspect_ratio", {
+    module.addBinding(
+      "format_aspect_ratio",
+      {
         label: "Asp.Ratio",
         options: Format.AspectRatios,
-      });
+      },
+      { target: "format.aspect_ratio" }
+    );
 
-      props.items.folder.addBlade({
-        view: "separator",
-      });
+    module.addBlade({
+      view: "separator",
+    });
 
-      props.items.folder.addBinding(parameter.tweakpane, "format_keep_aspect_ratio", {
+    module.addBinding(
+      "format_keep_aspect_ratio",
+      {
         label: "Keep AR",
-      });
+      },
+      { target: "format.keep_aspect_ratio" }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, "format_fencing", {
+    module.addBinding(
+      "format_fencing",
+      {
         label: "Fence",
-      });
-
-      return props.items;
-    },
-  };
+      },
+      { target: "format.fencing" }
+    );
+  }
 } // class Format

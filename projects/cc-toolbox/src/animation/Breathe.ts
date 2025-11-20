@@ -23,17 +23,12 @@
  * @author Carsten Nichte - 2022
  */
 
- // animateion/Animation_Breathe.ts
-import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
-} from "../TweakpaneSupport";
-
-import { AnimationTimeline, type AnimationTimeline_ParameterSet } from "../AnimationTimeline";
+// Animation_Breathe.ts
+import { ParameterManager } from "../ParameterManager";
+import { AnimationTimeline } from "../AnimationTimeline";
 import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
 import { Size } from "../Size";
+import type { TweakpaneContainer, TweakpaneManager } from "../TweakpaneManager";
 
 // const random = require('canvas-sketch-util/random');
 
@@ -48,6 +43,7 @@ export interface Breathe_Values {
 
 export interface Breathe_Property { // ValueObject / ParameterSet
   breathe: Breathe_Values;
+  timeline?: any;
 }
 
 // {breathe:{ min:1.0, now:2.0 max:3.0, increment:0.001}, timeline:{startTime:10.123, duration:0.001}}
@@ -96,7 +92,7 @@ export class Breathe extends AnimationTimeline_Item {
   check_type_and_run(parameter: any, animations: any): void {
     if ("animation" in animations) {
       if ("breathe" in animations.animation) {
-        super.perform_animate_fast_if_in_timeslot(parameter, animations.animation.breathe);
+    super.perform_animate_fast_if_in_timeslot(parameter, animations.animation.breathe);
       }
     }
   }
@@ -144,161 +140,86 @@ export class Breathe extends AnimationTimeline_Item {
   //* Parameter-Set Object + Tweakpane
   //*
   //* --------------------------------------------------------------------
+  public static ensureParameterSet(parameter: any, path: string | string[] = "animation.breathe") {
+    const manager = ParameterManager.from(parameter);
+    return manager.ensure(path, {
+      min: 0,
+      now: 1.25,
+      max: 2,
+      increment: 0.01,
+    });
+  }
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof AnimationTimer
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName: "",
-      }
-    ): void {
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager,
+    container: TweakpaneContainer,
+    id: string,
+    label = "Breathe",
+    parameterPath: string | string[] = "animation.breathe",
+    timelinePath: string | string[] = "animation.timeline"
+  ) {
+    const breathePath = Array.isArray(parameterPath)
+      ? parameterPath.filter((segment) => segment).join(".")
+      : parameterPath;
+    const timelineTargetPath = Array.isArray(timelinePath)
+      ? timelinePath.filter((segment) => segment).join(".")
+      : timelinePath;
 
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
-      let pt: any = parameter.tweakpane; // prefixable
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName + Breathe.TWEAKPANE_PREFIX
-      );
+    const breathe = Breathe.ensureParameterSet(parameter, parameterPath);
 
-      if (!("animation" in targetSet)) {
-        Object.assign(targetSet, {
-          animation: {},
-        });
-      }
+    const module = manager.createModule({
+      id,
+      container,
+      stateDefaults: {
+        depth_min: breathe.min,
+        depth_max: breathe.max,
+        increment: breathe.increment,
+      },
+      channelId: "tweakpane",
+    });
 
-      // Wird aus der Tweakpane initialisiert
-      let breathe_values: Breathe_Values = {
-        min: 0,
-        now: 1.25,
-        max: 2,
-        increment: 0.01
-      }
-
-      let breathe_prop: Breathe_Property = {
-        breathe: breathe_values
-      }
-
-      Object.assign(targetSet.animation, breathe_prop);
-
-      let atl_props: TweakpaneSupport_Props = {
-        parameterSetName: props.parameterSetName,
-        parameterSet: targetSet.animation.breathe,
-      };
-
-      // TODO das geht so nicht, weil AnimationTimeline auch zugriff auf parameter.tweakpane braucht!
-      // Ich brauch sowas: parameter, parameterSet?
-      AnimationTimeline.tweakpaneSupport.inject_parameterset_to(parameter, atl_props);
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName: "",
-      }
-    ): void {
-
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props);
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName + Breathe.TWEAKPANE_PREFIX);
-
-      // TODO
-      // parameterset.animation.breathe.min = parameter.tweakpane[tp_prefix + "depth"].min;
-      // parameterset.animation.breathe.max = parameter.tweakpane[tp_prefix + "depth"].max;
-      // parameterset.animation.breathe.increment = parameter.tweakpane[tp_prefix + "increment"];
-      let atl_props: TweakpaneSupport_Props = {
-        parameterSet: targetSet.animation.breathe,
-        parameterSetName: tp_prefix,
-      };
-
-      AnimationTimeline.tweakpaneSupport.transfer_tweakpane_parameter_to(
-        parameter,
-        atl_props
-      );
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ): Tweakpane_Items {
-
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName + Breathe.TWEAKPANE_PREFIX);
-
-      // Inject Tweakpane parameters
-      parameter.tweakpane[tp_prefix + "increment"] = 0.0101;
-      parameter.tweakpane[tp_prefix + "depth"] = {
-        min: 0.5,
-        max: 3.5,
-      };
-
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "depth", {
-        label: "Breathe",
+    module.addBinding(
+      "depth_min",
+      {
+        label,
         min: 0.125,
         max: 5.0,
         step: 0.004,
-      });
+      },
+      { target: `${breathePath}.min` }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, tp_prefix + "increment", {
+    module.addBinding(
+      "depth_max",
+      {
+        label: `${label} Max`,
+        min: 0.125,
+        max: 5.0,
+        step: 0.004,
+      },
+      { target: `${breathePath}.max` }
+    );
+
+    module.addBinding(
+      "increment",
+      {
         label: "Speed",
         min: 0.001,
         max: 0.2,
         step: 0.00001,
-      });
+      },
+      { target: `${breathePath}.increment` }
+    );
 
-      let timeline_defaults:AnimationTimeline_ParameterSet = {
-        startTime: 0,
-        endTime: 0.2,
-      };
-
-      let props_2: Provide_Tweakpane_To_Props = {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.folder,
-          tab: null
-        },
-        folder_name_prefix: "",
-        use_separator: true,
-        parameterSetName: tp_prefix,
-        excludes: [], // optional
-        defaults: timeline_defaults,
-      };
-
-      AnimationTimeline.tweakpaneSupport.provide_tweakpane_to(parameter, props_2);
-
-      return props.items;
-    },
-  };
+    AnimationTimeline.registerTweakpane(
+      parameter,
+      manager,
+      container,
+      `${id}:timeline`,
+      timelineTargetPath
+    );
+  }
 } // class Animation_Breathe
 
 // } // namespace Animation

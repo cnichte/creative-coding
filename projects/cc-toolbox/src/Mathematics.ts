@@ -50,8 +50,34 @@ export class Mathematics {
    * @return {*}  {number}
    * @memberof Mathematics
    */
-  public static lerp(min: number, max: number, t: number): number {
+ public static lerp(min: number, max: number, t: number): number {
     return min * (1 - t) + max * t;
+  }
+
+  /**
+   * Clamp a value between min and max.
+   */
+  public static clamp(value: number, min: number, max: number): number {
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+  }
+
+  /**
+   * Smoothstep interpolation between min and max.
+   */
+  public static smoothstep(min: number, max: number, t: number): number {
+    const x = Mathematics.clamp((t - min) / (max - min), 0, 1);
+    return x * x * (3 - 2 * x);
+  }
+
+  /**
+   * Wrap a value into [min,max).
+   */
+  public static wrap(value: number, min: number, max: number): number {
+    const range = max - min;
+    if (range === 0) return min;
+    return ((value - min) % range + range) % range + min;
   }
 
  
@@ -133,5 +159,19 @@ export class Mathematics {
 
       return value_out;
     }
+  }
+
+  /**
+   * Convert polar coordinates to cartesian Vector.
+   */
+  public static polar_to_cartesian(radius: number, angleRad: number): Vector {
+    return new Vector(radius * Math.cos(angleRad), radius * Math.sin(angleRad));
+  }
+
+  /**
+   * Computes distance between two vectors.
+   */
+  public static distance(a: Vector, b: Vector): number {
+    return a.clone().subtract(b).length();
   }
 }

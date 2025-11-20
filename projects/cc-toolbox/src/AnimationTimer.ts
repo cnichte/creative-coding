@@ -33,12 +33,11 @@
 
  
  // AnimationTimer.ts
+import { ParameterManager } from "./ParameterManager";
 import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
-} from "./TweakpaneSupport";
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";
 
 // TODO Was ist die Source für ein Objekt?
 
@@ -60,9 +59,19 @@ export interface AnimationTimer_ParameterSet {
 }
 
 // nicht benutzt, da prefixable
-interface AnimationTimer_ParameterTweakpane {
-  animation_timer_doAnimate: boolean;
-  animation_timer_slowDownFactor: number;
+export interface AnimationTimerTweakpaneOptions {
+  id?: string;
+  container: TweakpaneContainer;
+  parameterPath: string | string[];
+  statePath?: string | string[];
+  channelId?: string;
+  labels?: {
+    animate?: string;
+    throttle?: string;
+  };
+  createFolder?: boolean;
+  folderTitle?: string;
+  expanded?: boolean;
 }
 
 /**
@@ -231,135 +240,85 @@ export class AnimationTimer {
   }
 */
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager | null | undefined,
+    options: AnimationTimerTweakpaneOptions
+  ) {
+    if (!manager || !options || !options.container) {
+      return null;
+    }
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof AnimationTimer
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName:""
-      }
-    ): void {
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(
-        props.parameterSetName
-      );
+    const path = AnimationTimer.normalizePath(options.parameterPath);
+    const parameterManager = ParameterManager.from(parameter);
+    const timerDefaults: AnimationTimer_ParameterSet = {
+      time: 0,
+      deltaTime: 0,
+      doAnimate: true,
+      animation_halt: false,
+      slowDownFactor: 200,
+    };
 
-      let _parameterSet: AnimationTimer_ParameterSet = {
-        time: 0,
-        deltaTime: 0,
-        doAnimate:
-          parameter.tweakpane[tp_prefix + "animation_timer_doAnimate"],
-        animation_halt: false,
-        slowDownFactor:
-          parameter.tweakpane[tp_prefix + "animation_timer_slowDownFactor"],
-      };
+    const timer = parameterManager.ensure(path, timerDefaults);
 
-      if (props.parameterSetName != null) {
-        // animation.timer
-        if (!("animation" in parameter[props.parameterSetName])) {
-          Object.assign(parameter[props.parameterSetName], {
-            animation: {},
-          });
-        }
-
-        Object.assign(parameter[props.parameterSetName].animation, {
-          timer: _parameterSet,
-        });
-      }
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName:""
-      }
-    ): void {
-      let pt: any = parameter.tweakpane; // prefixable
-
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
-
-      if (props.parameterSetName != null) {
-        parameter[props.parameterSetName].animation.timer.doAnimate =
-          pt[tp_prefix + "animation_timer_doAnimate"];
-
-        parameter[props.parameterSetName].animation.timer.slowDownFactor =
-          pt[tp_prefix + "animation_timer_slowDownFactor"];
-      }
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ):Tweakpane_Items {
-      let pt: any = parameter.tweakpane; // prefixable
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
-
-      //! AnimationTimer_ParameterTweakpane kann ich hier nicht verwenden, weil prefixable.
-      // der prefix kann beliebig sein. also bleitbt das hier auch any
-      // Das ganze nenne ich prefixable.
-      let obj: any = new Object(); //  = {};
-      obj[tp_prefix + "animation_timer_doAnimate"] = true;
-      obj[tp_prefix + "animation_timer_slowDownFactor"] = 200;
-
-      Object.assign(pt, obj);
-
-      props.items.folder.addBinding(pt, tp_prefix + "animation_timer_doAnimate", {
-        label: "Animate",
+    let container: TweakpaneContainer = options.container;
+    if (options.createFolder && "addFolder" in container) {
+      container = (container as any).addFolder({
+        title: options.folderTitle ?? "Animation Timer",
+        expanded: options.expanded ?? false,
       });
+    }
 
-      props.items.folder.addBinding(
-        pt,
-        tp_prefix + "animation_timer_slowDownFactor",
-        {
-          label: "Throttel",
-          min: 0,
-          step: 0.0001,
-        }
-      );
+    const stateDefaults = {
+      doAnimate: timer.doAnimate,
+      slowDownFactor: timer.slowDownFactor,
+    };
 
-      return props.items;
-    },
-  };
+    const targetPath = path.join(".");
 
-  //* --------------------------------------------------------------------
-  //* Tweakpane
-  //* --------------------------------------------------------------------
+    const module = manager.createModule({
+      id: options.id ?? `animationTimer:${targetPath}`,
+      container,
+      statePath: options.statePath,
+      stateDefaults,
+      parameterPath: path,
+      parameterDefaults: timer,
+      channelId: options.channelId ?? "tweakpane",
+    });
+
+    module.addBinding(
+      "doAnimate",
+      {
+        label: options.labels?.animate ?? "Animate",
+      },
+      {
+        target: `${targetPath}.doAnimate`,
+      }
+    );
+
+    module.addBinding(
+      "slowDownFactor",
+      {
+        label: options.labels?.throttle ?? "Throttel",
+        min: 0,
+        step: 0.0001,
+      },
+      {
+        target: `${targetPath}.slowDownFactor`,
+      }
+    );
+
+    return module;
+  }
+
+  private static normalizePath(path: string | string[]): string[] {
+    if (Array.isArray(path)) {
+      return path;
+    }
+    if (!path) return [];
+    return path
+      .split(".")
+      .map((segment) => segment.trim())
+      .filter((segment) => segment.length > 0);
+  }
 } // class AnimationTimer

@@ -32,10 +32,7 @@
  * @author Carsten Nichte - 2022
  */
 
- // Background.ts
-import { Pane } from "tweakpane";
-
-const Color = require("canvas-sketch-util/color");
+// Background.ts
 
 import { Brush } from "./Brush";
 import { ColorSet, type ColorSet_ParameterSet } from "./ColorSet";
@@ -45,11 +42,12 @@ import { Size } from "./Size";
 import { Vector } from "./Vector";
 import type { Observer, ObserverSubject } from "./ObserverPattern";
 
+import { ParameterManager } from "./ParameterManager";
+import { ColorUtils } from "./ColorUtils";
 import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props, type TweakpaneSupport_Props,
-  type Tweakpane_Items
-} from "./TweakpaneSupport";
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";
 
 export interface Background_ParameterSet {
   color: string;
@@ -57,6 +55,16 @@ export interface Background_ParameterSet {
 
 export interface Background_ParameterTweakpane {
   background_color: string;
+}
+
+export interface BackgroundTweakpaneOptions {
+  manager: TweakpaneManager;
+  container: TweakpaneContainer;
+  statePath?: string | string[];
+  id?: string;
+  label?: string;
+  wrapInFolder?: boolean;
+  title?: string;
 }
 
 /**
@@ -130,6 +138,13 @@ export class Background implements Observer {
     };
   }
 
+  public static ensureParameterSet(parameter: any) {
+    const manager = ParameterManager.from(parameter);
+    return manager.ensure("background", {
+      color: parameter.background?.color ?? "#efefefFF",
+    });
+  }
+
   /**
    * Is called from the ObserverSubject.
    * Background listenes to colorset changes.
@@ -190,10 +205,6 @@ export class Background implements Observer {
    * @param {Object} parameter
    */
   draw(context: any, parameter: any) {
-    // this.parameter.background.color;
-    // this.parameter.tweakpane.background_color;
-    Background.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-
     // Fill the canvas with Background Color.
 
     if (this.state.colorset.mode !== "use_custom_colors") {
@@ -205,12 +216,9 @@ export class Background implements Observer {
     }
 
     // No matter what color, alpha I take from the tweakpane
-    this.brush.fillColorAlpha = Color.parse(
-      parameter.tweakpane.background_color
-    ).alpha;
-    this.brush.borderColorAlpha = Color.parse(
-      parameter.tweakpane.background_color
-    ).alpha;
+    const bgColor = this.parameter.background.color;
+    this.brush.fillColorAlpha = ColorUtils.parse(bgColor).alpha;
+    this.brush.borderColorAlpha = ColorUtils.parse(bgColor).alpha;
 
     Shape.draw(
       context,
@@ -221,103 +229,41 @@ export class Background implements Observer {
     );
   }
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
+  public static registerTweakpane(
+    parameter: any,
+    options: BackgroundTweakpaneOptions
+  ) {
+    const background = Background.ensureParameterSet(parameter);
+    let container = options.container;
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof Background
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
+    const canAddFolder = typeof (container as any)?.addFolder === "function";
+    const shouldWrap = options.wrapInFolder !== false && canAddFolder;
 
-      let pt: Background_ParameterTweakpane = parameter.tweakpane;
-
-      let _parameterSet: Background_ParameterSet = {
-        color: pt.background_color,
-      };
-
-      Object.assign(parameter, {
-        background: _parameterSet,
+    if (shouldWrap) {
+      container = (container as any).addFolder({
+        title: options.title ?? options.label ?? "Background",
+        expanded: false,
       });
+    }
 
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-      let pt: Background_ParameterTweakpane = parameter.tweakpane;
+    const module = options.manager.createModule({
+      id: options.id ?? "background",
+      container,
+      statePath: options.statePath,
+      stateDefaults: {
+        background_color: background.color ?? "#efefefFF",
+      },
+      channelId: "tweakpane",
+    });
 
-      parameter.background.color = pt.background_color;
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ):Tweakpane_Items {
-      let parameterTP: Background_ParameterTweakpane = {
-        background_color: "#efefefFF",
-      };
+    module.addBinding(
+      "background_color",
+      {
+        label: options.label ?? "Color",
+        color: { type: "float" },
+      },
+      { target: "background.color" }
+    );
+  }
 
-      parameter.tweakpane = Object.assign(parameter.tweakpane, parameterTP);
-
-      Background.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      if (props.items.folder == null) {
-        props.items.folder = props.items.pane.addFolder({
-          title: props.folder_name_prefix + "Background",
-          expanded: false,
-        });
-      }
-
-      if (props.use_separator) {
-        props.items.folder.addBlade({
-          view: "separator",
-        });
-      }
-
-      props.items.folder.addBinding(parameter.tweakpane, "background_color", {
-        label: "Background",
-      });
-
-      return props.items;
-    },
-  };
 } // class Background

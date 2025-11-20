@@ -20,14 +20,10 @@
  * @author Carsten Nichte - 2022
  */
 
- // AnimationTimeline.ts
+// AnimationTimeline.ts
 import type { AnimationTimeline_Item } from "./AnimationTimeline_Item";
-import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
-} from "./TweakpaneSupport";
+import { ParameterManager } from "./ParameterManager";
+import type { TweakpaneContainer, TweakpaneManager } from "./TweakpaneManager";
 
 
 export interface AnimationTimeline_ParameterSet {
@@ -83,6 +79,62 @@ export class AnimationTimeline {
     this.items.push(item);
   }
 
+  public static ensureParameterSet(
+    parameter: any,
+    path: string | string[] = "animation.timeline"
+  ) {
+    const manager = ParameterManager.from(parameter);
+    const defaults: AnimationTimeline_ParameterSet = { startTime: 0, endTime: 1 };
+    return manager.ensure(path, defaults);
+  }
+
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager,
+    container: TweakpaneContainer,
+    id: string,
+    path: string | string[] = "animation.timeline"
+  ) {
+    AnimationTimeline.ensureParameterSet(parameter, path);
+    const timelinePath = Array.isArray(path)
+      ? path.filter((segment) => segment).join(".")
+      : path;
+
+    const module = manager.createModule({
+      id,
+      container,
+      stateDefaults: {
+        timeline_min: 0.0,
+        timeline_max: 1.0,
+      },
+      channelId: "tweakpane",
+    });
+
+    module.addBinding(
+      "timeline_min",
+      {
+        label: "Start",
+        min: 0.0,
+        max: 1.0,
+        step: 0.0001,
+      },
+      { target: `${timelinePath}.startTime` }
+    );
+
+    module.addBinding(
+      "timeline_max",
+      {
+        label: "End",
+        min: 0.0,
+        max: 1.0,
+        step: 0.0001,
+      },
+      { target: `${timelinePath}.endTime` }
+    );
+
+    return module;
+  }
+
   /**
    * Performs all registered Animation-Items in theire timeslot.
    *
@@ -99,122 +151,4 @@ export class AnimationTimeline {
     }
   }
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
-
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof AnimationTimer
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName:""
-      }
-    ): void {
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
-
-      let al_pset: AnimationTimeline_ParameterSet = {
-        startTime: 0.0, // TODO parameter.tweakpane[tp_prefix + "timeline"].min
-        endTime: 1.0, // parameter.tweakpane[tp_prefix + "timeline"].max
-      };
-
-      const targetSet =
-        props.parameterSet ?? TweakpaneSupport.ensureParameterSet(parameter, props);
-
-      if (!("timeline" in targetSet) || targetSet.timeline == null) {
-        Object.assign(targetSet, {
-          timeline: al_pset,
-        });
-      }
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName:""
-      }
-    ): void {
-      const targetSet =
-        props.parameterSet ?? TweakpaneSupport.ensureParameterSet(parameter, props);
-      let source: any = parameter.tweakpane; // prefixable
-      let target: AnimationTimeline_ParameterSet = targetSet.timeline;
-      if (!target) {
-        target = targetSet.timeline = {
-          startTime: 0,
-          endTime: 1,
-        };
-      }
-
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
-
-      const timelineBinding = source[tp_prefix + "timeline"];
-      if (
-        timelineBinding !== undefined &&
-        typeof timelineBinding === "object" &&
-        "min" in timelineBinding &&
-        "max" in timelineBinding
-      ) {
-        target.startTime = timelineBinding.min;
-        target.endTime = timelineBinding.max;
-      }
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ):Tweakpane_Items {
-      let pt: any = parameter.tweakpane; // prefixable
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
-
-      // Inject Tweakpane parameters
-      pt[tp_prefix + "timeline"] = {
-        min: 0.0,
-        max: 1.0,
-      };
-
-      props.items.folder.addBinding(pt, tp_prefix + "timeline", {
-        label: "Timeline",
-        min: 0.0,
-        max: 1.0,
-        step: 0.0001,
-      });
-
-      return props.items;
-    },
-  };
 } // class AnimationTimeline

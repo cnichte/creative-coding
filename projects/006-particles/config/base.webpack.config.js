@@ -1,5 +1,5 @@
 const path = require("path");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
@@ -10,20 +10,20 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Happy Creative Coding',
+      title: "Happy Creative Coding",
     }),
-  ], 
+  ],
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin()],
   },
   output: {
     path: path.resolve(__dirname, "../dist"),
-    filename: '[name].bundle.js',
+    filename: "[name].bundle.js",
     clean: true,
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: [".ts", ".js"],
     alias: {
       "@carstennichte/cc-toolbox": path.resolve(__dirname, "../../cc-toolbox/src"),
     },
@@ -32,12 +32,12 @@ module.exports = {
     rules: [
       {
         test: /\.ts?$/,
-        use: 'ts-loader',
+        use: "ts-loader",
       },
       {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
-      }
-    ]
-  }
+      },
+    ],
+  },
 };

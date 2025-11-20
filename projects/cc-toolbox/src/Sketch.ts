@@ -72,7 +72,7 @@ export interface Sketch {
 
 import { Format, type Check_ObserverSubject_Format_Parameter } from "./Format";
 import type { Observer, ObserverSubject } from "./ObserverPattern";
-import { Artwork } from "./Artwork";
+import { IOManager } from "./IOManager";
 
 /**
  ** Der SketchRunner hat im Grunde nur eine Methode:
@@ -96,6 +96,7 @@ import { Artwork } from "./Artwork";
     private theCanvas: any;
     private tweakpane: Pane;
     private format: Format;
+    private ioManager: IOManager;
   
     public animationFrame: number;
     private lastTime: number;
@@ -125,6 +126,7 @@ import { Artwork } from "./Artwork";
       this.theCanvas = theCanvas;
       this.tweakpane = tweakpane;
       this.format = format;
+      this.ioManager = IOManager.from(parameter);
   
       this.format.addObserver(this);
   
@@ -185,21 +187,22 @@ import { Artwork } from "./Artwork";
      */
     public animation_loop(timeStamp: number) {
       // Transport tweakpane to parameter-object
-      Artwork.tweakpaneSupport.transfer_tweakpane_parameter_to(this.parameter);
-      Format.tweakpaneSupport.transfer_tweakpane_parameter_to(this.parameter);
-  
+      let deltaTime = timeStamp - this.lastTime; // milliseconds
+      // Move forward in time with a maximum amount
+      // https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-smooth-canvas-animation
+      deltaTime = Math.min(deltaTime, 0.1);
+      this.lastTime = timeStamp;
+      const deltaTimeSeconds = deltaTime * 0.001;
+      const timestampSeconds = timeStamp * 0.001;
+
+      this.ioManager.update(timestampSeconds, deltaTimeSeconds);
+
       // 1. Das format hat sich geändert -> canvas.size anpassen
       // if changed, recalculate and inform all the oberservers
       let params: Check_ObserverSubject_Format_Parameter = {
         canvas_size: this.parameter.artwork.canvas.size,
       };
       this.format.check_ObserverSubject(params); 
-  
-      let deltaTime = timeStamp - this.lastTime; // milliseconds
-      // Move forward in time with a maximum amount
-      // https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-smooth-canvas-animation
-      deltaTime = Math.min(deltaTime, 0.1);
-      this.lastTime = timeStamp;
       // const fps = Math.round(1000/deltaTime);
       // console.log(`fps: ${fps}`)
   
@@ -215,8 +218,8 @@ import { Artwork } from "./Artwork";
   
       this.parameter.artwork.animation.lastTime = this.lastTime;
       this.parameter.artwork.animation.intervall = this.intervall;
-      this.parameter.artwork.animation.timeStamp = timeStamp * 0.001;
-      this.parameter.artwork.animation.deltaTime = deltaTime * 0.001;
+      this.parameter.artwork.animation.timeStamp = timestampSeconds;
+      this.parameter.artwork.animation.deltaTime = deltaTimeSeconds;
   
       if (this.sketch != null && "animate" in this.sketch) {
         // timeStamp und deltaTime werden von Millisekunden in Sekunden umgerechnet.
@@ -224,8 +227,8 @@ import { Artwork } from "./Artwork";
         this.sketch.animate(
           this.ctx,
           this.parameter,
-          timeStamp * 0.001,
-          deltaTime * 0.001
+          timestampSeconds,
+          deltaTimeSeconds
         );
       } else {
         console.log(

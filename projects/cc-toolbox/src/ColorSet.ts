@@ -39,19 +39,16 @@
  */
 
 // ColorSet.ts
-const Color = require("canvas-sketch-util/color");
+import { ColorUtils } from "./ColorUtils";
 
-import { Pane } from "tweakpane";
 import { Brush } from "./Brush";
 import { ObserverSubject } from "./ObserverPattern";
-// import {  Animation } from "./Animation.js";
-import { AnimationTimer } from "./AnimationTimer";
+import { AnimationTimer, type AnimationTimer_ParameterSet } from "./AnimationTimer";
+import { ParameterManager } from "./ParameterManager";
 import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type Tweakpane_Items,
-  type TweakpaneSupport_Props,
-} from "./TweakpaneSupport";
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";
 
 // The Collections, with sets of colors
 import type ColorSetType from "./ColorSetType";
@@ -79,6 +76,7 @@ import system from "./colorset/system";
 import tsuchimochi from "./colorset/tsuchimochi";
 import tundra from "./colorset/tundra";
 import type { Size } from "./Size";
+import { IOManager } from "./IOManager";
 
 //! SyntaxError: Unexpected token: operator (=)
 //TODO Ist das immer noch so? The variable must be global so that 'canvas-sketch --build --inline' runs through without errors.
@@ -129,14 +127,10 @@ export interface ColorSet_ParameterSet {
   borderColor: string; // Three default colors with alpha, extracted for easy access
   fillColor: string;
   backgroundColor: string;
-}
-
-export interface ColorSet_ParameterTweakpane {
-  colorset_mode: string;
-  colorset_groupname: string;
-  colorset_variante: number;
-  colorset_number: number;
-  colorset_setname: string;
+  selectedSetName?: string;
+  animation?: {
+    timer: AnimationTimer_ParameterSet;
+  };
 }
 
 /**
@@ -188,6 +182,15 @@ export interface CS_ResultColorInfo {
  */
 export interface State {
   colorset: ColorSet_ParameterSet;
+}
+
+const COLORSET_SETNAME_BINDING = Symbol("__cc_colorset_setname_binding");
+
+export interface ColorSetTweakpaneOptions {
+  container?: TweakpaneContainer;
+  title?: string;
+  expanded?: boolean;
+  id?: string;
 }
 
 export class ColorSet extends ObserverSubject {
@@ -243,25 +246,10 @@ export class ColorSet extends ObserverSubject {
 
     this.animationTimer = new AnimationTimer(this);
 
-    this.state = {
-      colorset: {
-        mode: "",
-
-        groupname: "",
-        variant: 0,
-        variant_index: 0,
-
-        number: 0,
-        number_index: 0,
-
-        cs_object: null,
-
-        borderColor: "",
-        fillColor: "",
-        backgroundColor: "",
-      },
-    };
-
+    const initialParameters = ColorSet.ensureParameterSet(parameter);
+    this.state = ColorSet.cloneState({
+      colorset: initialParameters,
+    });
     this.state_last = ColorSet.cloneState(this.state);
   }
 
@@ -293,6 +281,48 @@ export class ColorSet extends ObserverSubject {
       },
     };
     return copy;
+  }
+
+  public static ensureParameterSet(parameter: any): ColorSet_ParameterSet {
+    const manager = ParameterManager.from(parameter);
+    const defaultGroup =
+      ColorSet.Groups.cako ?? Object.values(ColorSet.Groups)[0] ?? "";
+    const defaults: ColorSet_ParameterSet = {
+      mode: ColorSet.Modes.animate_from_all,
+      groupname: defaultGroup,
+      variant: -1,
+      variant_index: 0,
+      number: -1,
+      number_index: 0,
+      cs_object: null,
+      borderColor: "",
+      fillColor: "",
+      backgroundColor: "",
+      selectedSetName: "",
+    };
+
+    const colorset = manager.ensure("colorset", defaults);
+    if (typeof colorset.animation !== "object" || colorset.animation == null) {
+      colorset.animation = {
+        timer: {
+          time: 0,
+          deltaTime: 0,
+          doAnimate: true,
+          animation_halt: false,
+          slowDownFactor: 200,
+        },
+      };
+    } else if (!colorset.animation.timer) {
+      colorset.animation.timer = {
+        time: 0,
+        deltaTime: 0,
+        doAnimate: true,
+        animation_halt: false,
+        slowDownFactor: 200,
+      };
+    }
+
+    return colorset;
   }
 
   /**
@@ -404,15 +434,33 @@ export class ColorSet extends ObserverSubject {
 
     // Ausgabe des gewählten ColorSets in der Tweakpane
     if (this.state.colorset.cs_object != null) {
-      this.parameter.tweakpane.colorset_setname =
+      const displayName =
         this.state.colorset.cs_object.name +
         ", " +
         this.state.colorset.number_index;
+      ColorSet.setSelectedSetName(this.parameter, displayName);
     }
 
     // notifyAll(this, new, last)
     if (notify) super.notifyAll(this, this.state.colorset);
   } // checkObserverSubject
+
+  private static setSelectedSetName(parameter: any, name: string) {
+    if (!parameter) return;
+    if (parameter.colorset) {
+      parameter.colorset.selectedSetName = name;
+    }
+    if (parameter.tweakpane) {
+      if (typeof parameter.tweakpane.colorset !== "object") {
+        parameter.tweakpane.colorset = {};
+      }
+      parameter.tweakpane.colorset.setname = name;
+    }
+    const binding = (parameter as any)[COLORSET_SETNAME_BINDING];
+    if (binding && typeof binding.refresh === "function") {
+      binding.refresh();
+    }
+  }
 
   //! static stuff
 
@@ -522,9 +570,9 @@ export class ColorSet extends ObserverSubject {
             -1
           ).color;
 
-          result.borderColorAlpha = Color.parse(brush.borderColor).alpha;
-          result.fillColorAlpha = Color.parse(brush.fillColor).alpha;
-          result.backgroundColorAlpha = Color.parse(brush.fillColor).alpha;
+          result.borderColorAlpha = ColorUtils.parse(brush.borderColor).alpha;
+          result.fillColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
+          result.backgroundColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
         } else {
           // TODO
           console.log(
@@ -560,9 +608,9 @@ export class ColorSet extends ObserverSubject {
           ).color;
 
           // but get the alpha from the Tweakpane / Parameters
-          result.borderColorAlpha = Color.parse(brush.borderColor).alpha;
-          result.fillColorAlpha = Color.parse(brush.fillColor).alpha;
-          result.backgroundColorAlpha = Color.parse(brush.fillColor).alpha;
+          result.borderColorAlpha = ColorUtils.parse(brush.borderColor).alpha;
+          result.fillColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
+          result.backgroundColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
         } else {
           console.log(
             "ColorSet - kein ColorSet gefunden für groupname und variant",
@@ -580,9 +628,9 @@ export class ColorSet extends ObserverSubject {
           ColorSet.get_random_color_from_random_colorset();
 
         // but get the alpha from the Tweakpane / Parameters
-        result.borderColorAlpha = Color.parse(brush.borderColor).alpha;
-        result.fillColorAlpha = Color.parse(brush.fillColor).alpha;
-        result.backgroundColorAlpha = Color.parse(brush.fillColor).alpha;
+        result.borderColorAlpha = ColorUtils.parse(brush.borderColor).alpha;
+        result.fillColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
+        result.backgroundColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
 
         break;
       case ColorSet.Modes.use_custom_colors: // "custom"
@@ -592,9 +640,9 @@ export class ColorSet extends ObserverSubject {
         result.fillColor = brush.fillColor;
         result.backgroundColor = brush.fillColor;
 
-        result.fillColorAlpha = Color.parse(brush.fillColor).alpha;
-        result.borderColorAlpha = Color.parse(brush.borderColor).alpha;
-        result.backgroundColorAlpha = Color.parse(brush.fillColor).alpha;
+        result.fillColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
+        result.borderColorAlpha = ColorUtils.parse(brush.borderColor).alpha;
+        result.backgroundColorAlpha = ColorUtils.parse(brush.fillColor).alpha;
     }
 
     // Would that make sense? - I think not because...
@@ -692,192 +740,113 @@ export class ColorSet extends ObserverSubject {
     return colorsets.map((colorset: any) => colorset.name);
   } // getNames
 
-  //* --------------------------------------------------------------------
-  //*
-  //* Parameter-Set Object + Tweakpane
-  //*
-  //* --------------------------------------------------------------------
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager | null | undefined,
+    options: ColorSetTweakpaneOptions = {}
+  ) {
+    if (!manager) return null;
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof ColorSet
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "colorset",
-      };
-      const parameterSetParent = TweakpaneSupport.ensureParameterSet(
-        parameter,
-        props_default
-      );
+    const parent: TweakpaneContainer =
+      options.container ?? manager.getPane();
+    let container: TweakpaneContainer = parent;
+    if ("addFolder" in parent) {
+      container = (parent as any).addFolder({
+        title: options.title ?? "Color Palette",
+        expanded: options.expanded ?? false,
+      });
+    }
 
-      let parameterSet: ColorSet_ParameterSet = {
-        mode: parameter.tweakpane.colorset_mode,
-        groupname: parameter.tweakpane.colorset_groupname,
-        variant: parameter.tweakpane.colorset_variante,
-        variant_index: 0,
-        number: parameter.tweakpane.colorset_number,
+    const colorset = ColorSet.ensureParameterSet(parameter);
 
-        number_index: 0,
-        cs_object: null,
-        borderColor: "",
-        fillColor: "",
-        backgroundColor: "",
-      };
+    const module = manager.createModule({
+      id: options.id ?? "colorset",
+      container,
+      statePath: ["colorset"],
+      stateDefaults: {
+        mode: colorset.mode,
+        groupname: colorset.groupname,
+        variant: colorset.variant,
+        number: colorset.number,
+        setname: colorset.selectedSetName ?? "",
+      },
+      parameterPath: "colorset",
+      parameterDefaults: colorset,
+      channelId: "tweakpane",
+    });
 
-      Object.assign(parameterSetParent, parameterSet);
-
-      let props1: TweakpaneSupport_Props = {
-        parameterSetName: "colorset",
-        parameterSet: parameterSetParent,
-      };
-
-      // TODO AnimationTimer nicht hier sondern in AnimationTimer.provide_tweakpane_to initialisieren?
-      // dann ist sie automatisch initialisiert was das handling vereinfacht
-      //* Finde, so ist es zumindest in diesem Fall nachvollziehbarer
-      AnimationTimer.tweakpaneSupport.inject_parameterset_to(parameter, props1);
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props
-    ): void {
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "colorset",
-      };
-      const parameterSetParent = TweakpaneSupport.ensureParameterSet(
-        parameter,
-        props_default
-      );
-      let pt: ColorSet_ParameterTweakpane = parameter.tweakpane;
-      parameterSetParent.mode = pt.colorset_mode;
-      parameterSetParent.groupname = pt.colorset_groupname;
-      parameterSetParent.variant = pt.colorset_variante;
-      parameterSetParent.number = pt.colorset_number;
-
-      let props1: TweakpaneSupport_Props = {
-        parameterSetName: "colorset",
-        parameterSet: parameterSetParent,
-      };
-
-      AnimationTimer.tweakpaneSupport.transfer_tweakpane_parameter_to(
-        parameter,
-        props1
-      );
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ): Tweakpane_Items {
-      let parameterTP: ColorSet_ParameterTweakpane = {
-        colorset_mode: "animate_from_all",
-        colorset_groupname: "",
-        colorset_variante: -1,
-        colorset_number: -1,
-        colorset_setname: "MonitorColorSet",
-      };
-
-      parameter.tweakpane = Object.assign(parameter.tweakpane, parameterTP);
-
-      ColorSet.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      if (props.items.folder == null) {
-        props.items.folder = props.items.pane.addFolder({
-          title: props.parameterSetName + "Color Palette",
-          expanded: false,
-        });
-      }
-
-      if (props.use_separator) {
-        props.items.folder.addBlade({
-          view: "separator",
-        });
-      }
-
-      props.items.folder.addBinding(parameter.tweakpane, "colorset_mode", {
+    module.addBinding(
+      "mode",
+      {
         label: "Mode",
         options: ColorSet.Modes,
-      });
+      },
+      { target: "colorset.mode" }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, "colorset_groupname", {
+    module.addBinding(
+      "groupname",
+      {
         label: "Group",
         options: ColorSet.Groups,
-      });
+      },
+      { target: "colorset.groupname" }
+    );
 
-      // A Monitor
-      props.items.folder.addBinding(parameter.tweakpane, "colorset_setname", {
+    const setNameBinding = module.addBinding(
+      "setname",
+      {
         label: "G.V, C",
         readonly: true,
-        multiline: false,
-      });
+      },
+      { target: "colorset.selectedSetName" }
+    );
+    (parameter as any)[COLORSET_SETNAME_BINDING] = setNameBinding;
 
-      props.items.folder.addBinding(parameter.tweakpane, "colorset_variante", {
+    module.addBinding(
+      "variant",
+      {
         label: "Variante",
         max: 99,
         min: -1,
         step: 1,
-      });
+      },
+      { target: "colorset.variant" }
+    );
 
-      props.items.folder.addBinding(parameter.tweakpane, "colorset_number", {
+    module.addBinding(
+      "number",
+      {
         label: "Color",
         max: 99,
         min: -1,
         step: 1,
-      });
+      },
+      { target: "colorset.number" }
+    );
 
-      props.items.folder.addBlade({
-        view: "separator",
-      });
+    module.addBlade({
+      view: "separator",
+    });
 
-      AnimationTimer.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items:{
-          pane: props.items.pane,
-          folder: props.items.folder,
-          tab: null
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "colorset",
-        excludes: [],
-        defaults: {},
-      });
+    AnimationTimer.registerTweakpane(parameter, manager, {
+      id: `${options.id ?? "colorset"}:timer`,
+      container,
+      parameterPath: ["colorset", "animation", "timer"],
+      statePath: ["colorset", "animationTimer"],
+      channelId: "tweakpane",
+      createFolder: false,
+      labels: {
+        animate: "Animate",
+        throttle: "Throttel",
+      },
+    });
 
-      return props.items;
-    },
-  };
+    if (colorset.selectedSetName) {
+      ColorSet.setSelectedSetName(parameter, colorset.selectedSetName);
+    }
+
+    return module;
+  }
+
 } // class ColorSet

@@ -44,7 +44,6 @@ import { Size } from "./Size";
 import { Vector } from "./Vector";
 import { Mathematics } from "./Mathematics";
 
-const Color = require("canvas-sketch-util/color");
 
 // const math = require('canvas-sketch-util/math');
 

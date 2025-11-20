@@ -21,7 +21,7 @@
  */
 
 // Characters.ts
-const random = require('canvas-sketch-util/random');
+import { Random } from "./Random";
 
 export class Characters {
   /**
@@ -36,7 +36,7 @@ export class Characters {
     if (index > -1) {
       return Characters.choose_from_template_content(content_array, index);
     } else {
-      return random.pick(content_array);
+      return Random.pick(content_array);
     }
   }
 

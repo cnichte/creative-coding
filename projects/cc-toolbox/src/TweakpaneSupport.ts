@@ -26,6 +26,7 @@ import { Pane } from "tweakpane";
 import { TabApi } from "tweakpane";
 import { FolderApi } from "tweakpane";
 import { ParameterManager } from "./ParameterManager";
+import type { TweakpaneManager } from "./TweakpaneManager";
 
 /**
  * Die Parameter für die Methode provide_tweakpane_to, als Objekt.
@@ -45,6 +46,7 @@ export interface Tweakpane_Items {
   pane: Pane;
   folder: any;
   tab: any;
+  manager?: TweakpaneManager;
 }
 export interface Provide_Tweakpane_To_Props {
   items: Tweakpane_Items;

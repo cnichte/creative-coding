@@ -70,8 +70,12 @@ import { SceneGraph, type Drawable } from './SceneGraph';
 import { Shape } from './Shape';
 import { Size } from './Size';
 import { Vector } from './Vector';
-import { Grid_Manager_TweakpaneSupport } from './Grid_Manager_TweakpaneSupport';
-import type { TweakpaneSupport } from './TweakpaneSupport';
+import { ParameterManager } from './ParameterManager';
+import {
+  TweakpaneManager,
+  type TweakpaneContainer,
+  type TweakpaneModule,
+} from './TweakpaneManager';
 
 
 export class Grid_Manager extends ObserverSubject {
@@ -89,6 +93,7 @@ export class Grid_Manager extends ObserverSubject {
   constructor(parameter: any) {
     super();
     this.parameter = parameter;
+    Grid_Manager.ensureParameterSet(this.parameter);
     this.state = {
       grid: {
         cols: -1,
@@ -188,8 +193,6 @@ export class Grid_Manager extends ObserverSubject {
   }
 
   draw(context: any, parameter: any) {
-    Grid_Manager.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-  
     const gridChanged = (
       this.state.grid.cols !== parameter.grid.cols ||
       this.state.grid.rows !== parameter.grid.rows
@@ -210,7 +213,100 @@ export class Grid_Manager extends ObserverSubject {
     }
   }
 
-  public static tweakpaneSupport: TweakpaneSupport = Grid_Manager_TweakpaneSupport;
+  public static ensureParameterSet(parameter: any, path: string | string[] = "grid") {
+    const manager = ParameterManager.from(parameter);
+    const defaults = {
+      show: true,
+      rows: 5,
+      cols: 5,
+      brush: {
+        shape: "Rect",
+        angle: 0,
+        scale: 1.0,
+        border: 1,
+        borderColor: "#efefef7F",
+        fillColor: "#efefef7F",
+      },
+    };
+
+    return manager.ensure(path, defaults);
+  }
+
+  public static registerTweakpane(
+    parameter: any,
+    options: {
+      manager: TweakpaneManager;
+      container: TweakpaneContainer;
+      id?: string;
+      statePath?: string | string[];
+    }
+  ): TweakpaneModule | null {
+    if (!options.manager) return null;
+
+    const grid = Grid_Manager.ensureParameterSet(parameter);
+
+    const module = options.manager.createModule({
+      id: options.id ?? "grid",
+      container: options.container,
+      statePath: options.statePath ?? ["grid"],
+      stateDefaults: {
+        grid_show: grid.show,
+        grid_rows: grid.rows,
+        grid_cols: grid.cols,
+      },
+      parameterPath: "grid",
+      parameterDefaults: grid,
+      // let the manager create a dedicated channel for this module
+    });
+
+    module.addBinding(
+      "grid_show",
+      { label: "Show" },
+      { target: "grid.show" }
+    );
+
+    module.addBinding(
+      "grid_cols",
+      { label: "Cols", min: 1, max: 100, step: 1 },
+      {
+        target: "grid.cols",
+        transform: (value) => Math.max(1, Math.round(value)),
+      }
+    );
+
+    module.addBinding(
+      "grid_rows",
+      { label: "Rows", min: 1, max: 100, step: 1 },
+      {
+        target: "grid.rows",
+        transform: (value) => Math.max(1, Math.round(value)),
+      }
+    );
+
+    module.addBlade?.({ view: "separator" });
+
+    Brush.registerTweakpane(parameter, {
+      manager: options.manager,
+      container: options.container,
+      parameterPath: ["grid"],
+      statePath: ["grid", "brush"],
+      id: `${options.id ?? "grid"}:brush`,
+      defaults: {
+        brush_shape: "Rect",
+        brush_position_x: 0.5,
+        brush_position_y: 0.5,
+        brush_scale: 1.0,
+        brush_scale_x: 1.0,
+        brush_scale_y: 1.0,
+        brush_rotate: 0,
+        brush_border: 0.007,
+        brush_borderColor: "#efefef7F",
+        brush_fillColor: "#efefef7F",
+      },
+    });
+
+    return module;
+  }
 }
 
 export class Grid_Cell implements Drawable, Observer {

@@ -165,47 +165,26 @@ class MySketch implements Sketch {
 
     // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
 
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
-      folder_name_prefix: "",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
+    if (tweakpane_items?.manager) {
+      ColorSet.registerTweakpane(parameter, tweakpane_items.manager, {
+        container: tweakpane_items.pane,
+        title: "Color Palette",
+      });
 
-    // Inject ParameterSets and init with Tweakpane-Parameters
-    BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
-      folder_name_prefix: "Background ",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
-//! DEBUG
-    /*
-    My_Accent.tweakpaneSupport.provide_tweakpane_to(parameter,{
-      items: {
-        pane: tweakpane_items.pane,
-        folder: null,
-        tab: null
-      },
-      folder_name_prefix: "Accent ",
-      use_separator: false,
-      parameterSetName: "accent"
-    });
-*/
-    My_Target.tweakpaneSupport.provide_tweakpane_to(parameter,{
-      items: {
-        pane: tweakpane_items.pane,
-        folder: null,
-        tab: null
-      },
-      folder_name_prefix: "Target ",
-      use_separator: false,
-      parameterSetName: "target"
-    });
+      BackgroundShape.registerTweakpane(parameter, {
+        manager: tweakpane_items.manager,
+        container: tweakpane_items.pane,
+      });
+    }
+
+    if (tweakpane_items?.manager) {
+      My_Target.registerTweakpane(
+        parameter,
+        tweakpane_items.manager,
+        tweakpane_items.pane
+      );
+      //! My_Accent.registerTweakpane(parameter, tweakpane_items.manager, tweakpane_items.pane);
+    }
 
     // create my Artwork-Objects
     this.background = new BackgroundShape(parameter);
@@ -246,13 +225,6 @@ class MySketch implements Sketch {
   animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
-    // transfert all the tweakpane-parameters to the parameter-sets
-    BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-    ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-
-    //! My_Accent.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-    My_Target.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-
     // check the colorSets animation-timer.
     // calls all Listeners animate_slow Method when time is up.
     // TODO anbinden: this.animation_halt = parameter.artwork...
@@ -266,12 +238,12 @@ class MySketch implements Sketch {
 
     // pick color and inform Observers
     if (this.colorSet != null)
-      this.colorSet.check_ObserverSubject({
-        groupname: parameter.tweakpane.colorset_groupname,
-        mode: parameter.tweakpane.colorset_mode,
-        variant: parameter.tweakpane.colorset_variante,
-        number: parameter.tweakpane.colorset_number,
-      });
+    this.colorSet.check_ObserverSubject({
+      groupname: parameter.colorset.groupname,
+      mode: parameter.colorset.mode,
+      variant: parameter.colorset.variant,
+      number: parameter.colorset.number,
+    });
 
     // update, animate, draw
     if (this.scene != null) this.scene.draw(ctx, parameter);

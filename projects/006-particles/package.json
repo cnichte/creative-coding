@@ -1,4 +1,27 @@
 {
   "name": "@carstennichte/006-particles",
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@4.1.1",
+  "scripts": {
+    "watch": "webpack --watch --config ./config/dev.webpack.config.js",
+    "start": "webpack serve --open --config ./config/dev.webpack.config.js",
+    "clean": "rm -rf dist",
+    "build:dev": "webpack --config ./config/dev.webpack.config.js",
+    "build:prod": "webpack --config ./config/prod.webpack.config.js",
+    "build": "yarn build:prod"
+  },
+  "devDependencies": {
+    "@tweakpane/core": "^2.0.3",
+    "@types/node": "^20.11.28",
+    "css-loader": "^6.10.0",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^3.3.4",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.3"
+  },
+  "dependencies": {
+    "@carstennichte/cc-toolbox": "workspace:^",
+    "@tweakpane/plugin-essentials": "^0.2.1",
+    "tweakpane": "^4.0.3"
+  }
 }

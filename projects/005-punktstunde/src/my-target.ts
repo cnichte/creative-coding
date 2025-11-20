@@ -9,13 +9,14 @@ import {
   Shake,
   Shape,
   Size,
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
   Vector,
   ObserverSubject,
   ParameterManager,
+} from "@carstennichte/cc-toolbox";
+import {
+  TweakpaneManager,
+  type Tweakpane_Items,
+  type TweakpaneContainer,
 } from "@carstennichte/cc-toolbox";
 
 export class My_Target extends ObserverSubject {
@@ -27,15 +28,53 @@ export class My_Target extends ObserverSubject {
 
   public state: any;
 
+  public static ensureParameterSet(parameter: any) {
+    const manager = ParameterManager.from(parameter);
+    const canvas =
+      manager.get("artwork.canvas.size") ??
+      new Size(1, 1, 1);
+
+    const targetDefaults = {
+      brush: {
+        shape: "Rect",
+        position: new Vector(0.5, 0.5),
+        angle: 0,
+        scale: new Vector(1, 0.1),
+        border: Math.min(canvas.width, canvas.height) * 0.08,
+        borderColor: "#efefef7F",
+        fillColor: "#efefef7F",
+        fillColorAlpha: undefined,
+        borderColorAlpha: undefined,
+        text: {
+          content: "",
+          fontFamily: "Arial",
+          fontSize: 12,
+        },
+      },
+    };
+
+    manager.ensure("target", targetDefaults);
+
+    AnimationTimeline.ensureParameterSet(parameter, "target.animation.timeline");
+    Breathe.ensureParameterSet(parameter, "target.animation.breathe");
+    Rotate.ensureParameterSet(parameter, "target.animation.rotate");
+    Shake.ensureParameterSet(parameter, "target.animation.shake");
+  }
+
   constructor(parameter: any) {
     super();
 
     this.parameter = parameter;
+    My_Target.ensureParameterSet(this.parameter);
 
     this.animationTimeline = new AnimationTimeline();
-    this.breathe = new Breathe(this.parameter.target.animation);
-    //! this.rotate = new Rotate(this.parameter.target.animation);
-    //! this.shake = new Shake(this.parameter.target.animation);
+    this.breathe = new Breathe({
+      breathe: ParameterManager.from(this.parameter).get(
+        "target.animation.breathe"
+      ),
+    });
+    //! this.rotate = new Rotate({ rotate: ParameterManager.from(this.parameter).get("target.animation.rotate") });
+    //! this.shake = new Shake({ shake: ParameterManager.from(this.parameter).get("target.animation.shake") });
 
     this.animationTimeline.push(this.breathe);
     //! this.animationTimeline.push(this.rotate);
@@ -84,12 +123,9 @@ export class My_Target extends ObserverSubject {
   }
 
   draw(context: any, parameter: any) {
-    My_Target.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-
-    const targetParams = ParameterManager.from(parameter).get("target");
-    console.log("target", targetParams);
-    
-    this.animationTimeline.perform_animations_if(parameter, parameter.target);
+    this.animationTimeline.perform_animations_if(parameter, {
+      animation: parameter.target?.animation ?? {},
+    });
 
     const brush = new Brush(parameter.target.brush);
     brush.border = Format.transform(brush.border, this.state.format);
@@ -116,150 +152,99 @@ export class My_Target extends ObserverSubject {
     );
     size_px = Format.transform_size(size_px, this.state.format);
 
-    parameter.tweakpane.target_monitor_y = `x: ${position_px.x.toFixed(
-      2
-    )}\ny: ${position_px.y.toFixed(2)}`;
+    if (parameter.tweakpane) {
+      parameter.tweakpane.target_monitor_y = `x: ${position_px.x.toFixed(
+        2
+      )}\ny: ${position_px.y.toFixed(2)}`;
+    }
 
     Shape.draw(context, formatted_position, size_px, brush, true);
   }
 
-  public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to(parameter: any, props: Provide_Tweakpane_To_Props) {
-      My_Target.tweakpaneSupport.inject_parameterset_to(parameter);
+  public static registerTweakpane(
+    parameter: any,
+    manager: TweakpaneManager,
+    container: TweakpaneContainer,
+    id = "target"
+  ) {
+    if (!manager) return null;
+    My_Target.ensureParameterSet(parameter);
 
-      parameter.tweakpane = Object.assign(parameter.tweakpane, {
+    const folder =
+      (container as any) ??
+      manager.getPane().addFolder({
+        title: "Target",
+        expanded: false,
+      });
+
+    const brush_defaults: Brush_ParameterTweakpane = {
+      brush_shape: "Rect",
+      brush_position_x: 0.5,
+      brush_position_y: 0.5,
+      brush_scale: 1.0,
+      brush_scale_x: 1.0,
+      brush_scale_y: 0.1,
+      brush_rotate: 0,
+      brush_border: 0.08,
+      brush_borderColor: "#efefef7F",
+      brush_fillColor: "#efefef7F",
+    };
+
+    Brush.registerTweakpane(parameter, {
+      manager,
+      container: folder,
+      parameterPath: ["target"],
+      statePath: ["target", "brush"],
+      defaults: brush_defaults,
+      id: `${id}:brush`,
+    });
+
+    Breathe.registerTweakpane(
+      parameter,
+      manager,
+      folder,
+      `${id}:breathe`,
+      "Breathe",
+      "target.animation.breathe",
+      "target.animation.timeline"
+    );
+
+    Rotate.registerTweakpane(
+      parameter,
+      manager,
+      folder,
+      `${id}:rotate`,
+      "Rotate",
+      "target.animation.rotate",
+      "target.animation.timeline"
+    );
+
+    Shake.registerTweakpane(
+      parameter,
+      manager,
+      folder,
+      `${id}:shake`,
+      "Shake",
+      "target.animation.shake",
+      "target.animation.timeline"
+    );
+
+    const monitorModule = manager.createModule({
+      id: `${id}:monitor`,
+      container: folder,
+      stateDefaults: {
         target_monitor_y: "",
-      });
+      },
+      channelId: "tweakpane",
+    });
 
-      if (props.items.folder == null) {
-        props.items.folder = props.items.pane.addFolder({
-          title: props.folder_name_prefix + "Target",
-          expanded: false,
-        });
-      }
+    monitorModule.addBinding("target_monitor_y", {
+      label: "Target",
+      readonly: true,
+      multiline: true,
+      rows: 3,
+    });
 
-      const brush_defaults: Brush_ParameterTweakpane = {
-        brush_shape: "Rect",
-        brush_position_x: 0.5,
-        brush_position_y: 0.5,
-        brush_scale: 1.0,
-        brush_scale_x: 1.0,
-        brush_scale_y: 0.1,
-        brush_rotate: 0,
-        brush_border: 0.08,
-        brush_borderColor: "#efefef7F",
-        brush_fillColor: "#efefef7F",
-      };
-
-      Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.folder,
-          tab: null,
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "target",
-        excludes: [],
-        defaults: brush_defaults,
-      });
-
-      props.items.folder.addBlade({ view: "separator" });
-
-      Breathe.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.folder,
-          tab: null,
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "target",
-      });
-
-      props.items.folder.addBlade({ view: "separator" });
-
-      Rotate.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.folder,
-          tab: null,
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "target",
-      });
-
-      props.items.folder.addBlade({ view: "separator" });
-
-      Shake.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items: {
-          pane: props.items.pane,
-          folder: props.items.folder,
-          tab: null,
-        },
-        folder_name_prefix: "",
-        use_separator: false,
-        parameterSetName: "target",
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, "target_monitor_y", {
-        label: "Target",
-        readonly: true,
-        multiline: true,
-        rows: 3,
-      });
-
-      return props.items;
-    },
-    inject_parameterset_to(parameter: any) {
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "target",
-      };
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
-
-      if (!("brush" in targetSet)) targetSet.brush = {};
-      if (!("animation" in targetSet)) targetSet.animation = {};
-
-      Brush.tweakpaneSupport.inject_parameterset_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-      Breathe.tweakpaneSupport.inject_parameterset_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-      Rotate.tweakpaneSupport.inject_parameterset_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-      Shake.tweakpaneSupport.inject_parameterset_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-    },
-    transfer_tweakpane_parameter_to(parameter: any) {
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "target",
-      };
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
-
-      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-      Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-      Rotate.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-      Shake.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, {
-        parameterSetName: "target",
-        parameterSet: targetSet,
-      });
-    },
-  };
+    return folder;
+  }
 }

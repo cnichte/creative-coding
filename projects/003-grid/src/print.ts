@@ -169,39 +169,29 @@ export default function printMe() {
  
      // this.parameter = Object.assign(this.parameter, parameter); // ?? nötig? vgl. 002-shape
  
-     // tweakpane, null, false, parameter, ""
-     ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-       items: tweakpane_items,
-       folder_name_prefix: "",
-       use_separator: false,
-       parameterSetName: "",
-       excludes: [],
-       defaults: {},
-     });
- 
-     // Inject ParameterSets and init with Tweakpane-Parameters
-     BackgroundShape.tweakpaneSupport.provide_tweakpane_to(parameter, {
-       items: tweakpane_items,
-       folder_name_prefix: "Background ",
-       use_separator: false,
-       parameterSetName: "",
-       excludes: [],
-       defaults: {},
-     });
- 
-     Grid_Manager.tweakpaneSupport.provide_tweakpane_to(parameter, {
-       items: {
-         pane: tweakpane_items.pane,
-         folder: null,
-         tab: null
-       },
-       folder_name_prefix: "",
-       use_separator: false,
-       parameterSetName: "",
-       excludes: [],
-       defaults: {},
-     });
- 
+    // tweakpane, null, false, parameter, ""
+    if (tweakpane_items?.manager) {
+       ColorSet.registerTweakpane(parameter, tweakpane_items.manager, {
+         container: tweakpane_items.pane,
+         title: "Color Palette",
+       });
+
+       BackgroundShape.registerTweakpane(parameter, {
+         manager: tweakpane_items.manager,
+         container: tweakpane_items.pane,
+       });
+
+       const gridFolder = tweakpane_items.pane.addFolder({
+         title: "Grid",
+         expanded: false,
+       });
+
+       Grid_Manager.registerTweakpane(parameter, {
+         manager: tweakpane_items.manager,
+         container: gridFolder,
+       });
+      }
+
      // create my Artwork-Objects
      this.background = new BackgroundShape(parameter);
  
@@ -235,11 +225,7 @@ export default function printMe() {
     */
    animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
      // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
- 
-     // transfert all the tweakpane-parameters to the parameter-sets
-     BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-     ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
- 
+
      // check the colorSets animation-timer.
      // calls all Listeners animate_slow Method when time is up.
      // TODO anbinden: this.animation_halt = parameter.artwork...
@@ -253,12 +239,12 @@ export default function printMe() {
  
      // pick color and inform Observers
      if (this.colorSet != null)
-       this.colorSet.check_ObserverSubject({
-         groupname: parameter.tweakpane.colorset_groupname,
-         mode: parameter.tweakpane.colorset_mode,
-         variant: parameter.tweakpane.colorset_variante,
-         number: parameter.tweakpane.colorset_number,
-       });
+     this.colorSet.check_ObserverSubject({
+       groupname: parameter.colorset.groupname,
+       mode: parameter.colorset.mode,
+       variant: parameter.colorset.variant,
+       number: parameter.colorset.number,
+     });
  
      // update, animate, draw
      if (this.scene != null) this.scene.draw(ctx, parameter);

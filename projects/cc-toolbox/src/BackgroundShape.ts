@@ -37,27 +37,27 @@
  */
 
  // BackgroundShape.ts
-import { Pane } from "tweakpane";
-
-const Color = require("canvas-sketch-util/color");
-
 import { Background } from "./Background";
-import { Brush, type Brush_ParameterTweakpane } from './Brush';
+import { Brush, type Brush_ParameterTweakpane } from "./Brush";
 import { ColorSet } from "./ColorSet";
 import { Format } from "./Format";
 import { Size } from "./Size";
 import { Shape } from "./Shape";
 import { Vector } from "./Vector";
 import type { ObserverSubject } from "./ObserverPattern";
-
-import {
-  TweakpaneSupport,
-  type Provide_Tweakpane_To_Props,
-  type TweakpaneSupport_Props,
-  type Tweakpane_Items,
-} from "./TweakpaneSupport";
-
 import { AnimationTimeline } from "./AnimationTimeline";
+import { ParameterManager } from "./ParameterManager";
+import {
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";
+
+interface BackgroundShapeTweakpaneOptions {
+  manager: TweakpaneManager;
+  container: TweakpaneContainer;
+  brushDefaults?: Partial<Brush_ParameterTweakpane>;
+}
+import { IOManager } from "./IOManager";
 import { Breathe } from './animation/Breathe';
 
 export interface BackgroundShape_ParameterSet {
@@ -155,8 +155,6 @@ export class BackgroundShape extends Background {
   draw(context: any, parameter: any) {
     super.draw(context, parameter);
 
-    BackgroundShape.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter); // Assign Tweakpane parameter
-
     let position_brush_percent = parameter.backgroundshape.brush.position;
     let position_px: Vector = new Vector(parameter.artwork.canvas.size.width, parameter.artwork.canvas.size.height).multiply(position_brush_percent);
 
@@ -184,172 +182,84 @@ export class BackgroundShape extends Background {
     Shape.draw(context, position_px, size_px, brush, true);
   }
 
+  public static ensureParameterSet(parameter: any) {
+    const manager = ParameterManager.from(parameter);
+    const canvasSize = parameter?.artwork?.canvas?.size ?? new Size(1, 1, 1);
+
+    const defaults = {
+      size: new Size(
+        canvasSize.width * 0.5,
+        canvasSize.height * 0.5,
+        canvasSize.height * 0.25
+      ),
+      brush: new Brush(),
+      background: {
+        color: "#efefefFF",
+      },
+    };
+
+    const result = manager.ensure("backgroundshape", defaults);
+
+    // normalize potential plain objects
+    if (!(result.size instanceof Size)) {
+      const sz = result.size || {};
+      result.size = new Size(
+        sz.width ?? canvasSize.width * 0.5,
+        sz.height ?? canvasSize.height * 0.5,
+        sz.radius ?? (canvasSize.height ?? 1) * 0.25
+      );
+    }
+
+    if (!(result.brush instanceof Brush)) {
+      result.brush = new Brush(result.brush);
+    }
+
+    return result;
+  }
+
   //* --------------------------------------------------------------------
   //*
   //* Parameter-Set Object + Tweakpane
   //*
   //* --------------------------------------------------------------------
 
-  /**
-   * TweakpaneSupport has three Methods:
-   *
-   * - inject_parameterset_to
-   * - transfer_tweakpane_parameter_to
-   * - provide_tweakpane_to
-   *
-   * @static
-   * @type {TweakpaneSupport}
-   * @memberof BackgroundShape
-   */
-  public static tweakpaneSupport: TweakpaneSupport = {
-    /**
-     ** --------------------------------------------------------------------
-     ** Inject
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    inject_parameterset_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName: "",
-      }
-    ): void {
-      Background.tweakpaneSupport.inject_parameterset_to(parameter);
+  public static registerTweakpane(
+    parameter: any,
+    options: BackgroundShapeTweakpaneOptions
+  ) {
+    const { manager, container, brushDefaults } = options;
+    BackgroundShape.ensureParameterSet(parameter);
 
-      let pt: any = parameter.tweakpane; // prefixable
+    const defaults: Brush_ParameterTweakpane = {
+      brush_shape: "Circle",
+      brush_position_x: 0.5,
+      brush_position_y: 0.5,
+      brush_scale: 1.0,
+      brush_scale_x: 1.0,
+      brush_scale_y: 1.0,
+      brush_rotate: 0,
+      brush_border: 0.18,
+      brush_borderColor: "#efefef7F",
+      brush_fillColor: "#efefef7F",
+      ...(brushDefaults ?? {}),
+    };
 
-      let tp_prefix = TweakpaneSupport.create_tp_prefix(props.parameterSetName);
+    Brush.registerTweakpane(parameter, {
+      manager: manager,
+      container: container,
+      parameterPath: ["backgroundshape"],
+      statePath: ["backgroundshape", "brush"],
+      defaults: defaults,
+      id: "backgroundshape:brush",
+    });
 
-      // Die initiale Größe des Shapes.
-      let _parameterSet: BackgroundShape_ParameterSet = {
-        size: new Size(
-          parameter.artwork.canvas.size.width * 0.5,
-          parameter.artwork.canvas.size.height * 0.5,
-          parameter.artwork.canvas.size.height * 0.25
-        ),
-      };
+    Background.registerTweakpane(parameter, {
+      manager: manager,
+      container: container,
+      statePath: ["backgroundshape", "background"],
+      label: "Background",
+      id: "backgroundshape:background",
+    });
+  }
 
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "backgroundshape",
-      };
-      const targetSet = TweakpaneSupport.ensureParameterSet(
-        parameter,
-        props_default
-      );
-
-      Object.assign(targetSet, _parameterSet);
-
-      let props1: TweakpaneSupport_Props = {
-        parameterSetName: "backgroundshape",
-        parameterSet: targetSet,
-      };
-
-      Brush.tweakpaneSupport.inject_parameterset_to(parameter, props1);
-      
-      // TODO AnimationTimer.tweakpaneSupport.inject_parameterset_to(parameter.colorset, parameter_tweakpane, "colorset");
-      // TODO Breathe.tweakpaneSupport.inject_parameterset_to(parameter.accent, parameter.tweakpane, "accent");
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Transfert
-     ** --------------------------------------------------------------------
-     * @param parameter
-     * @param parameterSetName
-     */
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props: TweakpaneSupport_Props = {
-        parameterSetName: "",
-      }
-    ): void {
-      let tweakpane_props: TweakpaneSupport_Props = {
-        parameterSetName: "backgroundshape",
-        parameterSet: TweakpaneSupport.ensureParameterSet(parameter, {
-          parameterSetName: "backgroundshape",
-        }),
-      };
-
-      // TODO Breathe.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter.accent, parameter.tweakpane, "accent");
-
-      // im Brush steckt position und scale/size
-      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter, tweakpane_props);
-    },
-    /**
-     ** --------------------------------------------------------------------
-     ** Tweakpane
-     ** --------------------------------------------------------------------
-     *
-     * @abstract
-     * @param {*} parameter - The parameter object
-     * @param {Provide_Tweakpane_To_Props} props
-     * @return {*}  {*}
-     * @memberof TweakpaneSupport
-     */
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ):Tweakpane_Items {
-      let brush_defaults: Brush_ParameterTweakpane = {
-        brush_shape: "Circle",
-        brush_position_x: 0.5, // Die initiale Position des Shapes.
-        brush_position_y: 0.5,
-        brush_scale: 1.0,
-        brush_scale_x: 1.0,
-        brush_scale_y: 1.0,
-        brush_rotate: 0,
-        brush_border: 0.18,
-        brush_borderColor: "#efefef7F",
-        brush_fillColor: "#efefef7F",
-      };
-
-      /*
-      folder_name_prefix + "BackgroundShape:",
-      pane,
-      null,
-      parameter.tweakpane,
-      "backgroundShape",
-      [],
-      brush_defaults
-    */
-
-      const tpi_brush: Tweakpane_Items = Brush.tweakpaneSupport.provide_tweakpane_to(parameter, {
-        items:{
-          pane: props.items.pane,
-          folder: null,
-          tab: null
-        },
-        folder_name_prefix: props.folder_name_prefix,
-        use_separator: false,
-        parameterSetName: "backgroundshape",
-        excludes: [],
-        defaults: brush_defaults,
-      });
-
-      // pane, folder, "", false, parameter, folder_name_prefix
-      props.items.folder = Background.tweakpaneSupport.provide_tweakpane_to(
-        parameter,
-        {
-          items:{
-            pane: props.items.pane,
-            folder: tpi_brush.folder,
-            tab: null
-          },
-          folder_name_prefix: props.folder_name_prefix,
-          use_separator: true,
-          parameterSetName: "", // TODO not supported
-          excludes: [],
-          defaults: {},
-        }
-      );
-
-      // TODO müsste erfolgen nach dem das TP initialisiert ist
-      BackgroundShape.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      // TODO folder.addSeparator();
-      // TODO Breathe.tweakpaneSupport.provide_tweakpane_to(pane, folder, parameter_tweakpane, "accent");
-
-      return props.items;
-    },
-  };
 } // class

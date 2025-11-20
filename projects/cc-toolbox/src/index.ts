@@ -56,7 +56,6 @@ export { Format,
     type Format_ParameterSet_Values,
     type Check_ObserverSubject_Format_Parameter } from "./Format";
 export { Grid_Manager } from "./Grid_Manager";
-export { Mathematics } from "./Mathematics";
 export { ObserverSubject, type Observer } from "./ObserverPattern";
 export { ParameterObject } from "./ParameterObject";
 export { SceneGraph, type Drawable } from "./SceneGraph";
@@ -64,6 +63,11 @@ export { Shape } from "./Shape";
 export { Size } from "./Size";
 export { SketchRunner, 
     type Sketch } from "./Sketch";
+export { ParticleManager } from "./Particles";
+export { Random } from "./Random";
+export { ColorUtils } from "./ColorUtils";
+export { Noise } from "./Noise";
+export { Mathematics } from "./Mathematics";
 export { TweakpaneSupport, 
     type Provide_Tweakpane_To_Props, 
     type Tweakpane_Items, 
@@ -74,3 +78,10 @@ export {
   ParameterManager,
   type ParameterMappingEntry,
 } from "./ParameterManager";
+export { IOManager, type IOBinding, type IOContext } from "./IOManager";
+export {
+  TweakpaneManager,
+  TweakpaneModule,
+  type TweakpaneModuleOptions,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";

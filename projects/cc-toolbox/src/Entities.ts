@@ -38,23 +38,30 @@
  */
 
  // Entities.ts
-import { Brush, type Brush_ParameterTweakpane } from "./Brush";
+import { Brush, type Brush_ParameterTweakpane, type BrushTweakpaneOptions } from "./Brush";
 import { ColorSet, type ColorSet_ParameterSet } from "./ColorSet";
 import { Format } from "./Format";
 import { ObserverSubject, type Observer } from "./ObserverPattern";
 import { SceneGraph, type Drawable } from "./SceneGraph";
 import { Shape } from "./Shape";
 import { Size } from "./Size";
-import {
-  TweakpaneSupport,
-  type TweakpaneSupport_Props,
-  type Provide_Tweakpane_To_Props,
-  type Tweakpane_Items,
-} from "./TweakpaneSupport";
 import { Vector } from "./Vector";
+import type { TweakpaneModule } from "./TweakpaneManager";
 
-const random = require("canvas-sketch-util/random");
-const math = require("canvas-sketch-util/math");
+interface EntityTweakpaneOptions {
+  manager: TweakpaneManager;
+  container: TweakpaneContainer;
+  id?: string;
+  statePath?: string | string[];
+}
+import { ParameterManager } from "./ParameterManager";
+import {
+  TweakpaneManager,
+  type TweakpaneContainer,
+} from "./TweakpaneManager";
+import { IOManager } from "./IOManager";
+import { Random } from "./Random";
+import { Mathematics } from "./Mathematics";
 
 export class Entity_Manager extends ObserverSubject {
   private parameter: any;
@@ -83,6 +90,7 @@ export class Entity_Manager extends ObserverSubject {
     super();
 
     this.parameter = parameter;
+    Entity_Manager.ensureParameterSet(this.parameter);
     this.sceneGraph = new SceneGraph();
 
     this.lastCount = -1;
@@ -136,6 +144,23 @@ export class Entity_Manager extends ObserverSubject {
       entityConnectionBorderColor: "#2a27ebff",
     };
   } // constructor
+
+  public static ensureParameterSet(parameter: any) {
+    const manager = ParameterManager.from(parameter);
+    const defaults = {
+      bounceMode: true,
+      count: 40,
+      distanceFactor: 0.0,
+      nature: "uniform",
+      sizeRange: {
+        min: 0.01,
+        max: 0.1,
+      },
+      brush: new Brush(),
+    };
+
+    return manager.ensure("entity", defaults);
+  }
 
   animationTimerReset() {
     // TODO this.sceneGraph.animationTimer.reset();
@@ -252,18 +277,18 @@ export class Entity_Manager extends ObserverSubject {
         let diff = count - entitiesInScene;
         for (var i = 0; i < diff; i++) {
           const min =
-            this.parameter.tweakpane.entity_sizeRange.min *
+            this.parameter.entity.sizeRange.min *
             this.parameter.artwork.canvas.size.width;
           const max =
-            this.parameter.tweakpane.entity_sizeRange.max **
+            this.parameter.entity.sizeRange.max **
             this.parameter.artwork.canvas.size.width;
 
-          const radius = random.range(min, max);
-          const x = random.range(
+        const radius = Random.range(min, max);
+        const x = Random.range(
             0 + radius,
             this.parameter.artwork.canvas.size.width - radius
           );
-          const y = random.range(
+        const y = Random.range(
             0 + radius,
             this.parameter.artwork.canvas.size.height - radius
           );
@@ -277,6 +302,107 @@ export class Entity_Manager extends ObserverSubject {
 
     this.lastCount = count;
   } // add_or_remove_entities
+
+  public static registerTweakpane(
+    parameter: any,
+    options: EntityTweakpaneOptions
+  ): TweakpaneModule | null {
+    if (!options.manager) return null;
+
+    const entity = Entity_Manager.ensureParameterSet(parameter);
+
+    const module = options.manager.createModule({
+      id: options.id ?? "entity",
+      container: options.container,
+      statePath: options.statePath ?? ["entity"],
+      stateDefaults: {
+        nature: entity.nature,
+        sizeRange: entity.sizeRange,
+        bounceMode: entity.bounceMode,
+        count: entity.count,
+        distanceFactor: entity.distanceFactor,
+      },
+      parameterPath: "entity",
+      parameterDefaults: entity,
+      // use a dedicated channel so mappings read from the module state
+      channelId: undefined,
+    });
+
+    module.addBinding(
+      "nature",
+      {
+        label: "Nature",
+        options: {
+          individual: "individual",
+          uniform: "uniform",
+        },
+      },
+      { target: "entity.nature" }
+    );
+
+    module.addBinding(
+      "sizeRange",
+      {
+        label: "Size",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+      { target: "entity.sizeRange" }
+    );
+
+    module.addBinding(
+      "bounceMode",
+      {
+        label: "Bounce",
+      },
+      { target: "entity.bounceMode" }
+    );
+
+    module.addBinding(
+      "count",
+      {
+        label: "Anzahl",
+        min: 1,
+        max: 1500,
+        step: 1,
+      },
+      { target: "entity.count" }
+    );
+
+    module.addBinding(
+      "distanceFactor",
+      {
+        label: "Connect",
+        min: 0.0,
+        max: 1,
+        step: 0.01,
+      },
+      { target: "entity.distanceFactor" }
+    );
+
+    Brush.registerTweakpane(parameter, {
+      manager: options.manager,
+      container: options.container,
+      parameterPath: ["entity"],
+      statePath: ["entity", "brush"],
+      id: `${options.id ?? "entity"}:brush`,
+      defaults: {
+        brush_shape: "Circle",
+        brush_position_x: 0.5,
+        brush_position_y: 0.5,
+        brush_scale: 1.0,
+        brush_scale_x: 1.0,
+        brush_scale_y: 1.0,
+        brush_rotate: 0,
+        brush_border: 0.18,
+        brush_borderColor: "#efefef7F",
+        brush_fillColor: "#efefef7F",
+      },
+    });
+
+    return module;
+  }
 
   /**
    * Move and draw all the entitys and draw the lines.
@@ -339,7 +465,7 @@ export class Entity_Manager extends ObserverSubject {
           context.save();
           context.fillStyle = this.randomized.entityConnectionFillColor;
           context.strokeStyle = this.randomized.entityConnectionBorderColor;
-          context.lineWidth = math.mapRange(
+          context.lineWidth = Mathematics.map_range(
             distance,
             0,
             the_distance,
@@ -359,153 +485,6 @@ export class Entity_Manager extends ObserverSubject {
     this.sceneGraph.draw(context, parameter);
   } // draw
 
-  public static tweakpaneSupport: TweakpaneSupport = {
-    provide_tweakpane_to: function (
-      parameter: any,
-      props: Provide_Tweakpane_To_Props
-    ): Tweakpane_Items {
-      // Inject Tweakpane parameters
-      parameter.tweakpane = Object.assign(parameter.tweakpane, {
-        entity_bounceMode: true,
-        entity_count: 40,
-        entity_distanceFactor: 0.0,
-        entity_nature: "uniform", // 'individual'
-        entity_sizeRange: {
-          min: 0.01,
-          max: 0.1,
-        },
-      });
-
-      Entity_Manager.tweakpaneSupport.inject_parameterset_to(parameter);
-
-      let brush_defaults: Brush_ParameterTweakpane = {
-        brush_shape: "Circle",
-        brush_position_x: 0.5, // Die initiale Position des Shapes.
-        brush_position_y: 0.5,
-        brush_scale: 1.0,
-        brush_scale_x: 1.0,
-        brush_scale_y: 1.0,
-        brush_rotate: 0,
-        brush_border: 0.18,
-        brush_borderColor: "#efefef7F",
-        brush_fillColor: "#efefef7F",
-      };
-
-      // TODO folder_name_prefix + "Entity::", pane, folder, parameter_tweakpane, "entity", [], brush_defaults
-      let brush_tp_props: Provide_Tweakpane_To_Props = {
-        items: {
-          pane: props.items.pane,
-          folder: null,
-          tab: null,
-        },
-        folder_name_prefix: "Entities > ",
-        use_separator: false,
-        parameterSetName: "entity",
-        excludes: [],
-        defaults: brush_defaults,
-      };
-
-      const tpi_brush: Tweakpane_Items =
-        Brush.tweakpaneSupport.provide_tweakpane_to(parameter, brush_tp_props);
-
-      props.items.folder = props.items.pane.addFolder({
-        title: "Entities > Appearance",
-        expanded: false,
-      });
-
-      props.items.folder.addBlade({
-        view: "separator",
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, "entity_nature", {
-        label: "Nature",
-        options: {
-          individual: "individual",
-          uniform: "uniform",
-        },
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, "entity_sizeRange", {
-        label: "Size",
-        min: 0,
-        max: 1,
-        step: 0.01,
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, "entity_bounceMode", {
-        label: "Bounce",
-      });
-
-      props.items.folder.addBinding(parameter.tweakpane, "entity_count", {
-        label: "Anzahl",
-        min: 1,
-        max: 1500,
-        step: 1,
-      });
-
-      props.items.folder.addBinding(
-        parameter.tweakpane,
-        "entity_distanceFactor",
-        {
-          label: "Connect",
-          min: 0.0,
-          max: 1,
-          step: 0.01,
-        }
-      );
-
-      return props.items;
-    },
-    inject_parameterset_to: function (
-      parameter: any,
-      props?: TweakpaneSupport_Props | undefined
-    ): void {
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "entity",
-      };
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
-
-      Object.assign(targetSet, {
-        bounceMode: parameter.tweakpane.entity_bounceMode,
-        count: parameter.tweakpane.entity_count,
-        distanceFactor: parameter.tweakpane.entity_distanceFactor,
-        nature: parameter.tweakpane.entity_nature,
-        sizeRange: parameter.tweakpane.entity_sizeRange,
-      });
-
-      const brush_props: TweakpaneSupport_Props = {
-        parameterSetName: "entity",
-        parameterSet: targetSet,
-      };
-
-      Brush.tweakpaneSupport.inject_parameterset_to(parameter, brush_props);
-    },
-    transfer_tweakpane_parameter_to: function (
-      parameter: any,
-      props?: TweakpaneSupport_Props | undefined
-    ): void {
-      const props_default: TweakpaneSupport_Props = {
-        parameterSetName: "entity",
-      };
-      const targetSet = TweakpaneSupport.ensureParameterSet(parameter, props_default);
-
-      targetSet.bounceMode = parameter.tweakpane.entity_bounceMode;
-      targetSet.count = parameter.tweakpane.entity_count;
-      targetSet.distanceFactor = parameter.tweakpane.entity_distanceFactor;
-      targetSet.nature = parameter.tweakpane.entity_nature;
-      targetSet.sizeRange = parameter.tweakpane.entity_sizeRange;
-
-      const brush_props: TweakpaneSupport_Props = {
-        parameterSetName: "entity",
-        parameterSet: targetSet,
-      };
-
-      Brush.tweakpaneSupport.transfer_tweakpane_parameter_to(
-        parameter,
-        brush_props
-      );
-    },
-  };
 } // class Manager
 
 export class Entity implements Drawable, Observer {
@@ -528,7 +507,7 @@ export class Entity implements Drawable, Observer {
     };
 
     this.position = new Vector(x, y);
-    this.velocity = new Vector(random.range(-1, 1), random.range(-1, 1));
+    this.velocity = new Vector(Random.range(-1, 1), Random.range(-1, 1));
     this.radius = radius;
 
     this.radius_min = -1;
@@ -537,8 +516,8 @@ export class Entity implements Drawable, Observer {
     this.bouncemode = true;
 
     if (
-      random.range(0, parameter.tweakpane.entity_count) <
-      parameter.tweakpane.entity_count * 0.5
+      Random.range(0, parameter.entity.count) <
+      parameter.entity.count * 0.5
     ) {
       this.bouncemode = false;
     }
@@ -641,14 +620,12 @@ export class Entity implements Drawable, Observer {
 
     // Buffer the actual radius-range, and change the radius only id parameters modified
     const min =
-      parameter.tweakpane.entity_sizeRange.min *
-      parameter.artwork.canvas.size.width;
+      parameter.entity.sizeRange.min * parameter.artwork.canvas.size.width;
     const max =
-      parameter.tweakpane.entity_sizeRange.max *
-      parameter.artwork.canvas.size.width;
+      parameter.entity.sizeRange.max * parameter.artwork.canvas.size.width;
 
     if (min != this.radius_min || max != this.radius_max) {
-      this.radius = random.range(min, max);
+      this.radius = Random.range(min, max);
       this.radius_min = min;
       this.radius_max = max;
     }
@@ -697,7 +674,7 @@ export class Entity implements Drawable, Observer {
 
     // I want half of the entities to bounce, and the other half to wrap.
     // This behaviour is defined in the constructor.
-    if (parameter.tweakpane.entity_bounceMode && this.bouncemode) {
+    if (parameter.entity.bounceMode && this.bouncemode) {
       this.bounce(parameter.artwork.canvas.size);
     } else {
       this.wrap(parameter.artwork.canvas.size);

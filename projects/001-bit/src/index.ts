@@ -116,25 +116,26 @@ class MySketch implements Sketch {
       this.ctx = ctx;
     }
 
-    // tweakpane, null, false, parameter, ""
-    ColorSet.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
-      folder_name_prefix: "",
-      use_separator: true,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
+    if (tweakpane_items?.manager) {
+      ColorSet.registerTweakpane(parameter, tweakpane_items.manager, {
+        container: tweakpane_items.pane,
+        title: "Color Palette",
+        expanded: false,
+      });
 
-    // provide tweakpanes...
-    Background.tweakpaneSupport.provide_tweakpane_to(parameter, {
-      items: tweakpane_items,
-      folder_name_prefix: "",
-      use_separator: false,
-      parameterSetName: "",
-      excludes: [],
-      defaults: {},
-    });
+      const backgroundFolder =
+        tweakpane_items.folder ??
+        tweakpane_items.pane.addFolder({
+          title: "Background",
+          expanded: false,
+        });
+      Background.registerTweakpane(parameter, {
+        manager: tweakpane_items.manager,
+        container: backgroundFolder,
+        statePath: ["background"],
+        label: "Background",
+      });
+    }
 
     // create my artwork objects
     this.background = new Background(parameter);
@@ -165,10 +166,6 @@ class MySketch implements Sketch {
 
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
-    // transfert all the tweakpane-parameters to the parameter-sets
-    Background.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-    ColorSet.tweakpaneSupport.transfer_tweakpane_parameter_to(parameter);
-
     // check the colorSets animation-timer.
     // calls all Listeners animate_slow Method when time is up.
     // TODO anbinden: this.animation_halt = parameter.artwork...
@@ -181,10 +178,10 @@ class MySketch implements Sketch {
 
     // pick color and inform Observers
     this.colorSet.check_ObserverSubject({
-      groupname: parameter.tweakpane.colorset_groupname,
-      mode: parameter.tweakpane.colorset_mode,
-      variant: parameter.tweakpane.colorset_variante,
-      number: parameter.tweakpane.colorset_number,
+      groupname: parameter.colorset.groupname,
+      mode: parameter.colorset.mode,
+      variant: parameter.colorset.variant,
+      number: parameter.colorset.number,
     });
 
     // update, animate, draw
