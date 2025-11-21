@@ -25,6 +25,9 @@ export interface TweakpaneModuleOptions {
   title?: string;
   container?: TweakpaneContainer;
   expanded?: boolean;
+  insertSeparator?: boolean;
+  wrapInFolder?: boolean;
+  folderTitle?: string;
   statePath?: StatePath;
   stateDefaults?: Record<string, any>;
   parameterPath?: string | string[];
@@ -81,6 +84,9 @@ export class TweakpaneManager {
     }
 
     const container = this.resolveContainer(options);
+    if (options.insertSeparator && "addBlade" in container) {
+      (container as any).addBlade({ view: "separator" });
+    }
 
     return new TweakpaneModule(this, {
       id: options.id,
@@ -97,9 +103,20 @@ export class TweakpaneManager {
   }
 
   private resolveContainer(options: TweakpaneModuleOptions): TweakpaneContainer {
+    const base = options.container ?? this.pane;
+
+    if (options.wrapInFolder !== false && "addFolder" in base) {
+      return (base as any).addFolder({
+        title: options.folderTitle ?? options.title ?? options.id,
+        expanded: options.expanded ?? false,
+      });
+    }
+
     if (options.container) {
       return options.container;
     }
+
+    // fallback: create folder on root pane
     return this.pane.addFolder({
       title: options.title ?? options.id,
       expanded: options.expanded ?? false,

@@ -64,6 +64,7 @@ export interface AnimationTimerTweakpaneOptions {
   container: TweakpaneContainer;
   parameterPath: string | string[];
   statePath?: string | string[];
+  insertSeparator?: boolean;
   stateDefaults?: Record<string, any>;
   channelId?: string;
   labels?: {
@@ -291,6 +292,7 @@ export class AnimationTimer {
     const module = manager.createModule({
       id: options.id ?? `animationTimer:${targetPath}`,
       container,
+      insertSeparator: options.insertSeparator ?? true,
       statePath: options.statePath,
       stateDefaults,
       parameterPath: path,

@@ -278,6 +278,7 @@ export class Brush implements Brush_ParameterSet {
     const module = options.manager.createModule({
       id: options.id ?? "brush",
       container: options.container,
+      insertSeparator: true,
       statePath: options.statePath,
       stateDefaults: defaults,
       channelId: options.channelId ?? "tweakpane",

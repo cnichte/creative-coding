@@ -800,6 +800,7 @@ export class ColorSet {
       parameterPath: "colorset",
       parameterDefaults: colorset,
       channelId: "tweakpane",
+      insertSeparator: true,
     });
 
     module.addBinding(
