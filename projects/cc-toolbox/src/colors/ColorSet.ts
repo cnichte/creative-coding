@@ -455,7 +455,7 @@ export class ColorSet {
       // preserve existing animation settings on target
     }
 
-    if (Debug.isEnabled(this.parameter, "colorset.animation.timer")) {
+    if (Debug.isEnabled("colorset.animation.timer")) {
       console.log("[ColorSet] state", {
         mode: this.state.colorset.mode,
         group: this.state.colorset.groupname,

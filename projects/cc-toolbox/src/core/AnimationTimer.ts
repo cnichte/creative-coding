@@ -156,8 +156,8 @@ export class AnimationTimer {
     }
 
     const debugLog =
-      Debug.isEnabled(parameterset, "animation.timer") ||
-      Debug.isEnabled(parameterset, "colorset.animation.timer");
+      Debug.isEnabled("animation.timer") ||
+      Debug.isEnabled("colorset.animation.timer");
 
     if (doAnimate && !animation_halt) {
       let target_time = deltaTime * slowDownFactor;

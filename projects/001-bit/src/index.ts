@@ -47,6 +47,7 @@ import {
   Artwork_Canvas,
   Artwork_Canvas_HTML,
   Artwork_ParameterSet,
+  Debug,
 } from "@carstennichte/cc-toolbox";
 
 /*
@@ -115,6 +116,9 @@ class MySketch implements Sketch {
       // singleton-pattern
       this.ctx = ctx;
     }
+
+    Debug.enable("colorset.animation.timer");
+    Debug.enable("animation.timer");
 
     if (tweakpane_items?.manager) {
       // ensure base parameter sets before UI wiring
