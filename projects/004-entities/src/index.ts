@@ -96,7 +96,8 @@ class MySketch implements Sketch {
 
   private animation_halt: boolean;
 
-  private scene: SceneGraph | null;
+  public scene: SceneGraph | null;
+  public useSceneGraph = true;
 
   private parameter: any = {};
   private entity_manager: Entity_Manager | null;
@@ -189,16 +190,8 @@ class MySketch implements Sketch {
 
     this.entity_manager = new Entity_Manager(parameter);
 
-    // Background listens to Format changes
-    format.addObserver(this.background);
-    format.addObserver(this.entity_manager);
-
     // Quadrat listens to ColorSet changes
     this.colorSet = new ColorSet(parameter);
-    this.colorSet.addObserver(this.background);
-    this.colorSet.addObserver(this.entity_manager);
-    this.colorSet.animationTimer.addListener(this.background);
-    this.colorSet.animationTimer.addListener(this.entity_manager);
 
     // Lets set up the Scene
     this.scene = new SceneGraph();
@@ -206,16 +199,7 @@ class MySketch implements Sketch {
     this.scene.push(this.entity_manager);
   } // prepare
 
-  /**
-   * This is called by the SketchRunners ainmationLoop Method.
-   *
-   * @param {Object} ctx
-   * @param {Object} parameter
-   * @param {number} timeStamp
-   * @param {number} deltaTime
-   * @memberof MySketch
-   */
-  animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
+  tickScene(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
     // check the colorSets animation-timer.
@@ -239,8 +223,8 @@ class MySketch implements Sketch {
       });
 
     // update, animate, draw
-    if (this.scene != null) this.scene.draw(ctx, parameter);
-  } // animate
+    if (this.scene != null) this.scene.tick(ctx, parameter, deltaTime);
+  }
 } // class MySketch
 
 /* when all site content is loaded */

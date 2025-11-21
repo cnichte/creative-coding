@@ -56,11 +56,11 @@
  */
 // Format.ts
 
-import { ObserverSubject } from "./ObserverPattern";
 import { Shape } from "./Shape";
 import { Size } from "./Size";
 import { Vector } from "./Vector";
 import { TweakpaneManager } from "./TweakpaneManager";
+import { ParameterManager } from "./ParameterManager";
 
 
 export interface Format_ParameterSet {
@@ -120,7 +120,7 @@ interface PaperSize {
   unit: UnitOfMeasurement
 }
 
-export class Format extends ObserverSubject {
+export class Format {
   private parameter: any;
 
   public state: State;
@@ -234,8 +234,6 @@ export class Format extends ObserverSubject {
    * @param {Object} parameter
    */
   constructor(parameter: any) {
-    super();
-
     this.parameter = parameter;
 
     this.state = { //? Format.get_default_paramterset(parameter);
@@ -452,9 +450,6 @@ export class Format extends ObserverSubject {
 
 
 
-    // notify all listeners
-    if (doNotify)
-      super.notifyAll(this, this.state.format, this.state_last.format);
   }
 
   /**

@@ -56,7 +56,7 @@ export abstract class AnimationTimeline_Item {
    */
   public perform_animate_fast_if_in_timeslot(
     parameter: any,
-    animation: { timeline: { startTime: any; endTime: any } }
+    animation: { timeline?: any; timelineSegments?: Array<{ startTime: number; endTime: number }> }
   ): void {
     const animationState = parameter?.artwork?.animation ?? {};
     let time = animationState.timeStamp ?? 0; // in seconds
@@ -64,28 +64,74 @@ export abstract class AnimationTimeline_Item {
 
     let total_duration = animationState.duration ?? 60;
 
-    if (
-      animation.timeline == null ||
-      typeof animation.timeline !== "object" ||
-      !("startTime" in animation.timeline) ||
-      !("endTime" in animation.timeline)
-    ) {
-      animation.timeline = {
-        startTime: 0,
-        endTime: 1,
-      };
+    // normalize segments
+    let segments: Array<{ startTime: number; endTime: number }> = [];
+
+    if (Array.isArray((animation as any).timeline)) {
+      segments = (animation as any).timeline
+        .map((seg: any) => ({
+          startTime: Number(seg?.startTime ?? 0),
+          endTime: Number(seg?.endTime ?? 1),
+        }))
+        .filter(
+          (seg: { startTime: number; endTime: number }) =>
+            !isNaN(seg.startTime) && !isNaN(seg.endTime)
+        );
+    } else if (Array.isArray(animation.timelineSegments)) {
+      segments = animation.timelineSegments
+        .map((seg: any) => ({
+          startTime: Number(seg?.startTime ?? 0),
+          endTime: Number(seg?.endTime ?? 1),
+        }))
+        .filter(
+          (seg: { startTime: number; endTime: number }) =>
+            !isNaN(seg.startTime) && !isNaN(seg.endTime)
+        );
     }
 
-    this.startTime = animation.timeline.startTime; // 0-1 (0 to 100%)
-    this.endTime = animation.timeline.endTime; // 0-1 (0 to 100%)
+    if (segments.length === 0) {
+      const tl = animation.timeline ?? {};
+      segments = [
+        {
+          startTime:
+            typeof tl.startTime === "number" ? tl.startTime : 0,
+          endTime: typeof tl.endTime === "number" ? tl.endTime : 1,
+        },
+      ];
+    }
 
-    // animate only in the time-slot...
-    if (
-      this.endTime * total_duration > time &&
-      time > this.startTime * total_duration
-    ) {
-      // Calculate new/next values for a fast animation.
-      this.animate_fast(animation);
+    // clamp segments
+    segments = segments
+      .map((seg) => {
+        const start = Math.max(0, Math.min(1, seg.startTime));
+        const end = Math.max(0, Math.min(1, seg.endTime));
+        if (start === end) {
+          return null;
+        }
+        return start < end
+          ? { startTime: start, endTime: end }
+          : { startTime: end, endTime: start };
+      })
+      .filter(Boolean) as Array<{ startTime: number; endTime: number }>;
+
+    if (segments.length === 0) {
+      segments = [{ startTime: 0, endTime: 1 }];
+    }
+
+    const isInSegment = (seg: { startTime: number; endTime: number } | any): boolean => {
+      this.startTime = seg.startTime;
+      this.endTime = seg.endTime;
+      return (
+        this.endTime * total_duration > time &&
+        time > this.startTime * total_duration
+      );
+    };
+
+    for (let i = 0; i < segments.length; i++) {
+      if (isInSegment(segments[i])) {
+        this.animate_fast(animation);
+        break;
+      }
     }
   }
 

@@ -38,18 +38,17 @@
 
 // SceneGraph.ts
 import { Coordinate } from "./Coordinate";
-import { AnimationTimer } from "./AnimationTimer";
+import type { Agent } from "./Agent";
 
 export interface Drawable {
   draw(context: any, parameter: any): void;
 }
 
+type SceneNode = Drawable & Partial<Agent>;
+
 export class SceneGraph {
 
-  public graph: Drawable[][]; // Its a 2D Storage by default.
-  
-  //! public animation_timeline = new AnimationTimeline();
-  //! public animation_timer = new AnimationTimer(); // Der sitzt in jedem Objekt?
+  public graph: SceneNode[][]; // Its a 2D Storage by default.
   
   /**
    * Creates an instance of SceneGraph.
@@ -116,6 +115,33 @@ export class SceneGraph {
         });
       }
     });
+  }
+
+  /**
+   * Calls update on all nodes that implement it.
+   */
+  public update(parameter: any, deltaTime: number = 0): void {
+    this.graph.forEach((row) => {
+      if (!Array.isArray(row)) return;
+      row.forEach((node) => {
+        if (typeof (node as any).update === "function") {
+          (node as any).update(parameter, deltaTime);
+        }
+      });
+    });
+  }
+
+  /**
+   * Convenience: update then draw.
+   */
+  public tick(
+    context: any,
+    parameter: any,
+    deltaTime: number = 0,
+    limit: number | Coordinate = 0
+  ): void {
+    this.update(parameter, deltaTime);
+    this.draw(context, parameter, limit);
   }
 
   /**
@@ -220,7 +246,7 @@ export class SceneGraph {
   public push(
     something: Drawable,
     index: number = -1,
-    animationTimer: AnimationTimer | null = null
+    animationTimer: any = null
   ): void {
     if (index > -1) {
       if ("draw" in something) {

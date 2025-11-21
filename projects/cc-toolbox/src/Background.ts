@@ -40,7 +40,6 @@ import { Format, type Format_ParameterSet_Values } from "./Format";
 import { Shape } from "./Shape";
 import { Size } from "./Size";
 import { Vector } from "./Vector";
-import type { Observer, ObserverSubject } from "./ObserverPattern";
 
 import { ParameterManager } from "./ParameterManager";
 import { ColorUtils } from "./ColorUtils";
@@ -78,8 +77,7 @@ interface State {
   format: Format_ParameterSet_Values;
 }
 
-export class Background implements Observer {
-  // extends / implements Pattern.Observer
+export class Background {
 
   protected parameter: any;
   protected brush: Brush;
@@ -145,56 +143,15 @@ export class Background implements Observer {
     });
   }
 
-  /**
-   * Is called from the ObserverSubject.
-   * Background listenes to colorset changes.
-   *
-   * state ist zwar jetzt redundant, da es in source enthalten ist.
-   * aber ich identifiziere damit noch die quelle
-   * if ("colorset" in source.state) würde auch gehen, dann könnte state entfallen.
-   *
-   * @param {Object} source
-   * @param {Object} state
-   */
-  update(source: ObserverSubject, state_new: any, state_old: any) {
-    console.log("--------------------------------------------");
-    console.log("Observer state_new", state_new);
-    console.log("Observer state_old", state_old);
-    console.log("--------------------------------------------");
-
-    if (source instanceof ColorSet) {
-      // Die Zuweisung macht nur beim ersten mal Sinn.
-      // Es wird ja ein Pointer (eine Refrerenz) zugewiesen,
-      // und damit ist der Status sowieso immer auf dem aktuellesten Stand.
-      // Jeder weitere Aufruf macht nur Sinn, wenn hier noch was anderes passiert.
-      // zB. irgendwelche Berechnungen...
-
-      // ich bräuchte die refenenz also eh nicht zu speichern.
-      // sondern hier den state von Background aktualisieren durch Verrechnung der Änderungen
-      console.log("Background - colorset-Update:");
-      this.state.colorset = state_new;
+  private syncStateFromParameter() {
+    if (this.parameter?.format) {
+      this.state.format = this.parameter.format;
     }
-
-    if (source instanceof Format) {
-      this.state.format = state_new;
-      console.log("Background - format-Update:");
+    if (this.parameter?.colorset) {
+      this.state.colorset = this.parameter.colorset;
     }
-  }
-
-  /**
-   * This is called by the AnimationTimer.
-   *
-   * @param {Class} source
-   */
-  animate_slow(source: any) {
-    if (source instanceof ColorSet) {
-      let random = ColorSet.get_colors_from_mode(
-        this.state.colorset,
-        this.brush
-      );
-      this.state.colorset.borderColor = random.borderColor;
-      this.state.colorset.fillColor = random.fillColor;
-      this.state.colorset.backgroundColor = random.backgroundColor;
+    if (this.parameter?.background) {
+      this.state.background = this.parameter.background;
     }
   }
 
@@ -205,6 +162,8 @@ export class Background implements Observer {
    * @param {Object} parameter
    */
   draw(context: any, parameter: any) {
+    this.syncStateFromParameter();
+
     // Fill the canvas with Background Color.
 
     if (this.state.colorset.mode !== "use_custom_colors") {

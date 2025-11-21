@@ -26,7 +26,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
-      "@carstennichte/cc-toolbox": path.resolve(__dirname, "../../cc-toolbox/dist"),
+      "@carstennichte/cc-toolbox": path.resolve(__dirname, "../../cc-toolbox/src"),
     },
   },
   module: {

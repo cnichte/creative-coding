@@ -9,7 +9,6 @@
 import { Brush, type Brush_ParameterSet } from "./Brush";
 import { ColorSet } from "./ColorSet";
 import { Format } from "./Format";
-import { ObserverSubject, type Observer } from "./ObserverPattern";
 import { ParameterManager } from "./ParameterManager";
 import { Size } from "./Size";
 import {
@@ -41,12 +40,11 @@ export interface ParticleModuleOptions {
   statePath?: string | string[];
 }
 
-export class ParticleManager extends ObserverSubject {
+export class ParticleManager {
   private parameter: any;
   private particles: Particle[];
 
   constructor(parameter: any) {
-    super();
     this.parameter = parameter;
     ParticleManager.ensureParameterSet(this.parameter);
     this.particles = [];
@@ -228,114 +226,75 @@ export class ParticleManager extends ObserverSubject {
     return module;
   }
 
-  public check_ObserverSubject(): void {
-    // not used; required by base class
-  }
-
-  public update(source: ObserverSubject, state_new: any) {
-    if (source instanceof Format || source instanceof ColorSet) {
-      super.notifyAll(source, state_new);
-    }
-  }
-
-  // satisfy Animable (AnimationTimer listeners)
-  public animate_slow(_source: any, _parameter: any): void {
-    // hook for future slow animations; particles are updated in draw()
-  }
-
   public draw(context: CanvasRenderingContext2D, parameter: any) {
     ParticleManager.ensureParameterSet(parameter);
 
     const countDesired = Math.max(1, Math.round(parameter.particle.count ?? 0));
     while (this.particles.length < countDesired) {
       this.particles.push(new Particle(this.particles.length, parameter));
-      super.addObserver(this.particles[this.particles.length - 1]);
     }
     while (this.particles.length > countDesired) {
       const removed = this.particles.pop();
-      if (removed) super.removeObserver(removed);
     }
 
-    const mgrState = {
-      manager: {
-        particle: {
-          count: countDesired,
-          margin: parameter.particle.margin ?? 0,
-        },
-      },
-    };
-
-    this.particles.forEach((p) => {
-      p.update(this, mgrState.manager.particle);
-      p.draw(context, parameter);
+    this.particles.forEach((p, idx) => {
+      p.tick(context, parameter, idx, countDesired);
     });
   }
 }
 
-class Particle implements Observer {
+class Particle {
   private parameter: any;
-  public state: {
-    particle: { nr: number; position: Vector; size: Size };
-    manager: { particle: any };
-    format?: any;
-    colorset?: any;
-  };
+  private nr: number;
 
   constructor(nr: number, parameter: any) {
     this.parameter = parameter;
-    const canvasSize = parameter?.artwork?.canvas?.size ?? new Size(1, 1, 1);
-    this.state = {
-      particle: {
-        nr,
-        position: new Vector(0, 0),
-        size: new Size(canvasSize.width, canvasSize.height).multiply(
-          parameter?.particle?.brush?.scale ?? 1
-        ),
-      },
-      manager: { particle: {} },
-    };
+    this.nr = nr;
   }
 
-  update(source: any, state_new?: any) {
-    if (source instanceof Format) {
-      this.state.format = state_new?.format ?? source.state?.format;
-    }
-    if (source instanceof ColorSet) {
-      this.state.colorset = state_new?.colorset ?? source.state?.colorset;
-    }
-    if (source instanceof ParticleManager) {
-      this.state.manager.particle = state_new ?? {};
-      const count =
-        this.state.manager.particle.count != null
-          ? this.state.manager.particle.count
-          : 1;
-      const margin = this.state.manager.particle.margin ?? 0;
-      const t =
-        count <= 1 ? 0 : this.state.particle.nr / Math.max(1, count - 1);
-      const canvas = this.parameter.artwork.canvas.size;
-      const x = canvas.width * 0.5;
-      const y = lerp(
+  tick(
+    context: CanvasRenderingContext2D,
+    parameter: any,
+    index: number,
+    count: number
+  ) {
+    const brush = new Brush(parameter.particle.brush);
+    const canvas = parameter.artwork.canvas.size;
+    const margin = parameter.particle.margin ?? 0;
+    const t = count <= 1 ? 0 : index / Math.max(1, count - 1);
+
+    const basePos = new Vector(
+      canvas.width * 0.5 +
+        lerp(
+          parameter.particle.xOffset.min ?? 0,
+          parameter.particle.xOffset.max ?? 0,
+          t
+        ) *
+          canvas.width,
+      lerp(
         margin,
         canvas.height - margin,
-        t + (this.parameter.particle?.yOffset?.min ?? 0)
-      );
-      this.state.particle.position = new Vector(x, y);
+        t +
+          (parameter.particle?.yOffset?.min ?? 0) -
+          (parameter.particle?.yOffset?.max ?? 0)
+      )
+    );
+
+    let size = new Size(canvas.width, canvas.height).multiply(
+      parameter?.particle?.brush?.scale ?? 1
+    );
+    let pos = basePos;
+    const fmt = parameter.format;
+
+    if (fmt) {
+      size = Format.transform_size(size, fmt);
+      pos = Format.transform_position(pos, fmt);
+      brush.border = Format.transform(brush.border, fmt);
     }
-  }
 
-  draw(context: CanvasRenderingContext2D, parameter: any) {
-    const brush = new Brush(parameter.particle.brush);
-    let size = this.state.particle.size;
-    let pos = this.state.particle.position;
-
-    if (this.state.format) {
-      size = Format.transform_size(size, this.state.format);
-      pos = Format.transform_position(pos, this.state.format);
-      brush.border = Format.transform(brush.border, this.state.format);
-    }
-
-    brush.borderColor = this.state.colorset?.borderColor ?? brush.borderColor;
-    brush.fillColor = this.state.colorset?.fillColor ?? brush.fillColor;
+    brush.borderColor =
+      parameter.colorset?.borderColor ?? brush.borderColor;
+    brush.fillColor = parameter.colorset?.fillColor ?? brush.fillColor;
 
     Shape.draw(context, pos, size, brush, true);
   }

@@ -41,7 +41,6 @@
 import { Brush, type Brush_ParameterTweakpane, type BrushTweakpaneOptions } from "./Brush";
 import { ColorSet, type ColorSet_ParameterSet } from "./ColorSet";
 import { Format } from "./Format";
-import { ObserverSubject, type Observer } from "./ObserverPattern";
 import { SceneGraph, type Drawable } from "./SceneGraph";
 import { Shape } from "./Shape";
 import { Size } from "./Size";
@@ -63,13 +62,12 @@ import { IOManager } from "./IOManager";
 import { Random } from "./Random";
 import { Mathematics } from "./Mathematics";
 
-export class Entity_Manager extends ObserverSubject {
+export class Entity_Manager {
   private parameter: any;
   private sceneGraph: SceneGraph;
   private lastCount: number;
   private randomized: any;
 
-  public state: any;
   private get_entity_count(): number {
     const colsCount = this.sceneGraph.getColsCount(0);
     if (typeof colsCount === "number") {
@@ -78,68 +76,23 @@ export class Entity_Manager extends ObserverSubject {
     return 0;
   }
 
-  check_ObserverSubject(params: any): void {
-    throw new Error("Method not implemented.");
-  } // implements Pattern.Observer
-
   /**
    *
    * @param {Object} parameter
    */
   constructor(parameter: any) {
-    super();
-
     this.parameter = parameter;
     Entity_Manager.ensureParameterSet(this.parameter);
     this.sceneGraph = new SceneGraph();
 
     this.lastCount = -1;
 
-    this.state = {
-      entity: {},
-      colorset: {
-        mode: "", // "custom, colorset, random, chaos"
-
-        groupname: "", // The name of The colorset
-        variant: 0, // A name could return more then one colorset. This is to choose one of them.
-        variant_index: 0,
-
-        number: 0, // A colorset has more than one color. This is to choose a specific.
-        number_index: 0,
-
-        cs_object: null, // The ColorSet-Object
-
-        borderColor: "", // Three default colors with alpha, extracted for easy access
-        fillColor: "",
-        backgroundColor: "",
-      },
-      format: {
-        fencing: true,
-        preserveAspectRatio: true,
-        position_lefttop: new Vector(0, 0),
-        size: this.parameter.artwork.canvas.size,
-        /* center is always the same, instead the case: we move the Format outside the center. */
-        center: new Vector(
-          this.parameter.artwork.canvas.size.width * 0.5,
-          this.parameter.artwork.canvas.size.height * 0.5
-        ),
-        fak: new Vector(
-          1.0,
-          1.0
-        ) /* A scale Factor, for Objects to fit in the Format. */,
-      },
-    };
-
-    // deprecated
     this.randomized = {
       canvasColor: "#ffffffff",
-
       backgroundFillColor: "#ffffffff",
       backgroundBorderColor: "#efefefff",
-
       entityFillColor: "#ffffffff",
       entityBorderColor: "#2a27ebff",
-
       entityConnectionFillColor: "#ffffffff",
       entityConnectionBorderColor: "#2a27ebff",
     };
@@ -175,53 +128,12 @@ export class Entity_Manager extends ObserverSubject {
   } // animationTimerReset
 
   /**
-   * Is called from the ObserverSubject.
-   *
-   * @param {Object} state
-   */
-  update(source: any) {
-    if (source instanceof Format) {
-      this.state.format = source.state.format;
-      this.notifyAll(source, source.state.format); // informiere alle Entities über die Formatänderung!
-    }
-    if (source instanceof ColorSet) {
-      this.state.colorset = source.state.colorset;
-      this.notifyAll(source, source.state.colorset); // informiere alle Entities über die Formatänderung!
-    }
-  } // update
-
-  /**
    * This is called by the AnimationTimer.
    * This is throttled down, and called for every n-th frame by the AnimationTimer.
    *
    * @param {Class} source
    */
   animate_slow(source: any) {
-    console.log("### Manager animate_slow");
-
-    // TODO: PassThrought all cells
-/*
-    let test: ColorSet_ParameterSet = {
-      mode: this.state.colorset.mode,
-      groupname: this.state.colorset.groupname,
-      variant: this.state.colorset.variant,
-      variant_index: 0,
-      number: this.state.colorset.number,
-      number_index: 0,
-      cs_object: this.state.colorset.cs_object,
-      borderColor: "",
-      fillColor: "",
-      backgroundColor: "",
-    };
-
-    parameter.quadrat[this.ps_nr].brush,
-    
-
-    let random = ColorSet.get_colors_from_mode(
-      test,
-      thid.parameter.quadrat[this.ps_nr].brush
-    );
-*/
     let cs = ColorSet.get_random_colorset(); // #FFFFFF
 
     if ("background" in cs) {
@@ -263,11 +175,7 @@ export class Entity_Manager extends ObserverSubject {
         for (var i = 0; i < diff; i++) {
           let d: Drawable | Drawable[] = this.sceneGraph.get(0);
           if (Array.isArray(d)) {
-            let removed = (d as Array<Drawable>).shift();
-            if (removed !== undefined) {
-              let os: Observer = removed as any as Observer;
-              super.removeObserver(os);
-            }
+            (d as Array<Drawable>).shift();
           } else {
             // (d as Drawable)
           }
@@ -293,11 +201,10 @@ export class Entity_Manager extends ObserverSubject {
             this.parameter.artwork.canvas.size.height - radius
           );
 
-          let entity = new Entity(x, y, radius, this.parameter);
-          this.sceneGraph.push(entity);
-          super.addObserver(entity); // The Agent listens to the Manager
-        }
+        let entity = new Entity(x, y, radius, this.parameter);
+        this.sceneGraph.push(entity);
       }
+    }
     }
 
     this.lastCount = count;
@@ -420,8 +327,8 @@ export class Entity_Manager extends ObserverSubject {
     let the_distance =
       this.parameter.artwork.canvas.size.width * parameter.entity.distanceFactor;
 
-    if (typeof this.state.format !== "undefined")
-      the_distance = Format.transform(the_distance, this.state.format);
+    if (parameter.format)
+      the_distance = Format.transform(the_distance, parameter.format);
 
     // connecting the lines
     // TODO: 1. Die Linien sollen nicht bis zum Zentrum gehen sondern am Radius enden.
@@ -438,14 +345,14 @@ export class Entity_Manager extends ObserverSubject {
         let entity_position = entity.position;
         let other_position = other.position;
 
-        if (typeof this.state.format !== "undefined") {
+        if (parameter.format) {
           entity_position = Format.transform_position(
             entity.position,
-            this.state.format
+            parameter.format
           );
           other_position = Format.transform_position(
             other.position,
-            this.state.format
+            parameter.format
           );
         }
 
@@ -487,10 +394,8 @@ export class Entity_Manager extends ObserverSubject {
 
 } // class Manager
 
-export class Entity implements Drawable, Observer {
-  // is also an Observer, observes the Manager
+export class Entity implements Drawable {
   public parameter: any;
-  public state: any;
   public position: Vector;
   public velocity: Vector;
   public radius: number;
@@ -501,10 +406,6 @@ export class Entity implements Drawable, Observer {
 
   constructor(x: number, y: number, radius: number, parameter: any) {
     this.parameter = parameter;
-
-    this.state = {
-      entity: {},
-    };
 
     this.position = new Vector(x, y);
     this.velocity = new Vector(Random.range(-1, 1), Random.range(-1, 1));
@@ -582,25 +483,6 @@ export class Entity implements Drawable, Observer {
   }
 
   /**
-   * Is called from the ObserverSubject.
-   *
-   * @param {Object} source
-   */
-  update(source: any) {
-    if (source instanceof Format) {
-      this.state.format = source.state.format;
-    }
-
-    if (source instanceof ColorSet) {
-      this.state.colorset = source.state.colorset;
-    }
-
-    if (source instanceof Entity_Manager) {
-      this.state.entity = source.state.entity;
-    }
-  }
-
-  /**
    * This is the main draw Method, which draws the complete Scene.
    * It is called by the SceneGraph.
    *
@@ -647,13 +529,13 @@ export class Entity implements Drawable, Observer {
 
     let size: Size = new Size(2 * this.radius, 2 * this.radius, this.radius);
 
-    if (typeof this.state.format !== "undefined") {
-      size = Format.transform_size(size, this.state.format);
+    if (parameter.format) {
+      size = Format.transform_size(size, parameter.format);
       let position = Format.transform_position(
         this.position,
-        this.state.format
+        parameter.format
       );
-      brush.border = Format.transform(brush.border, this.state.format);
+      brush.border = Format.transform(brush.border, parameter.format);
       Shape.draw(context, position, size, brush, true);
     } else {
       Shape.draw(context, this.position, size, brush, true);

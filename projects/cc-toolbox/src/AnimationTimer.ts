@@ -64,6 +64,7 @@ export interface AnimationTimerTweakpaneOptions {
   container: TweakpaneContainer;
   parameterPath: string | string[];
   statePath?: string | string[];
+  stateDefaults?: Record<string, any>;
   channelId?: string;
   labels?: {
     animate?: string;
@@ -173,6 +174,16 @@ export class AnimationTimer {
       } else {
         // console.log("AnimationTimer targetTime reached? - no", { elapsed:this.elapsed, target: target_time});
       }
+    } else {
+      // keep timer idle and ready to continue without a jump
+      this.reset();
+      if (parameterset?.debug?.colorset_logging) {
+        console.log("[AnimationTimer] halted", {
+          doAnimate,
+          animation_halt,
+          path: parameterset,
+        });
+      }
     }
   }
 
@@ -272,6 +283,7 @@ export class AnimationTimer {
     const stateDefaults = {
       doAnimate: timer.doAnimate,
       slowDownFactor: timer.slowDownFactor,
+      ...(options.stateDefaults ?? {}),
     };
 
     const targetPath = path.join(".");

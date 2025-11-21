@@ -92,17 +92,18 @@ export default function printMe() {
   *
   * @class MySketch
   */
- class MySketch implements Sketch {
- 
-   private ctx: any;
- 
-   private background: BackgroundShape | null;
-   private format: Format | null;
-   private colorSet: ColorSet | null;
- 
-   private animation_halt: boolean;
- 
-   private scene: SceneGraph | null;
+class MySketch implements Sketch {
+
+  private ctx: any;
+
+  private background: BackgroundShape | null;
+  private format: Format | null;
+  private colorSet: ColorSet | null;
+
+  private animation_halt: boolean;
+
+  public scene: SceneGraph | null;
+  public useSceneGraph = true;
  
    private parameter: any = {};
    private grid: any = null;
@@ -197,16 +198,8 @@ export default function printMe() {
  
      this.grid = new Grid_Manager(parameter);
  
-     // Background listens to Format changes
-     format.addObserver(this.background);
-     format.addObserver(this.grid);
- 
-     // Quadrat listens to ColorSet changes
-     this.colorSet = new ColorSet(parameter);
-     this.colorSet.addObserver(this.background);
-     this.colorSet.addObserver(this.grid);
-     this.colorSet.animationTimer.addListener(this.background);
-     this.colorSet.animationTimer.addListener(this.grid);
+    // Quadrat listens to ColorSet changes
+    this.colorSet = new ColorSet(parameter);
  
      // Lets set up the Scene
      this.scene = new SceneGraph();
@@ -214,16 +207,7 @@ export default function printMe() {
      this.scene.push(this.grid);
    } // prepare
  
-   /**
-    * This is called by the SketchRunners ainmationLoop Method.
-    *
-    * @param {Object} ctx
-    * @param {Object} parameter
-    * @param {number} timeStamp
-    * @param {number} deltaTime
-    * @memberof MySketch
-    */
-   animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
+   tickScene(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
      // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
      // check the colorSets animation-timer.
@@ -247,8 +231,8 @@ export default function printMe() {
      });
  
      // update, animate, draw
-     if (this.scene != null) this.scene.draw(ctx, parameter);
-   } // animate
+     if (this.scene != null) this.scene.tick(ctx, parameter, deltaTime);
+   }
  } // class MySketch
  
  /* when all site content is loaded */

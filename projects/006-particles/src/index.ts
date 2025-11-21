@@ -32,7 +32,8 @@ class MySketch implements Sketch {
   private format: Format | null = null;
   private colorSet: ColorSet | null = null;
   private particleManager: ParticleManager | null = null;
-  private scene: SceneGraph | null = null;
+  public scene: SceneGraph | null = null;
+  public useSceneGraph = true;
   private animation_halt = false;
 
   prepare(
@@ -68,21 +69,14 @@ class MySketch implements Sketch {
     this.background = new BackgroundShape(parameter);
     this.particleManager = new ParticleManager(parameter);
 
-    format.addObserver(this.background);
-    format.addObserver(this.particleManager);
-
     this.colorSet = new ColorSet(parameter);
-    this.colorSet.addObserver(this.background);
-    this.colorSet.addObserver(this.particleManager);
-    this.colorSet.animationTimer.addListener(this.background);
-    this.colorSet.animationTimer.addListener(this.particleManager);
 
     this.scene = new SceneGraph();
     this.scene.push(this.background);
     this.scene.push(this.particleManager);
   }
 
-  animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
+  tickScene(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
     if (this.colorSet) {
       this.colorSet.animationTimer.check_AnimationTimer(
         timeStamp,
@@ -98,9 +92,7 @@ class MySketch implements Sketch {
       });
     }
 
-    if (this.scene) {
-      this.scene.draw(ctx, parameter);
-    }
+    this.scene?.tick(ctx, parameter, deltaTime);
   }
 }
 

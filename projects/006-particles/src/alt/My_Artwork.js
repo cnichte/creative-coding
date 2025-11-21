@@ -77,14 +77,8 @@ class My_Artwork extends Artwork {
 
         this.background = new BackgroundShape(this.parameter);
         this.format = new Format(this.parameter);
-        this.format.addObserver(this.background);
-        this.format.addObserver(this.agents_manager);
 
         this.colorSet = new ColorSet();
-        this.colorSet.addObserver(this.background);
-        this.colorSet.addObserver(this.agents_manager);
-        this.colorSet.animationTimer.addListener(this.background);
-        this.colorSet.animationTimer.addListener(this.agents_manager);
 
         // Lets set up the Scene
         this.scene = new SceneGraph();

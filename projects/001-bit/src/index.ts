@@ -71,10 +71,10 @@ class MySketch implements Sketch {
   private background: Background;
   private format: Format;
   private colorSet: ColorSet;
+  public scene: SceneGraph | null = null;
+  public useSceneGraph = true;
 
   private animation_halt: boolean;
-
-  private scene: SceneGraph;
 
   /**
    * Creates an instance of Sketch.
@@ -117,6 +117,10 @@ class MySketch implements Sketch {
     }
 
     if (tweakpane_items?.manager) {
+      // ensure base parameter sets before UI wiring
+      ColorSet.ensureParameterSet(parameter);
+      Background.ensureParameterSet(parameter);
+
       ColorSet.registerTweakpane(parameter, tweakpane_items.manager, {
         container: tweakpane_items.pane,
         title: "Color Palette",
@@ -140,41 +144,36 @@ class MySketch implements Sketch {
     // create my artwork objects
     this.background = new Background(parameter);
 
-    // inform Background about format changes
-    format.addObserver(this.background);
-
     // use some colors
     this.colorSet = new ColorSet(parameter);
-    this.colorSet.addObserver(this.background); // calls update
-    this.colorSet.animationTimer.addListener(this.background); // calls animate_slow
 
     // lets set up the scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
   } // prepare
 
-  /**
-   * This is called by the SketchRunners animationLoop Method.
-   *
-   * @param {Object} ctx
-   * @param {Object} parameter
-   * @param {number} timeStamp
-   * @param {number} deltaTime
-   * @memberof MySketch
-   */
-  animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
+  tickScene(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
 
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
     // check the colorSets animation-timer.
     // calls all Listeners animate_slow Method when time is up.
-    // TODO anbinden: this.animation_halt = parameter.artwork...
-    this.colorSet.animationTimer.check_AnimationTimer(
-      timeStamp,
-      deltaTime,
-      this.animation_halt,
-      parameter.colorset
-    );
+    const globalHalt =
+      parameter?.artwork?.animation?.global_halt ?? this.animation_halt;
+    const localTimer = parameter?.colorset?.animation?.timer;
+    const shouldAnimate =
+      (localTimer?.doAnimate ?? true) === true && globalHalt !== true;
+
+    if (shouldAnimate) {
+      this.colorSet.animationTimer.check_AnimationTimer(
+        timeStamp,
+        deltaTime,
+        globalHalt,
+        parameter.colorset
+      );
+    } else {
+      this.colorSet.animationTimer.reset();
+    }
 
     // pick color and inform Observers
     this.colorSet.check_ObserverSubject({
@@ -184,9 +183,13 @@ class MySketch implements Sketch {
       number: parameter.colorset.number,
     });
 
+    if (parameter?.debug?.colorset_logging) {
+      console.log("[001-bit] colorset params", parameter.colorset);
+    }
+
     // update, animate, draw
-    this.scene.draw(ctx, parameter);
-  } // animate
+    this.scene?.tick(ctx, parameter, deltaTime);
+  }
 } // class MySketch
 
 /* when all site content is loaded */

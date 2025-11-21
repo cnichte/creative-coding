@@ -42,7 +42,6 @@
 import { ColorUtils } from "./ColorUtils";
 
 import { Brush } from "./Brush";
-import { ObserverSubject } from "./ObserverPattern";
 import { AnimationTimer, type AnimationTimer_ParameterSet } from "./AnimationTimer";
 import { ParameterManager } from "./ParameterManager";
 import {
@@ -193,7 +192,7 @@ export interface ColorSetTweakpaneOptions {
   id?: string;
 }
 
-export class ColorSet extends ObserverSubject {
+export class ColorSet {
   private parameter: any;
   public animationTimer: AnimationTimer;
 
@@ -241,10 +240,10 @@ export class ColorSet extends ObserverSubject {
    * @memberof ColorSet
    */
   constructor(parameter: any) {
-    super();
     this.parameter = parameter;
 
     this.animationTimer = new AnimationTimer(this);
+    this.animationTimer.addListener(this as any);
 
     const initialParameters = ColorSet.ensureParameterSet(parameter);
     this.state = ColorSet.cloneState({
@@ -441,8 +440,38 @@ export class ColorSet extends ObserverSubject {
       ColorSet.setSelectedSetName(this.parameter, displayName);
     }
 
-    // notifyAll(this, new, last)
-    if (notify) super.notifyAll(this, this.state.colorset);
+    // propagate current state back to parameter for consumers without observer pattern
+    if (this.parameter?.colorset) {
+      Object.assign(this.parameter.colorset, this.state.colorset);
+    }
+
+    if (notify && this.parameter?.debug?.colorset_logging) {
+      console.log("[ColorSet] state", {
+        mode: this.state.colorset.mode,
+        group: this.state.colorset.groupname,
+        variant: this.state.colorset.variant,
+        number: this.state.colorset.number,
+        colors: {
+          border: this.state.colorset.borderColor,
+          fill: this.state.colorset.fillColor,
+          background: this.state.colorset.backgroundColor,
+        },
+      });
+    }
+
+    if (this.parameter?.debug?.colorset_logging) {
+      console.log("[ColorSet] state", {
+        mode: this.state.colorset.mode,
+        group: this.state.colorset.groupname,
+        variant: this.state.colorset.variant,
+        number: this.state.colorset.number,
+        colors: {
+          border: this.state.colorset.borderColor,
+          fill: this.state.colorset.fillColor,
+          background: this.state.colorset.backgroundColor,
+        },
+      });
+    }
   } // checkObserverSubject
 
   private static setSelectedSetName(parameter: any, name: string) {
@@ -647,8 +676,6 @@ export class ColorSet extends ObserverSubject {
 
     // Would that make sense? - I think not because...
     // But then the method can't be static anymore.
-    //?? super.notifyAll(this, this.state.colorset);
-
     return result;
   } // get_colors_from_mode
 
@@ -849,4 +876,22 @@ export class ColorSet extends ObserverSubject {
     return module;
   }
 
+  /**
+   * Called by AnimationTimer; refreshes colors according to current mode.
+   */
+  public animate_slow(_source?: any, _timerState?: any) {
+    const brush = new Brush();
+    const bg = this.parameter?.background?.color ?? "#000000FF";
+    brush.fillColor = bg;
+    brush.borderColor = bg;
+
+    const colors = ColorSet.get_colors_from_mode(this.state.colorset, brush);
+    this.state.colorset.borderColor = colors.borderColor;
+    this.state.colorset.fillColor = colors.fillColor;
+    this.state.colorset.backgroundColor = colors.backgroundColor;
+
+    if (this.parameter?.colorset) {
+      Object.assign(this.parameter.colorset, this.state.colorset);
+    }
+  }
 } // class ColorSet

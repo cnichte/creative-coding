@@ -49,6 +49,7 @@ import { ParameterManager } from "./ParameterManager";
 import { IOManager } from "./IOManager";
 import type { Tweakpane_Items } from "./TweakpaneSupport";
 import { TweakpaneManager } from "./TweakpaneManager";
+import { TimelinePlayer } from "./TimelinePlayer";
 
 
 export interface Artwork_ParameterSet {
@@ -111,6 +112,7 @@ export class Artwork {
 
   private sketchRunner: SketchRunner;
   private ioManager: IOManager;
+  private timelinePlayer: TimelinePlayer;
 
   /**
    * Bundles everything that makes up my artwork.
@@ -145,6 +147,8 @@ export class Artwork {
 
     ParameterManager.from(parameter);
     this.ioManager = IOManager.from(parameter);
+    this.timelinePlayer = new TimelinePlayer(this.parameter);
+    (this.parameter as any).__timelinePlayer = this.timelinePlayer;
 
     //* HTML Content, im wesentlichen das <canvas> Element.
 
@@ -344,6 +348,8 @@ export class Artwork {
         artwork_canvas_height: this.parameter.artwork.canvas.size.height,
         artwork_scale: this.parameter.artwork.scale,
         artwork_clearscreen: this.parameter.artwork.canvas.clearscreen,
+        artwork_animation_global_halt:
+          this.parameter.artwork.animation.global_halt,
       },
       channelId: "tweakpane",
     });
@@ -384,6 +390,16 @@ export class Artwork {
       }
     );
 
+    canvasModule.addBinding(
+      "artwork_animation_global_halt",
+      {
+        label: "Global Halt",
+      },
+      {
+        target: "artwork.animation.global_halt",
+      }
+    );
+
     if (this.tweakpaneManager) {
       Format.registerTweakpane(this.parameter, this.tweakpaneManager, formatPage);
     }
@@ -394,6 +410,14 @@ export class Artwork {
       exportPage,
       "exporter"
     );
+
+    // Timeline controls (play/pause/scrub)
+    this.timelinePlayer.registerTweakpane({
+      manager: this.tweakpaneManager,
+      container: propertiesPage,
+      id: "timeline",
+      title: "Timeline",
+    });
   }
 
   /**

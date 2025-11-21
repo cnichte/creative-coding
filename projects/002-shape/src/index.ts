@@ -68,8 +68,8 @@ class MySketch implements Sketch {
   private colorSet: ColorSet | null;
 
   private animation_halt: boolean;
-
-  private scene: SceneGraph | null;
+  public scene: SceneGraph | null;
+  public useSceneGraph = true;
 
   /**
    * Creates an instance of Sketch.
@@ -133,29 +133,15 @@ class MySketch implements Sketch {
     // create my artwork objects
     this.background = new BackgroundShape(parameter);
 
-    // inform Background about format changes
-    format.addObserver(this.background);
-
     // use some colors
     this.colorSet = new ColorSet(parameter);
-    this.colorSet.addObserver(this.background); // calls update
-    this.colorSet.animationTimer.addListener(this.background); // calls animate_slow
 
     // lets set up the scene
     this.scene = new SceneGraph();
     this.scene.push(this.background);
   } // prepare
 
-  /**
-   * This is called by the SketchRunners ainmationLoop Method.
-   *
-   * @param {Object} ctx
-   * @param {Object} parameter
-   * @param {number} timeStamp
-   * @param {number} deltaTime
-   * @memberof MySketch
-   */
-  animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
+  tickScene(ctx: any, parameter: any, timeStamp: number, deltaTime: number) {
 
     // console.log('time deltaTime', { time:timeStamp, delta:deltaTime} );
 
@@ -180,8 +166,8 @@ class MySketch implements Sketch {
       });
 
     // update, animate, draw
-    if (this.scene != null) this.scene.draw(ctx, parameter);
-  } // animate
+    this.scene?.tick(ctx, parameter, deltaTime);
+  }
 } // class MySketch
 
 /* when all site content is loaded */

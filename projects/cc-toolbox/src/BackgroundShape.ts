@@ -40,11 +40,9 @@
 import { Background } from "./Background";
 import { Brush, type Brush_ParameterTweakpane } from "./Brush";
 import { ColorSet } from "./ColorSet";
-import { Format } from "./Format";
 import { Size } from "./Size";
 import { Shape } from "./Shape";
 import { Vector } from "./Vector";
-import type { ObserverSubject } from "./ObserverPattern";
 import { AnimationTimeline } from "./AnimationTimeline";
 import { ParameterManager } from "./ParameterManager";
 import {
@@ -105,20 +103,6 @@ export class BackgroundShape extends Background {
     // TODO: parameter.canvas.center property anlegen.
     // this.position = new Vector( parameter.canvas.size.width*0.5, parameter.canvas.size.height*0.5 );
     // this.animationTimer = new AnimationTimer();
-  }
-
-  /**
-   * Is called from the ObserverSubject.
-   * Background listenes to colorset and format changes.
-   *
-   * @param {Object}  state.background.color
-   */
-  update(source: ObserverSubject, state_new: any, state_old: any) {
-    super.update(source, state_new, state_old);
-
-    if (source instanceof Format) {
-      // siehe draw Methode
-    }
   }
 
   /**

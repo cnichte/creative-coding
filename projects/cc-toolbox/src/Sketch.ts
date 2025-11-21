@@ -61,7 +61,24 @@ export interface Sketch {
       tweakpane: Pane,
       tweakpane_folder_artwork: any
     ): void;
-    animate(ctx: any, parameter: any, timeStamp: number, deltaTime: number): void;
+    animate?(ctx: any, parameter: any, timeStamp: number, deltaTime: number): void;
+    /**
+     * Optional: if provided, SketchRunner will prefer tickScene over animate.
+     */
+    tickScene?(
+      ctx: any,
+      parameter: any,
+      timeStamp: number,
+      deltaTime: number
+    ): void;
+    /**
+     * Optional: if true and a 'scene' property exists, SketchRunner will call scene.tick().
+     */
+    useSceneGraph?: boolean;
+    /**
+     * Optional SceneGraph reference for agent-based rendering.
+     */
+    scene?: any;
   }
 
 //* --------------------------------------------------------------------
@@ -71,8 +88,9 @@ export interface Sketch {
 //* --------------------------------------------------------------------
 
 import { Format, type Check_ObserverSubject_Format_Parameter } from "./Format";
-import type { Observer, ObserverSubject } from "./ObserverPattern";
+import { Vector } from "./Vector";
 import { IOManager } from "./IOManager";
+import { TimelinePlayer } from "./TimelinePlayer";
 
 /**
  ** Der SketchRunner hat im Grunde nur eine Methode:
@@ -90,13 +108,14 @@ import { IOManager } from "./IOManager";
  *
  * @class SketchRunner
  */
- export class SketchRunner implements Observer {
+ export class SketchRunner {
     private ctx: CanvasRenderingContext2D;
     private parameter: any;
     private theCanvas: any;
     private tweakpane: Pane;
     private format: Format;
     private ioManager: IOManager;
+    private timelinePlayer: TimelinePlayer | null;
   
     public animationFrame: number;
     private lastTime: number;
@@ -104,6 +123,35 @@ import { IOManager } from "./IOManager";
     private timer: number;
   
     public sketch: Sketch | null;
+
+    /**
+     * Synchronize canvas size/center into parameter and tweakpane from current format state.
+     */
+    private syncCanvasFromFormat() {
+      const fmt = this.parameter.format;
+      if (!fmt || !fmt.size) return;
+
+      const width = fmt.size.width;
+      const height = fmt.size.height;
+
+      if (
+        this.theCanvas.width !== width ||
+        this.theCanvas.height !== height
+      ) {
+        this.theCanvas.width = width;
+        this.theCanvas.height = height;
+      }
+
+      this.parameter.artwork.canvas.size = fmt.size;
+      this.parameter.artwork.canvas.center =
+        fmt.center ??
+        new Vector(width * 0.5, height * 0.5);
+
+      if (this.parameter.tweakpane) {
+        this.parameter.tweakpane.artwork_canvas_width = width;
+        this.parameter.tweakpane.artwork_canvas_height = height;
+      }
+    }
   
     /**
      * Creates an instance of SketchRunner.
@@ -127,9 +175,8 @@ import { IOManager } from "./IOManager";
       this.tweakpane = tweakpane;
       this.format = format;
       this.ioManager = IOManager.from(parameter);
-  
-      this.format.addObserver(this);
-  
+      this.timelinePlayer = parameter?.__timelinePlayer ?? null;
+
       this.animationFrame = 0;
   
       /* Die Animation soll auf unterschiedlich schnellen Rechnern gleich schnell ablaufen */
@@ -139,42 +186,6 @@ import { IOManager } from "./IOManager";
   
       this.sketch = null;
     } // constructor
-  
-    /**
-     * Is called from the ObserverSubject.
-     * Sketch-Runner listenes to Format-Changes.
-     *
-     * state ist in source enthalten.
-     * ich identifiziere damit die quelle.
-     * if ("colorset" in source.state) würde auch gehen.
-     *
-     * @param {Object} source
-     * @param {Object} state
-     * @memberof SketchRunner
-     */
-    update(source: ObserverSubject, state_new: any, state_old: any) {
-      if (source instanceof Format) {
-        console.log("Artwork SketchRunner -> Format geändert...");
-        console.log("Artwork SketchRunner.update(state_old)", state_old);
-        console.log("Artwork SketchRunner.update(state_new,)", state_new);
-  
-        // update Parameter-Object
-        this.parameter.artwork.canvas.size = state_new.size; // ---> doppelt
-        this.parameter.artwork.canvas.center = state_new.center;
-  
-        this.parameter.artwork.canvas.width = state_new.size.width; // TODO doppelt
-        this.parameter.artwork.canvas.height = state_new.size.height;
-  
-        // Das format hat sich geändert, und damit auch zize
-        this.theCanvas.width = state_new.size.width;
-        this.theCanvas.height = state_new.size.height;
-  
-        // Tweakpane Inputs aktualisieren.
-        this.parameter.tweakpane.artwork_canvas_width = state_new.size.width;
-        this.parameter.tweakpane.artwork_canvas_height = state_new.size.height;
-        this.tweakpane.refresh();
-      }
-    } // update
   
     /**
      * timeStamp wird erzeugt, wenn eine funktion (hier 'animation_loop')
@@ -205,6 +216,7 @@ import { IOManager } from "./IOManager";
       this.format.check_ObserverSubject(params); 
       // const fps = Math.round(1000/deltaTime);
       // console.log(`fps: ${fps}`)
+      this.syncCanvasFromFormat();
   
       if (this.parameter.artwork.canvas.clearscreen) {
         /* clear Canvas */
@@ -212,7 +224,7 @@ import { IOManager } from "./IOManager";
           0,
           0,
           this.parameter.artwork.canvas.size.width,
-          this.parameter.artwork.canvas.size.width
+          this.parameter.artwork.canvas.size.height
         );
       }
   
@@ -220,20 +232,42 @@ import { IOManager } from "./IOManager";
       this.parameter.artwork.animation.intervall = this.intervall;
       this.parameter.artwork.animation.timeStamp = timestampSeconds;
       this.parameter.artwork.animation.deltaTime = deltaTimeSeconds;
-  
-      if (this.sketch != null && "animate" in this.sketch) {
-        // timeStamp und deltaTime werden von Millisekunden in Sekunden umgerechnet.
-        // bevor sie übergeben werden.
-        this.sketch.animate(
-          this.ctx,
-          this.parameter,
-          timestampSeconds,
-          deltaTimeSeconds
+
+      // optional central timeline player
+      if (this.timelinePlayer) {
+        this.timelinePlayer.tick(deltaTimeSeconds);
+      }
+
+      if (this.parameter.artwork.animation.global_halt === true) {
+        this.animationFrame = requestAnimationFrame(
+          this.animation_loop.bind(this)
         );
-      } else {
-        console.log(
-          "Das ist kein Sketch! Dein Sketch muss das Interface 'Sketch' implementieren!"
-        );
+        return;
+      }
+
+      if (this.sketch != null) {
+        if (typeof (this.sketch as any).tickScene === "function") {
+          (this.sketch as any).tickScene(
+            this.ctx,
+            this.parameter,
+            timestampSeconds,
+            deltaTimeSeconds
+          );
+        } else if (
+          (this.sketch as any).useSceneGraph === true &&
+          (this.sketch as any).scene &&
+          typeof (this.sketch as any).scene.tick === "function"
+        ) {
+          (this.sketch as any).scene.tick(
+            this.ctx,
+            this.parameter,
+            deltaTimeSeconds
+          );
+        } else {
+          throw new Error(
+            "Sketch must implement tickScene() or provide scene.tick() with useSceneGraph=true."
+          );
+        }
       }
   
       if (this.timer > this.intervall) {
