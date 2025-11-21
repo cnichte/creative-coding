@@ -454,7 +454,7 @@ export class ColorSet {
       target.backgroundColor = this.state.colorset.backgroundColor;
       // preserve existing animation settings on target
     }
-
+/*
     if (Debug.isEnabled("colorset.animation.timer")) {
       console.log("[ColorSet] state", {
         mode: this.state.colorset.mode,
@@ -468,6 +468,7 @@ export class ColorSet {
         },
       });
     }
+    */
   } // checkObserverSubject
 
   private static setSelectedSetName(parameter: any, name: string) {
@@ -799,12 +800,6 @@ export class ColorSet {
         variant: colorset.variant,
         number: colorset.number,
         setname: colorset.selectedSetName ?? "",
-        animation: {
-          timer: {
-            doAnimate: colorset.animation?.timer?.doAnimate ?? true,
-            slowDownFactor: colorset.animation?.timer?.slowDownFactor ?? 200,
-          },
-        },
       },
       parameterPath: "colorset",
       parameterDefaults: colorset,
@@ -871,7 +866,6 @@ export class ColorSet {
       container,
       parameterPath: ["colorset", "animation", "timer"],
       statePath: ["colorset", "animation", "timer"],
-      channelId: "tweakpane",
       createFolder: true,
       folderTitle: "Animation",
       stateDefaults: timerDefaults,

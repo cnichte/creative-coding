@@ -60,18 +60,18 @@ export interface AnimationTimer_ParameterSet {
 }
 
 // nicht benutzt, da prefixable
-export interface AnimationTimerTweakpaneOptions {
-  id?: string;
-  container: TweakpaneContainer;
-  parameterPath: string | string[];
-  statePath?: string | string[];
-  insertSeparator?: boolean;
-  stateDefaults?: Record<string, any>;
-  channelId?: string;
-  labels?: {
-    animate?: string;
-    throttle?: string;
-  };
+  export interface AnimationTimerTweakpaneOptions {
+    id?: string;
+    container: TweakpaneContainer;
+    parameterPath: string | string[];
+    statePath?: string | string[];
+    insertSeparator?: boolean;
+    stateDefaults?: Record<string, any>;
+    channelId?: string;
+    labels?: {
+      animate?: string;
+      throttle?: string;
+    };
   createFolder?: boolean;
   folderTitle?: string;
   expanded?: boolean;
@@ -144,7 +144,7 @@ export class AnimationTimer {
 
     if ("animation" in parameterset) {
       if ("timer" in parameterset.animation) {
-        doAnimate = parameterset.animation.timer.doAnimate;
+        doAnimate = parameterset.animation.timer.doAnimate; // todo immer true
         slowDownFactor = parameterset.animation.timer.slowDownFactor;
       } else {
         console.log("AnimationTimer is missing timer object in parameterset");
@@ -159,7 +159,7 @@ export class AnimationTimer {
       Debug.isEnabled("animation.timer") ||
       Debug.isEnabled("colorset.animation.timer");
 
-    if (doAnimate && !animation_halt) {
+    if (doAnimate && !animation_halt) { // TODO doAnimate ist immer true
       let target_time = deltaTime * slowDownFactor;
       this.elapsed = this.elapsed + deltaTime;
 
@@ -177,6 +177,7 @@ export class AnimationTimer {
         //? once with SceneGraph.draw(), and once with Timer.animate_slow() - so in two loops?
 
         this.notifyAll(this.source, this.state.animation.timer);
+        /*
         if (debugLog) {
           console.log("[AnimationTimer] tick", {
             doAnimate,
@@ -186,6 +187,7 @@ export class AnimationTimer {
             time,
           });
         }
+        */
       } else {
         if (debugLog) {
           console.log("[AnimationTimer] waiting", {
@@ -319,7 +321,7 @@ export class AnimationTimer {
       stateDefaults,
       parameterPath: path,
       parameterDefaults: timer,
-      channelId: options.channelId ?? "tweakpane",
+      channelId: options.channelId, // let manager decide default when undefined
     });
 
     module.addBinding(

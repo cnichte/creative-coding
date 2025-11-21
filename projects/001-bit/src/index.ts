@@ -118,7 +118,7 @@ class MySketch implements Sketch {
     }
 
     Debug.enable("colorset.animation.timer");
-    Debug.enable("animation.timer");
+    // Debug.enable("animation.timer");
 
     if (tweakpane_items?.manager) {
       // ensure base parameter sets before UI wiring
