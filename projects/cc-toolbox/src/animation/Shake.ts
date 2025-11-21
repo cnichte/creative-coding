@@ -1,14 +1,14 @@
 import {
   AnimationTimeline,
   type AnimationTimeline_ParameterSet,
-} from "../AnimationTimeline";
-import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
-import { ParameterManager } from "../ParameterManager";
+} from "../core/AnimationTimeline";
+import { AnimationTimeline_Item } from "../core/AnimationTimeline_Item";
+import { ParameterManager } from "../core/ParameterManager";
 import {
   TweakpaneManager,
   type TweakpaneContainer,
-} from "../TweakpaneManager";
-import { Vector } from "../Vector";
+} from "../core/TweakpaneManager";
+import { Vector } from "../core/Vector";
 
 export enum ShakeMode {
   nothing = "nothing",
@@ -182,7 +182,7 @@ export class Shake extends AnimationTimeline_Item {
       },
       {
         target: `${shakePath}.amplitude`,
-        transform: (value) => value * minDim,
+        transform: (value: number) => value * minDim,
       }
     );
 

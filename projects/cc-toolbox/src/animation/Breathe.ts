@@ -24,11 +24,11 @@
  */
 
 // Animation_Breathe.ts
-import { ParameterManager } from "../ParameterManager";
-import { AnimationTimeline } from "../AnimationTimeline";
-import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
-import { Size } from "../Size";
-import type { TweakpaneContainer, TweakpaneManager } from "../TweakpaneManager";
+import { ParameterManager } from "../core/ParameterManager";
+import { AnimationTimeline } from "../core/AnimationTimeline";
+import { AnimationTimeline_Item } from "../core/AnimationTimeline_Item";
+import { Size } from "../core/Size";
+import type { TweakpaneContainer, TweakpaneManager } from "../core/TweakpaneManager";
 
 // const random = require('canvas-sketch-util/random');
 

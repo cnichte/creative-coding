@@ -1,13 +1,13 @@
 import {
   AnimationTimeline,
   type AnimationTimeline_ParameterSet,
-} from "../AnimationTimeline";
-import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
-import { ParameterManager } from "../ParameterManager";
+} from "../core/AnimationTimeline";
+import { AnimationTimeline_Item } from "../core/AnimationTimeline_Item";
+import { ParameterManager } from "../core/ParameterManager";
 import {
   TweakpaneManager,
   type TweakpaneContainer,
-} from "../TweakpaneManager";
+} from "../core/TweakpaneManager";
 
 export enum RotateMode {
   nothing = "nothing",
@@ -193,7 +193,7 @@ export class Rotate extends AnimationTimeline_Item {
       },
       {
         target: `${rotatePath}.boundary`,
-        transform: (value, state) => ({
+        transform: (value: number, state: any) => ({
           min: value,
           max: (state as any).rotate_boundary_max,
         }),
@@ -210,7 +210,7 @@ export class Rotate extends AnimationTimeline_Item {
       },
       {
         target: `${rotatePath}.boundary`,
-        transform: (value, state) => ({
+        transform: (value: number, state: any) => ({
           min: (state as any).rotate_boundary_min,
           max: value,
         }),

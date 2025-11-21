@@ -7,7 +7,9 @@
     "clean": "rm -rf dist",
     "build:dev": "webpack --config ./config/dev.webpack.config.js",
     "build:prod": "webpack --config ./config/prod.webpack.config.js",
-    "build": "yarn build:prod"
+    "build": "yarn build:prod",
+    "cb":" yarn clean && yarn build:dev",
+    "dev": "yarn start"
   },
   "devDependencies": {
     "@tweakpane/core": "^2.0.3",

@@ -3,9 +3,9 @@
 //* this is required for yarn Workspace (aka. npm monorepo)
 
 // Animation Support
-export { AnimationTimeline } from "./AnimationTimeline";
-export { AnimationTimeline_Item } from "./AnimationTimeline_Item";
-export { AnimationTimer, type Animable } from "./AnimationTimer";
+export { AnimationTimeline } from "./core/AnimationTimeline";
+export { AnimationTimeline_Item } from "./core/AnimationTimeline_Item";
+export { AnimationTimer, type Animable } from "./core/AnimationTimer";
 
 // Animations
 export {
@@ -40,50 +40,50 @@ export { Artwork,
     type Artwork_Canvas,
     type Artwork_Canvas_HTML,
     type Artwork_Animation,
-} from "./Artwork";
-export { Background } from "./Background";
-export { BackgroundShape } from "./BackgroundShape";
+} from "./core/Artwork";
+export { Background } from "./agents/Background";
+export { BackgroundShape } from "./agents/BackgroundShape";
 export { Brush, 
-    type Brush_ParameterTweakpane } from "./Brush";
-export { Characters } from "./Characters";
+    type Brush_ParameterTweakpane } from "./agents/Brush";
+export { Characters } from "./agents/Characters";
 export { ColorSet, 
-    type CheckObserverSubject_ColorSet_Parameter } from "./ColorSet";
-export { Coordinate } from "./Coordinate";
+    type CheckObserverSubject_ColorSet_Parameter } from "./colors/ColorSet";
+export { Coordinate } from "./core/Coordinate";
 export { Exporter } from "./Exporter";
-export { Entity_Manager, Entity } from "./Entities";
+export { Entity_Manager, Entity } from "./agents/Entities";
 export { Format, 
     type Format_ParameterSet,
     type Format_ParameterSet_Values,
-    type Check_ObserverSubject_Format_Parameter } from "./Format";
-export { Grid_Manager } from "./Grid_Manager";
-export { ParameterObject } from "./ParameterObject";
-export { SceneGraph, type Drawable } from "./SceneGraph";
-export { Shape } from "./Shape";
-export { Size } from "./Size";
+    type Check_ObserverSubject_Format_Parameter } from "./core/Format";
+export { Grid_Manager } from "./agents/Grid_Manager";
+export { ParameterObject } from "./core/ParameterObject";
+export { SceneGraph, type Drawable } from "./core/SceneGraph";
+export { Shape } from "./core/Shape";
+export { Size } from "./core/Size";
 export { SketchRunner, 
-    type Sketch } from "./Sketch";
-export { CompositeAgent } from "./Agent";
-export type { Agent } from "./Agent";
-export { ParticleManager } from "./Particles";
-export { Random } from "./Random";
-export { ColorUtils } from "./ColorUtils";
-export { Noise } from "./Noise";
-export { Mathematics } from "./Mathematics";
-export { TimelinePlayer } from "./TimelinePlayer";
+    type Sketch } from "./core/Sketch";
+export { CompositeAgent } from "./core/Agent";
+export type { Agent } from "./core/Agent";
+export { ParticleManager } from "./agents/Particles";
+export { Random } from "./utils/Random";
+export { ColorUtils } from "./utils/ColorUtils";
+export { Noise } from "./utils/Noise";
+export { Mathematics } from "./utils/Mathematics";
+export { TimelinePlayer } from "./core/TimelinePlayer";
 export { TweakpaneSupport, 
     type Provide_Tweakpane_To_Props, 
     type Tweakpane_Items, 
-    type TweakpaneSupport_Props } from "./TweakpaneSupport";
-export { Utils } from "./Utils";
-export { Vector } from "./Vector";
+    type TweakpaneSupport_Props } from "./core/TweakpaneSupport";
+export { Utils } from "./core/Utils";
+export { Vector } from "./core/Vector";
 export {
   ParameterManager,
   type ParameterMappingEntry,
-} from "./ParameterManager";
-export { IOManager, type IOBinding, type IOContext } from "./IOManager";
+} from "./core/ParameterManager";
+export { IOManager, type IOBinding, type IOContext } from "./core/IOManager";
 export {
   TweakpaneManager,
   TweakpaneModule,
   type TweakpaneModuleOptions,
   type TweakpaneContainer,
-} from "./TweakpaneManager";
+} from "./core/TweakpaneManager";

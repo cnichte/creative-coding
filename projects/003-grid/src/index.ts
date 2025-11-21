@@ -43,7 +43,6 @@ import {
   Format,
   SceneGraph,
   Sketch,
-  ObserverSubject,
   Size,
   Vector,
   Grid_Manager,

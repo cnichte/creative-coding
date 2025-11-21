@@ -10,7 +10,6 @@ import {
   Shape,
   Size,
   Vector,
-  ObserverSubject,
   ParameterManager,
 } from "@carstennichte/cc-toolbox";
 import {
@@ -19,7 +18,7 @@ import {
   type TweakpaneContainer,
 } from "@carstennichte/cc-toolbox";
 
-export class My_Target extends ObserverSubject {
+export class My_Target {
   private parameter: any;
   private animationTimeline: AnimationTimeline;
   private breathe: Breathe;
@@ -62,8 +61,6 @@ export class My_Target extends ObserverSubject {
   }
 
   constructor(parameter: any) {
-    super();
-
     this.parameter = parameter;
     My_Target.ensureParameterSet(this.parameter);
 
@@ -102,24 +99,6 @@ export class My_Target extends ObserverSubject {
 
   check_ObserverSubject(): void {
     // not needed
-  }
-
-  notify(data = {}) {
-    this.state = Object.assign(this.state, data);
-    this.notifyAll(this, this.state);
-  }
-
-  update(source: any) {
-    if (source instanceof Format) {
-      this.state.format = source.state.format;
-    }
-    if (source instanceof ColorSet) {
-      this.state.colorset = source.state.colorset;
-    }
-  }
-
-  animate_slow(): void {
-    // not used yet
   }
 
   draw(context: any, parameter: any) {

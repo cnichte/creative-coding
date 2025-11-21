@@ -9,11 +9,11 @@
  */
 
 import { Pane } from "tweakpane";
-import { ParameterManager } from "./ParameterManager";
+import { ParameterManager } from "./core/ParameterManager";
 import {
   TweakpaneManager,
   type TweakpaneContainer,
-} from "./TweakpaneManager";
+} from "./core/TweakpaneManager";
 
 const JSZip = require("jszip");
 const saveAs = require("file-saver");

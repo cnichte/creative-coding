@@ -39,7 +39,6 @@ import {
   Format,
   SceneGraph,
   Sketch,
-  ObserverSubject,
   Size,
   Vector,
   Tweakpane_Items,

@@ -1,14 +1,14 @@
 import {
   AnimationTimeline,
   type AnimationTimeline_ParameterSet,
-} from "../AnimationTimeline";
-import { AnimationTimeline_Item } from "../AnimationTimeline_Item";
-import { ParameterManager } from "../ParameterManager";
+} from "../core/AnimationTimeline";
+import { AnimationTimeline_Item } from "../core/AnimationTimeline_Item";
+import { ParameterManager } from "../core/ParameterManager";
 import {
   TweakpaneManager,
   type TweakpaneContainer,
-} from "../TweakpaneManager";
-import { Vector } from "../Vector";
+} from "../core/TweakpaneManager";
+import { Vector } from "../core/Vector";
 
 export enum MoveMode {
   stop = "stop",
@@ -218,7 +218,7 @@ export class Move extends AnimationTimeline_Item {
       },
       {
         target: `${movePath}.to`,
-        transform: (value, state) =>
+        transform: (value: number, state: any) =>
           new Vector(
             value * (canvas.width || 1),
             (state as any).move_to_y * (canvas.height || 1)
@@ -236,7 +236,7 @@ export class Move extends AnimationTimeline_Item {
       },
       {
         target: `${movePath}.to`,
-        transform: (value, state) =>
+        transform: (value: number, state: any) =>
           new Vector(
             (state as any).move_to_x * (canvas.width || 1),
             value * (canvas.height || 1)
@@ -254,7 +254,7 @@ export class Move extends AnimationTimeline_Item {
       },
       {
         target: `${movePath}.step`,
-        transform: (value) => value * minDim,
+        transform: (value: number) => value * minDim,
       }
     );
 
