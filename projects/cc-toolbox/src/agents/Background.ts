@@ -196,7 +196,8 @@ export class Background {
     let container = options.container;
 
     const canAddFolder = typeof (container as any)?.addFolder === "function";
-    const shouldWrap = options.wrapInFolder !== false && canAddFolder;
+    // Keep flat by default; only wrap if explicitly requested.
+    const shouldWrap = options.wrapInFolder === true && canAddFolder;
 
     if (shouldWrap) {
       container = (container as any).addFolder({

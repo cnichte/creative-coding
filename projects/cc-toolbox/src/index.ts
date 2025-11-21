@@ -76,6 +76,7 @@ export { TweakpaneSupport,
     type TweakpaneSupport_Props } from "./core/TweakpaneSupport";
 export { Utils } from "./core/Utils";
 export { Vector } from "./core/Vector";
+export { Debug } from "./core/Debug";
 export {
   ParameterManager,
   type ParameterMappingEntry,

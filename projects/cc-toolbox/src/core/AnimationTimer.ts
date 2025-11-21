@@ -34,6 +34,7 @@
  
  // AnimationTimer.ts
 import { ParameterManager } from "./ParameterManager";
+import { Debug } from "./Debug";
 import {
   TweakpaneManager,
   type TweakpaneContainer,
@@ -154,6 +155,10 @@ export class AnimationTimer {
       );
     }
 
+    const debugLog =
+      Debug.isEnabled(parameterset, "animation.timer") ||
+      Debug.isEnabled(parameterset, "colorset.animation.timer");
+
     if (doAnimate && !animation_halt) {
       let target_time = deltaTime * slowDownFactor;
       this.elapsed = this.elapsed + deltaTime;
@@ -172,17 +177,34 @@ export class AnimationTimer {
         //? once with SceneGraph.draw(), and once with Timer.animate_slow() - so in two loops?
 
         this.notifyAll(this.source, this.state.animation.timer);
+        if (debugLog) {
+          console.log("[AnimationTimer] tick", {
+            doAnimate,
+            slowDownFactor,
+            target_time,
+            deltaTime,
+            time,
+          });
+        }
       } else {
-        // console.log("AnimationTimer targetTime reached? - no", { elapsed:this.elapsed, target: target_time});
+        if (debugLog) {
+          console.log("[AnimationTimer] waiting", {
+            doAnimate,
+            slowDownFactor,
+            target_time,
+            elapsed: this.elapsed,
+            deltaTime,
+          });
+        }
       }
     } else {
       // keep timer idle and ready to continue without a jump
       this.reset();
-      if (parameterset?.debug?.colorset_logging) {
+      if (debugLog || parameterset?.debug?.colorset_logging) {
         console.log("[AnimationTimer] halted", {
           doAnimate,
           animation_halt,
-          path: parameterset,
+          slowDownFactor,
         });
       }
     }

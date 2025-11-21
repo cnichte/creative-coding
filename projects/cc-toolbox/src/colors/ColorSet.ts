@@ -48,6 +48,7 @@ import {
   TweakpaneManager,
   type TweakpaneContainer,
 } from "../core/TweakpaneManager";
+import { Debug } from "../core/Debug";
 
 // The Collections, with sets of colors
 import type ColorSetType from "../utils/ColorSetType";
@@ -442,24 +443,19 @@ export class ColorSet {
 
     // propagate current state back to parameter for consumers without observer pattern
     if (this.parameter?.colorset) {
-      Object.assign(this.parameter.colorset, this.state.colorset);
+      const target = this.parameter.colorset;
+      target.mode = this.state.colorset.mode;
+      target.groupname = this.state.colorset.groupname;
+      target.variant = this.state.colorset.variant;
+      target.number = this.state.colorset.number;
+      target.cs_object = this.state.colorset.cs_object;
+      target.borderColor = this.state.colorset.borderColor;
+      target.fillColor = this.state.colorset.fillColor;
+      target.backgroundColor = this.state.colorset.backgroundColor;
+      // preserve existing animation settings on target
     }
 
-    if (notify && this.parameter?.debug?.colorset_logging) {
-      console.log("[ColorSet] state", {
-        mode: this.state.colorset.mode,
-        group: this.state.colorset.groupname,
-        variant: this.state.colorset.variant,
-        number: this.state.colorset.number,
-        colors: {
-          border: this.state.colorset.borderColor,
-          fill: this.state.colorset.fillColor,
-          background: this.state.colorset.backgroundColor,
-        },
-      });
-    }
-
-    if (this.parameter?.debug?.colorset_logging) {
+    if (Debug.isEnabled(this.parameter, "colorset.animation.timer")) {
       console.log("[ColorSet] state", {
         mode: this.state.colorset.mode,
         group: this.state.colorset.groupname,
@@ -785,6 +781,13 @@ export class ColorSet {
     }
 
     const colorset = ColorSet.ensureParameterSet(parameter);
+    const timerDefaults = colorset.animation?.timer ?? {
+      time: 0,
+      deltaTime: 0,
+      doAnimate: true,
+      animation_halt: false,
+      slowDownFactor: 200,
+    };
 
     const module = manager.createModule({
       id: options.id ?? "colorset",
@@ -796,6 +799,12 @@ export class ColorSet {
         variant: colorset.variant,
         number: colorset.number,
         setname: colorset.selectedSetName ?? "",
+        animation: {
+          timer: {
+            doAnimate: colorset.animation?.timer?.doAnimate ?? true,
+            slowDownFactor: colorset.animation?.timer?.slowDownFactor ?? 200,
+          },
+        },
       },
       parameterPath: "colorset",
       parameterDefaults: colorset,
@@ -861,9 +870,11 @@ export class ColorSet {
       id: `${options.id ?? "colorset"}:timer`,
       container,
       parameterPath: ["colorset", "animation", "timer"],
-      statePath: ["colorset", "animationTimer"],
+      statePath: ["colorset", "animation", "timer"],
       channelId: "tweakpane",
-      createFolder: false,
+      createFolder: true,
+      folderTitle: "Animation",
+      stateDefaults: timerDefaults,
       labels: {
         animate: "Animate",
         throttle: "Throttel",
@@ -892,7 +903,10 @@ export class ColorSet {
     this.state.colorset.backgroundColor = colors.backgroundColor;
 
     if (this.parameter?.colorset) {
-      Object.assign(this.parameter.colorset, this.state.colorset);
+      this.parameter.colorset.borderColor = this.state.colorset.borderColor;
+      this.parameter.colorset.fillColor = this.state.colorset.fillColor;
+      this.parameter.colorset.backgroundColor =
+        this.state.colorset.backgroundColor;
     }
   }
 } // class ColorSet
