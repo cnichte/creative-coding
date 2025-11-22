@@ -385,9 +385,9 @@ var require_react_development = __commonJS({
               case REACT_LAZY_TYPE: {
                 var lazyComponent = type;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  return getComponentNameFromType(init2(payload));
+                  return getComponentNameFromType(init3(payload));
                 } catch (x) {
                   return null;
                 }
@@ -396,7 +396,7 @@ var require_react_development = __commonJS({
           }
           return null;
         }
-        var hasOwnProperty = Object.prototype.hasOwnProperty;
+        var hasOwnProperty2 = Object.prototype.hasOwnProperty;
         var RESERVED_PROPS = {
           key: true,
           ref: true,
@@ -407,27 +407,27 @@ var require_react_development = __commonJS({
         {
           didWarnAboutStringRefs = {};
         }
-        function hasValidRef(config) {
+        function hasValidRef(config3) {
           {
-            if (hasOwnProperty.call(config, "ref")) {
-              var getter = Object.getOwnPropertyDescriptor(config, "ref").get;
+            if (hasOwnProperty2.call(config3, "ref")) {
+              var getter = Object.getOwnPropertyDescriptor(config3, "ref").get;
               if (getter && getter.isReactWarning) {
                 return false;
               }
             }
           }
-          return config.ref !== void 0;
+          return config3.ref !== void 0;
         }
-        function hasValidKey(config) {
+        function hasValidKey(config3) {
           {
-            if (hasOwnProperty.call(config, "key")) {
-              var getter = Object.getOwnPropertyDescriptor(config, "key").get;
+            if (hasOwnProperty2.call(config3, "key")) {
+              var getter = Object.getOwnPropertyDescriptor(config3, "key").get;
               if (getter && getter.isReactWarning) {
                 return false;
               }
             }
           }
-          return config.key !== void 0;
+          return config3.key !== void 0;
         }
         function defineKeyPropWarningGetter(props2, displayName) {
           var warnAboutAccessingKey = function() {
@@ -459,12 +459,12 @@ var require_react_development = __commonJS({
             configurable: true
           });
         }
-        function warnIfStringRefCannotBeAutoConverted(config) {
+        function warnIfStringRefCannotBeAutoConverted(config3) {
           {
-            if (typeof config.ref === "string" && ReactCurrentOwner.current && config.__self && ReactCurrentOwner.current.stateNode !== config.__self) {
+            if (typeof config3.ref === "string" && ReactCurrentOwner.current && config3.__self && ReactCurrentOwner.current.stateNode !== config3.__self) {
               var componentName = getComponentNameFromType(ReactCurrentOwner.current.type);
               if (!didWarnAboutStringRefs[componentName]) {
-                error('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', componentName, config.ref);
+                error('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', componentName, config3.ref);
                 didWarnAboutStringRefs[componentName] = true;
               }
             }
@@ -509,31 +509,31 @@ var require_react_development = __commonJS({
           }
           return element;
         };
-        function createElement2(type, config, children2) {
+        function createElement2(type, config3, children2) {
           var propName;
           var props2 = {};
           var key = null;
           var ref = null;
           var self = null;
           var source = null;
-          if (config != null) {
-            if (hasValidRef(config)) {
-              ref = config.ref;
+          if (config3 != null) {
+            if (hasValidRef(config3)) {
+              ref = config3.ref;
               {
-                warnIfStringRefCannotBeAutoConverted(config);
+                warnIfStringRefCannotBeAutoConverted(config3);
               }
             }
-            if (hasValidKey(config)) {
+            if (hasValidKey(config3)) {
               {
-                checkKeyStringCoercion(config.key);
+                checkKeyStringCoercion(config3.key);
               }
-              key = "" + config.key;
+              key = "" + config3.key;
             }
-            self = config.__self === void 0 ? null : config.__self;
-            source = config.__source === void 0 ? null : config.__source;
-            for (propName in config) {
-              if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
-                props2[propName] = config[propName];
+            self = config3.__self === void 0 ? null : config3.__self;
+            source = config3.__source === void 0 ? null : config3.__source;
+            for (propName in config3) {
+              if (hasOwnProperty2.call(config3, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
+                props2[propName] = config3[propName];
               }
             }
           }
@@ -577,7 +577,7 @@ var require_react_development = __commonJS({
           var newElement = ReactElement(oldElement.type, newKey, oldElement.ref, oldElement._self, oldElement._source, oldElement._owner, oldElement.props);
           return newElement;
         }
-        function cloneElement3(element, config, children2) {
+        function cloneElement3(element, config3, children2) {
           if (element === null || element === void 0) {
             throw new Error("React.cloneElement(...): The argument must be a React element, but you passed " + element + ".");
           }
@@ -588,27 +588,27 @@ var require_react_development = __commonJS({
           var self = element._self;
           var source = element._source;
           var owner = element._owner;
-          if (config != null) {
-            if (hasValidRef(config)) {
-              ref = config.ref;
+          if (config3 != null) {
+            if (hasValidRef(config3)) {
+              ref = config3.ref;
               owner = ReactCurrentOwner.current;
             }
-            if (hasValidKey(config)) {
+            if (hasValidKey(config3)) {
               {
-                checkKeyStringCoercion(config.key);
+                checkKeyStringCoercion(config3.key);
               }
-              key = "" + config.key;
+              key = "" + config3.key;
             }
             var defaultProps;
             if (element.type && element.type.defaultProps) {
               defaultProps = element.type.defaultProps;
             }
-            for (propName in config) {
-              if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
-                if (config[propName] === void 0 && defaultProps !== void 0) {
+            for (propName in config3) {
+              if (hasOwnProperty2.call(config3, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
+                if (config3[propName] === void 0 && defaultProps !== void 0) {
                   props2[propName] = defaultProps[propName];
                 } else {
-                  props2[propName] = config[propName];
+                  props2[propName] = config3[propName];
                 }
               }
             }
@@ -646,14 +646,14 @@ var require_react_development = __commonJS({
         function escapeUserProvidedKey(text) {
           return text.replace(userProvidedKeyEscapeRegex, "$&/");
         }
-        function getElementKey(element, index) {
+        function getElementKey(element, index2) {
           if (typeof element === "object" && element !== null && element.key != null) {
             {
               checkKeyStringCoercion(element.key);
             }
             return escape("" + element.key);
           }
-          return index.toString(36);
+          return index2.toString(36);
         }
         function mapIntoArray(children2, array2, escapedPrefix, nameSoFar, callback) {
           var type = typeof children2;
@@ -1087,37 +1087,37 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState2);
         }
-        function useReducer3(reducer, initialArg, init2) {
+        function useReducer3(reducer, initialArg, init3) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useReducer(reducer, initialArg, init2);
+          return dispatcher.useReducer(reducer, initialArg, init3);
         }
         function useRef12(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect14(create2, deps) {
+        function useEffect14(create3, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useEffect(create2, deps);
+          return dispatcher.useEffect(create3, deps);
         }
-        function useInsertionEffect2(create2, deps) {
+        function useInsertionEffect2(create3, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useInsertionEffect(create2, deps);
+          return dispatcher.useInsertionEffect(create3, deps);
         }
-        function useLayoutEffect4(create2, deps) {
+        function useLayoutEffect4(create3, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useLayoutEffect(create2, deps);
+          return dispatcher.useLayoutEffect(create3, deps);
         }
         function useCallback8(callback, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
-        function useMemo8(create2, deps) {
+        function useMemo8(create3, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useMemo(create2, deps);
+          return dispatcher.useMemo(create3, deps);
         }
-        function useImperativeHandle2(ref, create2, deps) {
+        function useImperativeHandle2(ref, create3, deps) {
           var dispatcher = resolveDispatcher();
-          return dispatcher.useImperativeHandle(ref, create2, deps);
+          return dispatcher.useImperativeHandle(ref, create3, deps);
         }
         function useDebugValue2(value, formatterFn) {
           {
@@ -1379,9 +1379,9 @@ var require_react_development = __commonJS({
               case REACT_LAZY_TYPE: {
                 var lazyComponent = type;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  return describeUnknownElementTypeFrameInDEV(init2(payload), source, ownerFn);
+                  return describeUnknownElementTypeFrameInDEV(init3(payload), source, ownerFn);
                 } catch (x) {
                 }
               }
@@ -1404,7 +1404,7 @@ var require_react_development = __commonJS({
         }
         function checkPropTypes(typeSpecs, values, location, componentName, element) {
           {
-            var has = Function.call.bind(hasOwnProperty);
+            var has = Function.call.bind(hasOwnProperty2);
             for (var typeSpecName in typeSpecs) {
               if (has(typeSpecs, typeSpecName)) {
                 var error$1 = void 0;
@@ -1924,9 +1924,9 @@ var require_scheduler_development = __commonJS({
         var enableProfiling = false;
         var frameYieldMs = 5;
         function push(heap, node) {
-          var index = heap.length;
+          var index2 = heap.length;
           heap.push(node);
-          siftUp(heap, node, index);
+          siftUp(heap, node, index2);
         }
         function peek(heap) {
           return heap.length === 0 ? null : heap[0];
@@ -1944,42 +1944,42 @@ var require_scheduler_development = __commonJS({
           return first;
         }
         function siftUp(heap, node, i) {
-          var index = i;
-          while (index > 0) {
-            var parentIndex = index - 1 >>> 1;
+          var index2 = i;
+          while (index2 > 0) {
+            var parentIndex = index2 - 1 >>> 1;
             var parent = heap[parentIndex];
             if (compare2(parent, node) > 0) {
               heap[parentIndex] = node;
-              heap[index] = parent;
-              index = parentIndex;
+              heap[index2] = parent;
+              index2 = parentIndex;
             } else {
               return;
             }
           }
         }
         function siftDown(heap, node, i) {
-          var index = i;
+          var index2 = i;
           var length = heap.length;
           var halfLength = length >>> 1;
-          while (index < halfLength) {
-            var leftIndex = (index + 1) * 2 - 1;
+          while (index2 < halfLength) {
+            var leftIndex = (index2 + 1) * 2 - 1;
             var left = heap[leftIndex];
             var rightIndex = leftIndex + 1;
             var right = heap[rightIndex];
             if (compare2(left, node) < 0) {
               if (rightIndex < length && compare2(right, left) < 0) {
-                heap[index] = right;
+                heap[index2] = right;
                 heap[rightIndex] = node;
-                index = rightIndex;
+                index2 = rightIndex;
               } else {
-                heap[index] = left;
+                heap[index2] = left;
                 heap[leftIndex] = node;
-                index = leftIndex;
+                index2 = leftIndex;
               }
             } else if (rightIndex < length && compare2(right, node) < 0) {
-              heap[index] = right;
+              heap[index2] = right;
               heap[rightIndex] = node;
-              index = rightIndex;
+              index2 = rightIndex;
             } else {
               return;
             }
@@ -2488,7 +2488,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var canUseDOM2 = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined");
-        var hasOwnProperty = Object.prototype.hasOwnProperty;
+        var hasOwnProperty2 = Object.prototype.hasOwnProperty;
         function typeName(value) {
           {
             var hasToStringTag = typeof Symbol === "function" && Symbol.toStringTag;
@@ -2570,10 +2570,10 @@ var require_react_dom_development = __commonJS({
         var illegalAttributeNameCache = {};
         var validatedAttributeNameCache = {};
         function isAttributeNameSafe(attributeName) {
-          if (hasOwnProperty.call(validatedAttributeNameCache, attributeName)) {
+          if (hasOwnProperty2.call(validatedAttributeNameCache, attributeName)) {
             return true;
           }
-          if (hasOwnProperty.call(illegalAttributeNameCache, attributeName)) {
+          if (hasOwnProperty2.call(illegalAttributeNameCache, attributeName)) {
             return false;
           }
           if (VALID_ATTRIBUTE_NAME_REGEX.test(attributeName)) {
@@ -3451,9 +3451,9 @@ var require_react_dom_development = __commonJS({
               case REACT_LAZY_TYPE: {
                 var lazyComponent = type;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  return describeUnknownElementTypeFrameInDEV(init2(payload), source, ownerFn);
+                  return describeUnknownElementTypeFrameInDEV(init3(payload), source, ownerFn);
                 } catch (x) {
                 }
               }
@@ -3557,9 +3557,9 @@ var require_react_dom_development = __commonJS({
               case REACT_LAZY_TYPE: {
                 var lazyComponent = type;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  return getComponentNameFromType(init2(payload));
+                  return getComponentNameFromType(init3(payload));
                 } catch (x) {
                   return null;
                 }
@@ -4394,8 +4394,8 @@ var require_react_dom_development = __commonJS({
           });
         });
         function dangerousStyleValue(name, value, isCustomProperty) {
-          var isEmpty = value == null || typeof value === "boolean" || value === "";
-          if (isEmpty) {
+          var isEmpty2 = value == null || typeof value === "boolean" || value === "";
+          if (isEmpty2) {
             return "";
           }
           if (!isCustomProperty && typeof value === "number" && value !== 0 && !(isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name])) {
@@ -4423,7 +4423,7 @@ var require_react_dom_development = __commonJS({
           var warnedForNaNValue = false;
           var warnedForInfinityValue = false;
           var camelize = function(string) {
-            return string.replace(hyphenPattern, function(_, character) {
+            return string.replace(hyphenPattern, function(_2, character) {
               return character.toUpperCase();
             });
           };
@@ -5187,7 +5187,7 @@ var require_react_dom_development = __commonJS({
         var rARIACamel = new RegExp("^(aria)[A-Z][" + ATTRIBUTE_NAME_CHAR + "]*$");
         function validateProperty(tagName, name) {
           {
-            if (hasOwnProperty.call(warnedProperties, name) && warnedProperties[name]) {
+            if (hasOwnProperty2.call(warnedProperties, name) && warnedProperties[name]) {
               return true;
             }
             if (rARIACamel.test(name)) {
@@ -5270,7 +5270,7 @@ var require_react_dom_development = __commonJS({
           var rARIA$1 = new RegExp("^(aria)-[" + ATTRIBUTE_NAME_CHAR + "]*$");
           var rARIACamel$1 = new RegExp("^(aria)[A-Z][" + ATTRIBUTE_NAME_CHAR + "]*$");
           validateProperty$1 = function(tagName, name, value, eventRegistry) {
-            if (hasOwnProperty.call(warnedProperties$1, name) && warnedProperties$1[name]) {
+            if (hasOwnProperty2.call(warnedProperties$1, name) && warnedProperties$1[name]) {
               return true;
             }
             var lowerCasedName = name.toLowerCase();
@@ -6154,7 +6154,7 @@ var require_react_dom_development = __commonJS({
           {
             var map = /* @__PURE__ */ new Map();
             var lane = 1;
-            for (var index2 = 0; index2 < TotalLanes; index2++) {
+            for (var index3 = 0; index3 < TotalLanes; index3++) {
               var label = getLabelForLane(lane);
               map.set(lane, label);
               lane *= 2;
@@ -6657,9 +6657,9 @@ var require_react_dom_development = __commonJS({
             var entanglements = root3.entanglements;
             var lanes = nextLanes & entangledLanes;
             while (lanes > 0) {
-              var index2 = pickArbitraryLaneIndex(lanes);
-              var lane = 1 << index2;
-              nextLanes |= entanglements[index2];
+              var index3 = pickArbitraryLaneIndex(lanes);
+              var lane = 1 << index3;
+              nextLanes |= entanglements[index3];
               lanes &= ~lane;
             }
           }
@@ -6669,9 +6669,9 @@ var require_react_dom_development = __commonJS({
           var eventTimes = root3.eventTimes;
           var mostRecentEventTime = NoTimestamp;
           while (lanes > 0) {
-            var index2 = pickArbitraryLaneIndex(lanes);
-            var lane = 1 << index2;
-            var eventTime = eventTimes[index2];
+            var index3 = pickArbitraryLaneIndex(lanes);
+            var lane = 1 << index3;
+            var eventTime = eventTimes[index3];
             if (eventTime > mostRecentEventTime) {
               mostRecentEventTime = eventTime;
             }
@@ -6730,12 +6730,12 @@ var require_react_dom_development = __commonJS({
           var expirationTimes = root3.expirationTimes;
           var lanes = pendingLanes;
           while (lanes > 0) {
-            var index2 = pickArbitraryLaneIndex(lanes);
-            var lane = 1 << index2;
-            var expirationTime = expirationTimes[index2];
+            var index3 = pickArbitraryLaneIndex(lanes);
+            var lane = 1 << index3;
+            var expirationTime = expirationTimes[index3];
             if (expirationTime === NoTimestamp) {
               if ((lane & suspendedLanes) === NoLanes || (lane & pingedLanes) !== NoLanes) {
-                expirationTimes[index2] = computeExpirationTime(lane, currentTime);
+                expirationTimes[index3] = computeExpirationTime(lane, currentTime);
               }
             } else if (expirationTime <= currentTime) {
               root3.expiredLanes |= lane;
@@ -6845,8 +6845,8 @@ var require_react_dom_development = __commonJS({
             root3.pingedLanes = NoLanes;
           }
           var eventTimes = root3.eventTimes;
-          var index2 = laneToIndex(updateLane);
-          eventTimes[index2] = eventTime;
+          var index3 = laneToIndex(updateLane);
+          eventTimes[index3] = eventTime;
         }
         function markRootSuspended(root3, suspendedLanes) {
           root3.suspendedLanes |= suspendedLanes;
@@ -6854,9 +6854,9 @@ var require_react_dom_development = __commonJS({
           var expirationTimes = root3.expirationTimes;
           var lanes = suspendedLanes;
           while (lanes > 0) {
-            var index2 = pickArbitraryLaneIndex(lanes);
-            var lane = 1 << index2;
-            expirationTimes[index2] = NoTimestamp;
+            var index3 = pickArbitraryLaneIndex(lanes);
+            var lane = 1 << index3;
+            expirationTimes[index3] = NoTimestamp;
             lanes &= ~lane;
           }
         }
@@ -6876,11 +6876,11 @@ var require_react_dom_development = __commonJS({
           var expirationTimes = root3.expirationTimes;
           var lanes = noLongerPendingLanes;
           while (lanes > 0) {
-            var index2 = pickArbitraryLaneIndex(lanes);
-            var lane = 1 << index2;
-            entanglements[index2] = NoLanes;
-            eventTimes[index2] = NoTimestamp;
-            expirationTimes[index2] = NoTimestamp;
+            var index3 = pickArbitraryLaneIndex(lanes);
+            var lane = 1 << index3;
+            entanglements[index3] = NoLanes;
+            eventTimes[index3] = NoTimestamp;
+            expirationTimes[index3] = NoTimestamp;
             lanes &= ~lane;
           }
         }
@@ -6889,14 +6889,14 @@ var require_react_dom_development = __commonJS({
           var entanglements = root3.entanglements;
           var lanes = rootEntangledLanes;
           while (lanes) {
-            var index2 = pickArbitraryLaneIndex(lanes);
-            var lane = 1 << index2;
+            var index3 = pickArbitraryLaneIndex(lanes);
+            var lane = 1 << index3;
             if (
               // Is this one of the newly entangled lanes?
               lane & entangledLanes | // Is this lane transitively entangled with the newly entangled lanes?
-              entanglements[index2] & entangledLanes
+              entanglements[index3] & entangledLanes
             ) {
-              entanglements[index2] |= entangledLanes;
+              entanglements[index3] |= entangledLanes;
             }
             lanes &= ~lane;
           }
@@ -6952,9 +6952,9 @@ var require_react_dom_development = __commonJS({
           }
           var pendingUpdatersLaneMap = root3.pendingUpdatersLaneMap;
           while (lanes > 0) {
-            var index2 = laneToIndex(lanes);
-            var lane = 1 << index2;
-            var updaters = pendingUpdatersLaneMap[index2];
+            var index3 = laneToIndex(lanes);
+            var lane = 1 << index3;
+            var updaters = pendingUpdatersLaneMap[index3];
             updaters.add(fiber);
             lanes &= ~lane;
           }
@@ -6966,9 +6966,9 @@ var require_react_dom_development = __commonJS({
           var pendingUpdatersLaneMap = root3.pendingUpdatersLaneMap;
           var memoizedUpdaters = root3.memoizedUpdaters;
           while (lanes > 0) {
-            var index2 = laneToIndex(lanes);
-            var lane = 1 << index2;
-            var updaters = pendingUpdatersLaneMap[index2];
+            var index3 = laneToIndex(lanes);
+            var lane = 1 << index3;
+            var updaters = pendingUpdatersLaneMap[index3];
             if (updaters.size > 0) {
               updaters.forEach(function(fiber) {
                 var alternate = fiber.alternate;
@@ -8411,7 +8411,7 @@ var require_react_dom_development = __commonJS({
           }
           for (var i = 0; i < keysA.length; i++) {
             var currentKey = keysA[i];
-            if (!hasOwnProperty.call(objB, currentKey) || !objectIs(objA[currentKey], objB[currentKey])) {
+            if (!hasOwnProperty2.call(objB, currentKey) || !objectIs(objA[currentKey], objB[currentKey])) {
               return false;
             }
           }
@@ -9455,7 +9455,7 @@ var require_react_dom_development = __commonJS({
           }
           {
             if (namespaceURI === HTML_NAMESPACE) {
-              if (!isCustomComponentTag && Object.prototype.toString.call(domElement) === "[object HTMLUnknownElement]" && !hasOwnProperty.call(warnedUnknownTags, type)) {
+              if (!isCustomComponentTag && Object.prototype.toString.call(domElement) === "[object HTMLUnknownElement]" && !hasOwnProperty2.call(warnedUnknownTags, type)) {
                 warnedUnknownTags[type] = true;
                 error("The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.", type);
               }
@@ -10806,7 +10806,7 @@ var require_react_dom_development = __commonJS({
         }
         function checkPropTypes(typeSpecs, values, location, componentName, element) {
           {
-            var has2 = Function.call.bind(hasOwnProperty);
+            var has2 = Function.call.bind(hasOwnProperty2);
             for (var typeSpecName in typeSpecs) {
               if (has2(typeSpecs, typeSpecName)) {
                 var error$1 = void 0;
@@ -10840,36 +10840,36 @@ var require_react_dom_development = __commonJS({
         {
           fiberStack = [];
         }
-        var index = -1;
+        var index2 = -1;
         function createCursor(defaultValue) {
           return {
             current: defaultValue
           };
         }
         function pop(cursor, fiber) {
-          if (index < 0) {
+          if (index2 < 0) {
             {
               error("Unexpected pop.");
             }
             return;
           }
           {
-            if (fiber !== fiberStack[index]) {
+            if (fiber !== fiberStack[index2]) {
               error("Unexpected Fiber popped.");
             }
           }
-          cursor.current = valueStack[index];
-          valueStack[index] = null;
+          cursor.current = valueStack[index2];
+          valueStack[index2] = null;
           {
-            fiberStack[index] = null;
+            fiberStack[index2] = null;
           }
-          index--;
+          index2--;
         }
         function push(cursor, value, fiber) {
-          index++;
-          valueStack[index] = cursor.current;
+          index2++;
+          valueStack[index2] = cursor.current;
           {
-            fiberStack[index] = fiber;
+            fiberStack[index2] = fiber;
           }
           cursor.current = value;
         }
@@ -11116,7 +11116,7 @@ var require_react_dom_development = __commonJS({
           treeForkProvider = workInProgress2;
           treeForkCount = totalChildren;
         }
-        function pushTreeId(workInProgress2, totalChildren, index2) {
+        function pushTreeId(workInProgress2, totalChildren, index3) {
           warnIfNotHydrating();
           idStack[idStackIndex++] = treeContextId;
           idStack[idStackIndex++] = treeContextOverflow;
@@ -11126,7 +11126,7 @@ var require_react_dom_development = __commonJS({
           var baseOverflow = treeContextOverflow;
           var baseLength = getBitLength(baseIdWithLeadingBit) - 1;
           var baseId = baseIdWithLeadingBit & ~(1 << baseLength);
-          var slot = index2 + 1;
+          var slot = index3 + 1;
           var length = getBitLength(totalChildren) + baseLength;
           if (length > 30) {
             var numberOfOverflowBits = baseLength - baseLength % 5;
@@ -11897,8 +11897,8 @@ var require_react_dom_development = __commonJS({
         }
         function resolveLazy(lazyType) {
           var payload = lazyType._payload;
-          var init2 = lazyType._init;
-          return init2(payload);
+          var init3 = lazyType._init;
+          return init3(payload);
         }
         function ChildReconciler(shouldTrackSideEffects) {
           function deleteChild(returnFiber, childToDelete) {
@@ -12050,8 +12050,8 @@ var require_react_dom_development = __commonJS({
                 }
                 case REACT_LAZY_TYPE: {
                   var payload = newChild._payload;
-                  var init2 = newChild._init;
-                  return createChild(returnFiber, init2(payload), lanes);
+                  var init3 = newChild._init;
+                  return createChild(returnFiber, init3(payload), lanes);
                 }
               }
               if (isArray(newChild) || getIteratorFn(newChild)) {
@@ -12094,8 +12094,8 @@ var require_react_dom_development = __commonJS({
                 }
                 case REACT_LAZY_TYPE: {
                   var payload = newChild._payload;
-                  var init2 = newChild._init;
-                  return updateSlot(returnFiber, oldFiber, init2(payload), lanes);
+                  var init3 = newChild._init;
+                  return updateSlot(returnFiber, oldFiber, init3(payload), lanes);
                 }
               }
               if (isArray(newChild) || getIteratorFn(newChild)) {
@@ -12130,8 +12130,8 @@ var require_react_dom_development = __commonJS({
                 }
                 case REACT_LAZY_TYPE:
                   var payload = newChild._payload;
-                  var init2 = newChild._init;
-                  return updateFromMap(existingChildren, returnFiber, newIdx, init2(payload), lanes);
+                  var init3 = newChild._init;
+                  return updateFromMap(existingChildren, returnFiber, newIdx, init3(payload), lanes);
               }
               if (isArray(newChild) || getIteratorFn(newChild)) {
                 var _matchedFiber3 = existingChildren.get(newIdx) || null;
@@ -12172,8 +12172,8 @@ var require_react_dom_development = __commonJS({
                   break;
                 case REACT_LAZY_TYPE:
                   var payload = child._payload;
-                  var init2 = child._init;
-                  warnOnInvalidKey(init2(payload), knownKeys, returnFiber);
+                  var init3 = child._init;
+                  warnOnInvalidKey(init3(payload), knownKeys, returnFiber);
                   break;
               }
             }
@@ -12504,8 +12504,8 @@ var require_react_dom_development = __commonJS({
                   return placeSingleChild(reconcileSinglePortal(returnFiber, currentFirstChild, newChild, lanes));
                 case REACT_LAZY_TYPE:
                   var payload = newChild._payload;
-                  var init2 = newChild._init;
-                  return reconcileChildFibers2(returnFiber, currentFirstChild, init2(payload), lanes);
+                  var init3 = newChild._init;
+                  return reconcileChildFibers2(returnFiber, currentFirstChild, init3(payload), lanes);
               }
               if (isArray(newChild)) {
                 return reconcileChildrenArray(returnFiber, currentFirstChild, newChild, lanes);
@@ -13655,11 +13655,11 @@ var require_react_dom_development = __commonJS({
         function basicStateReducer(state, action) {
           return typeof action === "function" ? action(state) : action;
         }
-        function mountReducer(reducer, initialArg, init2) {
+        function mountReducer(reducer, initialArg, init3) {
           var hook = mountWorkInProgressHook();
           var initialState2;
-          if (init2 !== void 0) {
-            initialState2 = init2(initialArg);
+          if (init3 !== void 0) {
+            initialState2 = init3(initialArg);
           } else {
             initialState2 = initialArg;
           }
@@ -13676,7 +13676,7 @@ var require_react_dom_development = __commonJS({
           var dispatch2 = queue.dispatch = dispatchReducerAction.bind(null, currentlyRenderingFiber$1, queue);
           return [hook.memoizedState, dispatch2];
         }
-        function updateReducer(reducer, initialArg, init2) {
+        function updateReducer(reducer, initialArg, init3) {
           var hook = updateWorkInProgressHook();
           var queue = hook.queue;
           if (queue === null) {
@@ -13777,7 +13777,7 @@ var require_react_dom_development = __commonJS({
           var dispatch2 = queue.dispatch;
           return [hook.memoizedState, dispatch2];
         }
-        function rerenderReducer(reducer, initialArg, init2) {
+        function rerenderReducer(reducer, initialArg, init3) {
           var hook = updateWorkInProgressHook();
           var queue = hook.queue;
           if (queue === null) {
@@ -13970,16 +13970,16 @@ var require_react_dom_development = __commonJS({
           var dispatch2 = queue.dispatch = dispatchSetState.bind(null, currentlyRenderingFiber$1, queue);
           return [hook.memoizedState, dispatch2];
         }
-        function updateState(initialState2) {
+        function updateState2(initialState2) {
           return updateReducer(basicStateReducer);
         }
         function rerenderState(initialState2) {
           return rerenderReducer(basicStateReducer);
         }
-        function pushEffect(tag, create2, destroy, deps) {
+        function pushEffect(tag, create3, destroy, deps) {
           var effect = {
             tag,
-            create: create2,
+            create: create3,
             destroy,
             deps,
             // Circular
@@ -14017,13 +14017,13 @@ var require_react_dom_development = __commonJS({
           var hook = updateWorkInProgressHook();
           return hook.memoizedState;
         }
-        function mountEffectImpl(fiberFlags, hookFlags, create2, deps) {
+        function mountEffectImpl(fiberFlags, hookFlags, create3, deps) {
           var hook = mountWorkInProgressHook();
           var nextDeps = deps === void 0 ? null : deps;
           currentlyRenderingFiber$1.flags |= fiberFlags;
-          hook.memoizedState = pushEffect(HasEffect | hookFlags, create2, void 0, nextDeps);
+          hook.memoizedState = pushEffect(HasEffect | hookFlags, create3, void 0, nextDeps);
         }
-        function updateEffectImpl(fiberFlags, hookFlags, create2, deps) {
+        function updateEffectImpl(fiberFlags, hookFlags, create3, deps) {
           var hook = updateWorkInProgressHook();
           var nextDeps = deps === void 0 ? null : deps;
           var destroy = void 0;
@@ -14033,31 +14033,31 @@ var require_react_dom_development = __commonJS({
             if (nextDeps !== null) {
               var prevDeps = prevEffect.deps;
               if (areHookInputsEqual(nextDeps, prevDeps)) {
-                hook.memoizedState = pushEffect(hookFlags, create2, destroy, nextDeps);
+                hook.memoizedState = pushEffect(hookFlags, create3, destroy, nextDeps);
                 return;
               }
             }
           }
           currentlyRenderingFiber$1.flags |= fiberFlags;
-          hook.memoizedState = pushEffect(HasEffect | hookFlags, create2, destroy, nextDeps);
+          hook.memoizedState = pushEffect(HasEffect | hookFlags, create3, destroy, nextDeps);
         }
-        function mountEffect(create2, deps) {
+        function mountEffect(create3, deps) {
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
-            return mountEffectImpl(MountPassiveDev | Passive | PassiveStatic, Passive$1, create2, deps);
+            return mountEffectImpl(MountPassiveDev | Passive | PassiveStatic, Passive$1, create3, deps);
           } else {
-            return mountEffectImpl(Passive | PassiveStatic, Passive$1, create2, deps);
+            return mountEffectImpl(Passive | PassiveStatic, Passive$1, create3, deps);
           }
         }
-        function updateEffect(create2, deps) {
-          return updateEffectImpl(Passive, Passive$1, create2, deps);
+        function updateEffect(create3, deps) {
+          return updateEffectImpl(Passive, Passive$1, create3, deps);
         }
-        function mountInsertionEffect(create2, deps) {
-          return mountEffectImpl(Update, Insertion, create2, deps);
+        function mountInsertionEffect(create3, deps) {
+          return mountEffectImpl(Update, Insertion, create3, deps);
         }
-        function updateInsertionEffect(create2, deps) {
-          return updateEffectImpl(Update, Insertion, create2, deps);
+        function updateInsertionEffect(create3, deps) {
+          return updateEffectImpl(Update, Insertion, create3, deps);
         }
-        function mountLayoutEffect(create2, deps) {
+        function mountLayoutEffect(create3, deps) {
           var fiberFlags = Update;
           {
             fiberFlags |= LayoutStatic;
@@ -14065,15 +14065,15 @@ var require_react_dom_development = __commonJS({
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             fiberFlags |= MountLayoutDev;
           }
-          return mountEffectImpl(fiberFlags, Layout, create2, deps);
+          return mountEffectImpl(fiberFlags, Layout, create3, deps);
         }
-        function updateLayoutEffect(create2, deps) {
-          return updateEffectImpl(Update, Layout, create2, deps);
+        function updateLayoutEffect(create3, deps) {
+          return updateEffectImpl(Update, Layout, create3, deps);
         }
-        function imperativeHandleEffect(create2, ref) {
+        function imperativeHandleEffect(create3, ref) {
           if (typeof ref === "function") {
             var refCallback = ref;
-            var _inst = create2();
+            var _inst = create3();
             refCallback(_inst);
             return function() {
               refCallback(null);
@@ -14085,17 +14085,17 @@ var require_react_dom_development = __commonJS({
                 error("Expected useImperativeHandle() first argument to either be a ref callback or React.createRef() object. Instead received: %s.", "an object with keys {" + Object.keys(refObject).join(", ") + "}");
               }
             }
-            var _inst2 = create2();
+            var _inst2 = create3();
             refObject.current = _inst2;
             return function() {
               refObject.current = null;
             };
           }
         }
-        function mountImperativeHandle(ref, create2, deps) {
+        function mountImperativeHandle(ref, create3, deps) {
           {
-            if (typeof create2 !== "function") {
-              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create2 !== null ? typeof create2 : "null");
+            if (typeof create3 !== "function") {
+              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create3 !== null ? typeof create3 : "null");
             }
           }
           var effectDeps = deps !== null && deps !== void 0 ? deps.concat([ref]) : null;
@@ -14106,16 +14106,16 @@ var require_react_dom_development = __commonJS({
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             fiberFlags |= MountLayoutDev;
           }
-          return mountEffectImpl(fiberFlags, Layout, imperativeHandleEffect.bind(null, create2, ref), effectDeps);
+          return mountEffectImpl(fiberFlags, Layout, imperativeHandleEffect.bind(null, create3, ref), effectDeps);
         }
-        function updateImperativeHandle(ref, create2, deps) {
+        function updateImperativeHandle(ref, create3, deps) {
           {
-            if (typeof create2 !== "function") {
-              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create2 !== null ? typeof create2 : "null");
+            if (typeof create3 !== "function") {
+              error("Expected useImperativeHandle() second argument to be a function that creates a handle. Instead received: %s.", create3 !== null ? typeof create3 : "null");
             }
           }
           var effectDeps = deps !== null && deps !== void 0 ? deps.concat([ref]) : null;
-          return updateEffectImpl(Update, Layout, imperativeHandleEffect.bind(null, create2, ref), effectDeps);
+          return updateEffectImpl(Update, Layout, imperativeHandleEffect.bind(null, create3, ref), effectDeps);
         }
         function mountDebugValue(value, formatterFn) {
         }
@@ -14239,7 +14239,7 @@ var require_react_dom_development = __commonJS({
           return [isPending, start2];
         }
         function updateTransition() {
-          var _updateState = updateState(), isPending = _updateState[0];
+          var _updateState = updateState2(), isPending = _updateState[0];
           var hook = updateWorkInProgressHook();
           var start2 = hook.memoizedState;
           return [isPending, start2];
@@ -14437,49 +14437,49 @@ var require_react_dom_development = __commonJS({
               mountHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountEffect(create2, deps);
+              return mountEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountImperativeHandle(ref, create2, deps);
+              return mountImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountInsertionEffect(create2, deps);
+              return mountInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
-              return mountLayoutEffect(create2, deps);
+              return mountLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               mountHookTypesDev();
               checkDepsAreArrayDev(deps);
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountMemo(create2, deps);
+                return mountMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               mountHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountReducer(reducer, initialArg, init2);
+                return mountReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14546,44 +14546,44 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               updateHookTypesDev();
-              return mountEffect(create2, deps);
+              return mountEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               updateHookTypesDev();
-              return mountImperativeHandle(ref, create2, deps);
+              return mountImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               updateHookTypesDev();
-              return mountInsertionEffect(create2, deps);
+              return mountInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               updateHookTypesDev();
-              return mountLayoutEffect(create2, deps);
+              return mountLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountMemo(create2, deps);
+                return mountMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountReducer(reducer, initialArg, init2);
+                return mountReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14650,44 +14650,44 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               updateHookTypesDev();
-              return updateEffect(create2, deps);
+              return updateEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create2, deps);
+              return updateImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               updateHookTypesDev();
-              return updateInsertionEffect(create2, deps);
+              return updateInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               updateHookTypesDev();
-              return updateLayoutEffect(create2, deps);
+              return updateLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateMemo(create2, deps);
+                return updateMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateReducer(reducer, initialArg, init2);
+                return updateReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14703,7 +14703,7 @@ var require_react_dom_development = __commonJS({
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateState(initialState2);
+                return updateState2(initialState2);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14754,44 +14754,44 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               updateHookTypesDev();
-              return updateEffect(create2, deps);
+              return updateEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create2, deps);
+              return updateImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               updateHookTypesDev();
-              return updateInsertionEffect(create2, deps);
+              return updateInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               updateHookTypesDev();
-              return updateLayoutEffect(create2, deps);
+              return updateLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnRerenderInDEV;
               try {
-                return updateMemo(create2, deps);
+                return updateMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnRerenderInDEV;
               try {
-                return rerenderReducer(reducer, initialArg, init2);
+                return rerenderReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14861,50 +14861,50 @@ var require_react_dom_development = __commonJS({
               mountHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountEffect(create2, deps);
+              return mountEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountImperativeHandle(ref, create2, deps);
+              return mountImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountInsertionEffect(create2, deps);
+              return mountInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               warnInvalidHookAccess();
               mountHookTypesDev();
-              return mountLayoutEffect(create2, deps);
+              return mountLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               warnInvalidHookAccess();
               mountHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountMemo(create2, deps);
+                return mountMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               warnInvalidHookAccess();
               mountHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnMountInDEV;
               try {
-                return mountReducer(reducer, initialArg, init2);
+                return mountReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -14982,50 +14982,50 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateEffect(create2, deps);
+              return updateEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create2, deps);
+              return updateImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateInsertionEffect(create2, deps);
+              return updateInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateLayoutEffect(create2, deps);
+              return updateLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               warnInvalidHookAccess();
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateMemo(create2, deps);
+                return updateMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               warnInvalidHookAccess();
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateReducer(reducer, initialArg, init2);
+                return updateReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -15043,7 +15043,7 @@ var require_react_dom_development = __commonJS({
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateState(initialState2);
+                return updateState2(initialState2);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -15103,50 +15103,50 @@ var require_react_dom_development = __commonJS({
               updateHookTypesDev();
               return readContext(context);
             },
-            useEffect: function(create2, deps) {
+            useEffect: function(create3, deps) {
               currentHookNameInDev = "useEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateEffect(create2, deps);
+              return updateEffect(create3, deps);
             },
-            useImperativeHandle: function(ref, create2, deps) {
+            useImperativeHandle: function(ref, create3, deps) {
               currentHookNameInDev = "useImperativeHandle";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateImperativeHandle(ref, create2, deps);
+              return updateImperativeHandle(ref, create3, deps);
             },
-            useInsertionEffect: function(create2, deps) {
+            useInsertionEffect: function(create3, deps) {
               currentHookNameInDev = "useInsertionEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateInsertionEffect(create2, deps);
+              return updateInsertionEffect(create3, deps);
             },
-            useLayoutEffect: function(create2, deps) {
+            useLayoutEffect: function(create3, deps) {
               currentHookNameInDev = "useLayoutEffect";
               warnInvalidHookAccess();
               updateHookTypesDev();
-              return updateLayoutEffect(create2, deps);
+              return updateLayoutEffect(create3, deps);
             },
-            useMemo: function(create2, deps) {
+            useMemo: function(create3, deps) {
               currentHookNameInDev = "useMemo";
               warnInvalidHookAccess();
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return updateMemo(create2, deps);
+                return updateMemo(create3, deps);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
             },
-            useReducer: function(reducer, initialArg, init2) {
+            useReducer: function(reducer, initialArg, init3) {
               currentHookNameInDev = "useReducer";
               warnInvalidHookAccess();
               updateHookTypesDev();
               var prevDispatcher = ReactCurrentDispatcher$1.current;
               ReactCurrentDispatcher$1.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
               try {
-                return rerenderReducer(reducer, initialArg, init2);
+                return rerenderReducer(reducer, initialArg, init3);
               } finally {
                 ReactCurrentDispatcher$1.current = prevDispatcher;
               }
@@ -16380,9 +16380,9 @@ var require_react_dom_development = __commonJS({
               if (outerMemoType.$$typeof === REACT_LAZY_TYPE) {
                 var lazyComponent = outerMemoType;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  outerMemoType = init2(payload);
+                  outerMemoType = init3(payload);
                 } catch (x) {
                   outerMemoType = null;
                 }
@@ -16771,8 +16771,8 @@ var require_react_dom_development = __commonJS({
           var props2 = workInProgress2.pendingProps;
           var lazyComponent = elementType;
           var payload = lazyComponent._payload;
-          var init2 = lazyComponent._init;
-          var Component = init2(payload);
+          var init3 = lazyComponent._init;
+          var Component = init3(payload);
           workInProgress2.type = Component;
           var resolvedTag = workInProgress2.tag = resolveLazyComponentTag(Component);
           var resolvedProps = resolveDefaultProps(Component, props2);
@@ -17418,13 +17418,13 @@ var require_react_dom_development = __commonJS({
             }
           }
         }
-        function validateSuspenseListNestedChild(childSlot, index2) {
+        function validateSuspenseListNestedChild(childSlot, index3) {
           {
             var isAnArray = isArray(childSlot);
             var isIterable = !isAnArray && typeof getIteratorFn(childSlot) === "function";
             if (isAnArray || isIterable) {
               var type = isAnArray ? "array" : "iterable";
-              error("A nested %s was passed to row #%s in <SuspenseList />. Wrap it in an additional SuspenseList to configure its revealOrder: <SuspenseList revealOrder=...> ... <SuspenseList revealOrder=...>{%s}</SuspenseList> ... </SuspenseList>", type, index2, type);
+              error("A nested %s was passed to row #%s in <SuspenseList />. Wrap it in an additional SuspenseList to configure its revealOrder: <SuspenseList revealOrder=...> ... <SuspenseList revealOrder=...>{%s}</SuspenseList> ... </SuspenseList>", type, index3, type);
               return false;
             }
           }
@@ -18859,13 +18859,13 @@ var require_react_dom_development = __commonJS({
                     markComponentLayoutEffectMountStarted(finishedWork);
                   }
                 }
-                var create2 = effect.create;
+                var create3 = effect.create;
                 {
                   if ((flags & Insertion) !== NoFlags$1) {
                     setIsRunningInsertionEffect(true);
                   }
                 }
-                effect.destroy = create2();
+                effect.destroy = create3();
                 {
                   if ((flags & Insertion) !== NoFlags$1) {
                     setIsRunningInsertionEffect(false);
@@ -22843,10 +22843,10 @@ var require_react_dom_development = __commonJS({
         var setErrorHandler = null;
         var setSuspenseHandler = null;
         {
-          var copyWithDeleteImpl = function(obj, path, index2) {
-            var key = path[index2];
+          var copyWithDeleteImpl = function(obj, path, index3) {
+            var key = path[index3];
             var updated = isArray(obj) ? obj.slice() : assign({}, obj);
-            if (index2 + 1 === path.length) {
+            if (index3 + 1 === path.length) {
               if (isArray(updated)) {
                 updated.splice(key, 1);
               } else {
@@ -22854,17 +22854,17 @@ var require_react_dom_development = __commonJS({
               }
               return updated;
             }
-            updated[key] = copyWithDeleteImpl(obj[key], path, index2 + 1);
+            updated[key] = copyWithDeleteImpl(obj[key], path, index3 + 1);
             return updated;
           };
           var copyWithDelete = function(obj, path) {
             return copyWithDeleteImpl(obj, path, 0);
           };
-          var copyWithRenameImpl = function(obj, oldPath, newPath, index2) {
-            var oldKey = oldPath[index2];
+          var copyWithRenameImpl = function(obj, oldPath, newPath, index3) {
+            var oldKey = oldPath[index3];
             var updated = isArray(obj) ? obj.slice() : assign({}, obj);
-            if (index2 + 1 === oldPath.length) {
-              var newKey = newPath[index2];
+            if (index3 + 1 === oldPath.length) {
+              var newKey = newPath[index3];
               updated[newKey] = updated[oldKey];
               if (isArray(updated)) {
                 updated.splice(oldKey, 1);
@@ -22877,7 +22877,7 @@ var require_react_dom_development = __commonJS({
                 obj[oldKey],
                 oldPath,
                 newPath,
-                index2 + 1
+                index3 + 1
               );
             }
             return updated;
@@ -22896,13 +22896,13 @@ var require_react_dom_development = __commonJS({
             }
             return copyWithRenameImpl(obj, oldPath, newPath, 0);
           };
-          var copyWithSetImpl = function(obj, path, index2, value) {
-            if (index2 >= path.length) {
+          var copyWithSetImpl = function(obj, path, index3, value) {
+            if (index3 >= path.length) {
               return value;
             }
-            var key = path[index2];
+            var key = path[index3];
             var updated = isArray(obj) ? obj.slice() : assign({}, obj);
-            updated[key] = copyWithSetImpl(obj[key], path, index2 + 1, value);
+            updated[key] = copyWithSetImpl(obj[key], path, index3 + 1, value);
             return updated;
           };
           var copyWithSet = function(obj, path, value) {
@@ -23567,10 +23567,10 @@ var require_client = __commonJS({
           i.usingClientEntryPoint = false;
         }
       };
-      exports.hydrateRoot = function(c, h, o) {
+      exports.hydrateRoot = function(c, h2, o) {
         i.usingClientEntryPoint = true;
         try {
-          return m.hydrateRoot(c, h, o);
+          return m.hydrateRoot(c, h2, o);
         } finally {
           i.usingClientEntryPoint = false;
         }
@@ -23725,9 +23725,9 @@ var require_react_jsx_runtime_development = __commonJS({
               case REACT_LAZY_TYPE: {
                 var lazyComponent = type;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  return getComponentNameFromType(init2(payload));
+                  return getComponentNameFromType(init3(payload));
                 } catch (x) {
                   return null;
                 }
@@ -23975,9 +23975,9 @@ var require_react_jsx_runtime_development = __commonJS({
               case REACT_LAZY_TYPE: {
                 var lazyComponent = type;
                 var payload = lazyComponent._payload;
-                var init2 = lazyComponent._init;
+                var init3 = lazyComponent._init;
                 try {
-                  return describeUnknownElementTypeFrameInDEV(init2(payload), source, ownerFn);
+                  return describeUnknownElementTypeFrameInDEV(init3(payload), source, ownerFn);
                 } catch (x) {
                 }
               }
@@ -23985,7 +23985,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return "";
         }
-        var hasOwnProperty = Object.prototype.hasOwnProperty;
+        var hasOwnProperty2 = Object.prototype.hasOwnProperty;
         var loggedTypeFailures = {};
         var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
         function setCurrentlyValidatingElement(element) {
@@ -24001,7 +24001,7 @@ var require_react_jsx_runtime_development = __commonJS({
         }
         function checkPropTypes(typeSpecs, values, location, componentName, element) {
           {
-            var has = Function.call.bind(hasOwnProperty);
+            var has = Function.call.bind(hasOwnProperty2);
             for (var typeSpecName in typeSpecs) {
               if (has(typeSpecs, typeSpecName)) {
                 var error$1 = void 0;
@@ -24075,34 +24075,34 @@ var require_react_jsx_runtime_development = __commonJS({
         {
           didWarnAboutStringRefs = {};
         }
-        function hasValidRef(config) {
+        function hasValidRef(config3) {
           {
-            if (hasOwnProperty.call(config, "ref")) {
-              var getter = Object.getOwnPropertyDescriptor(config, "ref").get;
+            if (hasOwnProperty2.call(config3, "ref")) {
+              var getter = Object.getOwnPropertyDescriptor(config3, "ref").get;
               if (getter && getter.isReactWarning) {
                 return false;
               }
             }
           }
-          return config.ref !== void 0;
+          return config3.ref !== void 0;
         }
-        function hasValidKey(config) {
+        function hasValidKey(config3) {
           {
-            if (hasOwnProperty.call(config, "key")) {
-              var getter = Object.getOwnPropertyDescriptor(config, "key").get;
+            if (hasOwnProperty2.call(config3, "key")) {
+              var getter = Object.getOwnPropertyDescriptor(config3, "key").get;
               if (getter && getter.isReactWarning) {
                 return false;
               }
             }
           }
-          return config.key !== void 0;
+          return config3.key !== void 0;
         }
-        function warnIfStringRefCannotBeAutoConverted(config, self) {
+        function warnIfStringRefCannotBeAutoConverted(config3, self) {
           {
-            if (typeof config.ref === "string" && ReactCurrentOwner.current && self && ReactCurrentOwner.current.stateNode !== self) {
+            if (typeof config3.ref === "string" && ReactCurrentOwner.current && self && ReactCurrentOwner.current.stateNode !== self) {
               var componentName = getComponentNameFromType(ReactCurrentOwner.current.type);
               if (!didWarnAboutStringRefs[componentName]) {
-                error('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', getComponentNameFromType(ReactCurrentOwner.current.type), config.ref);
+                error('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', getComponentNameFromType(ReactCurrentOwner.current.type), config3.ref);
                 didWarnAboutStringRefs[componentName] = true;
               }
             }
@@ -24177,7 +24177,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return element;
         };
-        function jsxDEV(type, config, maybeKey, source, self) {
+        function jsxDEV(type, config3, maybeKey, source, self) {
           {
             var propName;
             var props2 = {};
@@ -24189,19 +24189,19 @@ var require_react_jsx_runtime_development = __commonJS({
               }
               key = "" + maybeKey;
             }
-            if (hasValidKey(config)) {
+            if (hasValidKey(config3)) {
               {
-                checkKeyStringCoercion(config.key);
+                checkKeyStringCoercion(config3.key);
               }
-              key = "" + config.key;
+              key = "" + config3.key;
             }
-            if (hasValidRef(config)) {
-              ref = config.ref;
-              warnIfStringRefCannotBeAutoConverted(config, self);
+            if (hasValidRef(config3)) {
+              ref = config3.ref;
+              warnIfStringRefCannotBeAutoConverted(config3, self);
             }
-            for (propName in config) {
-              if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
-                props2[propName] = config[propName];
+            for (propName in config3) {
+              if (hasOwnProperty2.call(config3, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
+                props2[propName] = config3[propName];
               }
             }
             if (type && type.defaultProps) {
@@ -24432,10 +24432,10 @@ var require_react_jsx_runtime_development = __commonJS({
               }
             }
             {
-              if (hasOwnProperty.call(props2, "key")) {
+              if (hasOwnProperty2.call(props2, "key")) {
                 var componentName = getComponentNameFromType(type);
-                var keys = Object.keys(props2).filter(function(k) {
-                  return k !== "key";
+                var keys = Object.keys(props2).filter(function(k2) {
+                  return k2 !== "key";
                 });
                 var beforeExample = keys.length > 0 ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
                 if (!didWarnAboutKeySpread[componentName + beforeExample]) {
@@ -24641,7 +24641,7 @@ var require_with_selector = __commonJS({
 });
 
 // src/renderer/index.tsx
-var import_react13 = __toESM(require_react());
+var import_react24 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // ../../node_modules/@radix-ui/react-tabs/dist/index.mjs
@@ -24665,17 +24665,17 @@ function createContextScope(scopeName, createContextScopeDeps = []) {
   let defaultContexts = [];
   function createContext32(rootComponentName, defaultContext) {
     const BaseContext = React.createContext(defaultContext);
-    const index = defaultContexts.length;
+    const index2 = defaultContexts.length;
     defaultContexts = [...defaultContexts, defaultContext];
     const Provider2 = (props2) => {
       const { scope, children: children2, ...context } = props2;
-      const Context = scope?.[scopeName]?.[index] || BaseContext;
+      const Context = scope?.[scopeName]?.[index2] || BaseContext;
       const value = React.useMemo(() => context, Object.values(context));
       return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Context.Provider, { value, children: children2 });
     };
     Provider2.displayName = rootComponentName + "Provider";
     function useContext22(consumerName, scope) {
-      const Context = scope?.[scopeName]?.[index] || BaseContext;
+      const Context = scope?.[scopeName]?.[index2] || BaseContext;
       const context = React.useContext(Context);
       if (context) return context;
       if (defaultContext !== void 0) return defaultContext;
@@ -25267,7 +25267,7 @@ function focusFirst(candidates, preventScroll = false) {
   }
 }
 function wrapArray(array2, startIndex) {
-  return array2.map((_, index) => array2[(startIndex + index) % array2.length]);
+  return array2.map((_2, index2) => array2[(startIndex + index2) % array2.length]);
 }
 var Root = RovingFocusGroup;
 var Item = RovingFocusGroupItem;
@@ -25592,12 +25592,12 @@ function clsx() {
 
 // ../../node_modules/tailwind-merge/dist/bundle-mjs.mjs
 var CLASS_PART_SEPARATOR = "-";
-var createClassGroupUtils = (config) => {
-  const classMap = createClassMap(config);
+var createClassGroupUtils = (config3) => {
+  const classMap = createClassMap(config3);
   const {
     conflictingClassGroups,
     conflictingClassGroupModifiers
-  } = config;
+  } = config3;
   const getClassGroupId = (className) => {
     const classParts = className.split(CLASS_PART_SEPARATOR);
     if (classParts[0] === "" && classParts.length !== 1) {
@@ -25645,16 +25645,16 @@ var getGroupIdForArbitraryProperty = (className) => {
     }
   }
 };
-var createClassMap = (config) => {
+var createClassMap = (config3) => {
   const {
     theme,
     prefix
-  } = config;
+  } = config3;
   const classMap = {
     nextPart: /* @__PURE__ */ new Map(),
     validators: []
   };
-  const prefixedClassGroupEntries = getPrefixedClassGroupEntries(Object.entries(config.classGroups), prefix);
+  const prefixedClassGroupEntries = getPrefixedClassGroupEntries(Object.entries(config3.classGroups), prefix);
   prefixedClassGroupEntries.forEach(([classGroupId, classGroup]) => {
     processClassesRecursively(classGroup, classMap, classGroupId, theme);
   });
@@ -25755,11 +25755,11 @@ var createLruCache = (maxCacheSize) => {
   };
 };
 var IMPORTANT_MODIFIER = "!";
-var createParseClassName = (config) => {
+var createParseClassName = (config3) => {
   const {
     separator,
     experimentalParseClassName
-  } = config;
+  } = config3;
   const isSeparatorSingleCharacter = separator.length === 1;
   const firstSeparatorCharacter = separator[0];
   const separatorLength = separator.length;
@@ -25768,16 +25768,16 @@ var createParseClassName = (config) => {
     let bracketDepth = 0;
     let modifierStart = 0;
     let postfixModifierPosition;
-    for (let index = 0; index < className.length; index++) {
-      let currentCharacter = className[index];
+    for (let index2 = 0; index2 < className.length; index2++) {
+      let currentCharacter = className[index2];
       if (bracketDepth === 0) {
-        if (currentCharacter === firstSeparatorCharacter && (isSeparatorSingleCharacter || className.slice(index, index + separatorLength) === separator)) {
-          modifiers.push(className.slice(modifierStart, index));
-          modifierStart = index + separatorLength;
+        if (currentCharacter === firstSeparatorCharacter && (isSeparatorSingleCharacter || className.slice(index2, index2 + separatorLength) === separator)) {
+          modifiers.push(className.slice(modifierStart, index2));
+          modifierStart = index2 + separatorLength;
           continue;
         }
         if (currentCharacter === "/") {
-          postfixModifierPosition = index;
+          postfixModifierPosition = index2;
           continue;
         }
       }
@@ -25824,10 +25824,10 @@ var sortModifiers = (modifiers) => {
   sortedModifiers.push(...unsortedModifiers.sort());
   return sortedModifiers;
 };
-var createConfigUtils = (config) => ({
-  cache: createLruCache(config.cacheSize),
-  parseClassName: createParseClassName(config),
-  ...createClassGroupUtils(config)
+var createConfigUtils = (config3) => ({
+  cache: createLruCache(config3.cacheSize),
+  parseClassName: createParseClassName(config3),
+  ...createClassGroupUtils(config3)
 });
 var SPLIT_CLASSES_REGEX = /\s+/;
 var mergeClassList = (classList2, configUtils) => {
@@ -25839,8 +25839,8 @@ var mergeClassList = (classList2, configUtils) => {
   const classGroupsInConflict = [];
   const classNames = classList2.trim().split(SPLIT_CLASSES_REGEX);
   let result = "";
-  for (let index = classNames.length - 1; index >= 0; index -= 1) {
-    const originalClassName = classNames[index];
+  for (let index2 = classNames.length - 1; index2 >= 0; index2 -= 1) {
+    const originalClassName = classNames[index2];
     const {
       modifiers,
       hasImportantModifier,
@@ -25878,12 +25878,12 @@ var mergeClassList = (classList2, configUtils) => {
   return result;
 };
 function twJoin() {
-  let index = 0;
+  let index2 = 0;
   let argument;
   let resolvedValue;
   let string = "";
-  while (index < arguments.length) {
-    if (argument = arguments[index++]) {
+  while (index2 < arguments.length) {
+    if (argument = arguments[index2++]) {
       if (resolvedValue = toValue(argument)) {
         string && (string += " ");
         string += resolvedValue;
@@ -25898,9 +25898,9 @@ var toValue = (mix) => {
   }
   let resolvedValue;
   let string = "";
-  for (let k = 0; k < mix.length; k++) {
-    if (mix[k]) {
-      if (resolvedValue = toValue(mix[k])) {
+  for (let k2 = 0; k2 < mix.length; k2++) {
+    if (mix[k2]) {
+      if (resolvedValue = toValue(mix[k2])) {
         string && (string += " ");
         string += resolvedValue;
       }
@@ -25914,8 +25914,8 @@ function createTailwindMerge(createConfigFirst, ...createConfigRest) {
   let cacheSet;
   let functionToCall = initTailwindMerge;
   function initTailwindMerge(classList2) {
-    const config = createConfigRest.reduce((previousConfig, createConfigCurrent) => createConfigCurrent(previousConfig), createConfigFirst());
-    configUtils = createConfigUtils(config);
+    const config3 = createConfigRest.reduce((previousConfig, createConfigCurrent) => createConfigCurrent(previousConfig), createConfigFirst());
+    configUtils = createConfigUtils(config3);
     cacheGet = configUtils.cache.get;
     cacheSet = configUtils.cache.set;
     functionToCall = tailwindMerge;
@@ -28061,10 +28061,10 @@ var React14 = __toESM(require_react());
 // ../../node_modules/class-variance-authority/dist/index.mjs
 var falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
 var cx = clsx;
-var cva = (base, config) => (props2) => {
+var cva = (base, config3) => (props2) => {
   var _config_compoundVariants;
-  if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props2 === null || props2 === void 0 ? void 0 : props2.class, props2 === null || props2 === void 0 ? void 0 : props2.className);
-  const { variants, defaultVariants } = config;
+  if ((config3 === null || config3 === void 0 ? void 0 : config3.variants) == null) return cx(base, props2 === null || props2 === void 0 ? void 0 : props2.class, props2 === null || props2 === void 0 ? void 0 : props2.className);
+  const { variants, defaultVariants } = config3;
   const getVariantClassNames = Object.keys(variants).map((variant) => {
     const variantProp = props2 === null || props2 === void 0 ? void 0 : props2[variant];
     const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
@@ -28080,7 +28080,7 @@ var cva = (base, config) => (props2) => {
     acc[key] = value;
     return acc;
   }, {});
-  const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
+  const getCompoundVariantClassNames = config3 === null || config3 === void 0 ? void 0 : (_config_compoundVariants = config3.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
     let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
     return Object.entries(compoundVariantOptions).every((param2) => {
       let [key, value] = param2;
@@ -28589,9 +28589,9 @@ function registerResizeHandle(resizeHandleId, element, direction, hitAreaMargins
       ownerDocumentCounts.delete(ownerDocument);
     }
     if (intersectingHandles.includes(data)) {
-      const index = intersectingHandles.indexOf(data);
-      if (index >= 0) {
-        intersectingHandles.splice(index, 1);
+      const index2 = intersectingHandles.indexOf(data);
+      if (index2 >= 0) {
+        intersectingHandles.splice(index2, 1);
       }
       updateCursor();
       setResizeHandlerState("up", true, null);
@@ -28807,7 +28807,7 @@ function updateResizeHandlerStates(action, event) {
   });
 }
 function useForceUpdate() {
-  const [_, setCount] = (0, import_react3.useState)(0);
+  const [_2, setCount] = (0, import_react3.useState)(0);
   return (0, import_react3.useCallback)(() => setCount((prevCount) => prevCount + 1), []);
 }
 function assert(expectedCondition, message) {
@@ -28833,9 +28833,9 @@ function fuzzyLayoutsEqual(actual, expected, fractionDigits) {
   if (actual.length !== expected.length) {
     return false;
   }
-  for (let index = 0; index < actual.length; index++) {
-    const actualSize = actual[index];
-    const expectedSize = expected[index];
+  for (let index2 = 0; index2 < actual.length; index2++) {
+    const actualSize = actual[index2];
+    const expectedSize = expected[index2];
     if (!fuzzyNumbersEqual(actualSize, expectedSize, fractionDigits)) {
       return false;
     }
@@ -28890,17 +28890,17 @@ function adjustLayoutByDelta({
   {
     if (trigger === "keyboard") {
       {
-        const index = delta < 0 ? secondPivotIndex : firstPivotIndex;
-        const panelConstraints = panelConstraintsArray[index];
-        assert(panelConstraints, `Panel constraints not found for index ${index}`);
+        const index2 = delta < 0 ? secondPivotIndex : firstPivotIndex;
+        const panelConstraints = panelConstraintsArray[index2];
+        assert(panelConstraints, `Panel constraints not found for index ${index2}`);
         const {
           collapsedSize = 0,
           collapsible,
           minSize = 0
         } = panelConstraints;
         if (collapsible) {
-          const prevSize = initialLayout[index];
-          assert(prevSize != null, `Previous layout not found for panel index ${index}`);
+          const prevSize = initialLayout[index2];
+          assert(prevSize != null, `Previous layout not found for panel index ${index2}`);
           if (fuzzyNumbersEqual(prevSize, collapsedSize)) {
             const localDelta = minSize - prevSize;
             if (fuzzyCompareNumbers(localDelta, Math.abs(delta)) > 0) {
@@ -28910,17 +28910,17 @@ function adjustLayoutByDelta({
         }
       }
       {
-        const index = delta < 0 ? firstPivotIndex : secondPivotIndex;
-        const panelConstraints = panelConstraintsArray[index];
-        assert(panelConstraints, `No panel constraints found for index ${index}`);
+        const index2 = delta < 0 ? firstPivotIndex : secondPivotIndex;
+        const panelConstraints = panelConstraintsArray[index2];
+        assert(panelConstraints, `No panel constraints found for index ${index2}`);
         const {
           collapsedSize = 0,
           collapsible,
           minSize = 0
         } = panelConstraints;
         if (collapsible) {
-          const prevSize = initialLayout[index];
-          assert(prevSize != null, `Previous layout not found for panel index ${index}`);
+          const prevSize = initialLayout[index2];
+          assert(prevSize != null, `Previous layout not found for panel index ${index2}`);
           if (fuzzyNumbersEqual(prevSize, minSize)) {
             const localDelta = prevSize - collapsedSize;
             if (fuzzyCompareNumbers(localDelta, Math.abs(delta)) > 0) {
@@ -28933,20 +28933,20 @@ function adjustLayoutByDelta({
   }
   {
     const increment = delta < 0 ? 1 : -1;
-    let index = delta < 0 ? secondPivotIndex : firstPivotIndex;
+    let index2 = delta < 0 ? secondPivotIndex : firstPivotIndex;
     let maxAvailableDelta = 0;
     while (true) {
-      const prevSize = initialLayout[index];
-      assert(prevSize != null, `Previous layout not found for panel index ${index}`);
+      const prevSize = initialLayout[index2];
+      assert(prevSize != null, `Previous layout not found for panel index ${index2}`);
       const maxSafeSize = resizePanel({
         panelConstraints: panelConstraintsArray,
-        panelIndex: index,
+        panelIndex: index2,
         size: 100
       });
       const delta2 = maxSafeSize - prevSize;
       maxAvailableDelta += delta2;
-      index += increment;
-      if (index < 0 || index >= panelConstraintsArray.length) {
+      index2 += increment;
+      if (index2 < 0 || index2 >= panelConstraintsArray.length) {
         break;
       }
     }
@@ -28955,20 +28955,20 @@ function adjustLayoutByDelta({
   }
   {
     const pivotIndex = delta < 0 ? firstPivotIndex : secondPivotIndex;
-    let index = pivotIndex;
-    while (index >= 0 && index < panelConstraintsArray.length) {
+    let index2 = pivotIndex;
+    while (index2 >= 0 && index2 < panelConstraintsArray.length) {
       const deltaRemaining = Math.abs(delta) - Math.abs(deltaApplied);
-      const prevSize = initialLayout[index];
-      assert(prevSize != null, `Previous layout not found for panel index ${index}`);
+      const prevSize = initialLayout[index2];
+      assert(prevSize != null, `Previous layout not found for panel index ${index2}`);
       const unsafeSize = prevSize - deltaRemaining;
       const safeSize = resizePanel({
         panelConstraints: panelConstraintsArray,
-        panelIndex: index,
+        panelIndex: index2,
         size: unsafeSize
       });
       if (!fuzzyNumbersEqual(prevSize, safeSize)) {
         deltaApplied += prevSize - safeSize;
-        nextLayout[index] = safeSize;
+        nextLayout[index2] = safeSize;
         if (deltaApplied.toPrecision(3).localeCompare(Math.abs(delta).toPrecision(3), void 0, {
           numeric: true
         }) >= 0) {
@@ -28976,9 +28976,9 @@ function adjustLayoutByDelta({
         }
       }
       if (delta < 0) {
-        index--;
+        index2--;
       } else {
-        index++;
+        index2++;
       }
     }
   }
@@ -28999,27 +28999,27 @@ function adjustLayoutByDelta({
     if (!fuzzyNumbersEqual(safeSize, unsafeSize)) {
       let deltaRemaining = unsafeSize - safeSize;
       const pivotIndex2 = delta < 0 ? secondPivotIndex : firstPivotIndex;
-      let index = pivotIndex2;
-      while (index >= 0 && index < panelConstraintsArray.length) {
-        const prevSize2 = nextLayout[index];
-        assert(prevSize2 != null, `Previous layout not found for panel index ${index}`);
+      let index2 = pivotIndex2;
+      while (index2 >= 0 && index2 < panelConstraintsArray.length) {
+        const prevSize2 = nextLayout[index2];
+        assert(prevSize2 != null, `Previous layout not found for panel index ${index2}`);
         const unsafeSize2 = prevSize2 + deltaRemaining;
         const safeSize2 = resizePanel({
           panelConstraints: panelConstraintsArray,
-          panelIndex: index,
+          panelIndex: index2,
           size: unsafeSize2
         });
         if (!fuzzyNumbersEqual(prevSize2, safeSize2)) {
           deltaRemaining -= safeSize2 - prevSize2;
-          nextLayout[index] = safeSize2;
+          nextLayout[index2] = safeSize2;
         }
         if (fuzzyNumbersEqual(deltaRemaining, 0)) {
           break;
         }
         if (delta > 0) {
-          index--;
+          index2--;
         } else {
-          index++;
+          index2++;
         }
       }
     }
@@ -29041,7 +29041,7 @@ function calculateAriaValues({
   let totalMaxSize = 0;
   const firstIndex = pivotIndices[0];
   assert(firstIndex != null, "No pivot index found");
-  panelsArray.forEach((panelData, index) => {
+  panelsArray.forEach((panelData, index2) => {
     const {
       constraints
     } = panelData;
@@ -29049,7 +29049,7 @@ function calculateAriaValues({
       maxSize = 100,
       minSize = 0
     } = constraints;
-    if (index === firstIndex) {
+    if (index2 === firstIndex) {
       currentMinSize = minSize;
       currentMaxSize = maxSize;
     } else {
@@ -29071,12 +29071,12 @@ function getResizeHandleElementsForGroup(groupId, scope = document) {
 }
 function getResizeHandleElementIndex(groupId, id2, scope = document) {
   const handles = getResizeHandleElementsForGroup(groupId, scope);
-  const index = handles.findIndex((handle) => handle.getAttribute(DATA_ATTRIBUTES.resizeHandleId) === id2);
-  return index !== null && index !== void 0 ? index : null;
+  const index2 = handles.findIndex((handle) => handle.getAttribute(DATA_ATTRIBUTES.resizeHandleId) === id2);
+  return index2 !== null && index2 !== void 0 ? index2 : null;
 }
 function determinePivotIndices(groupId, dragHandleId, panelGroupElement) {
-  const index = getResizeHandleElementIndex(groupId, dragHandleId, panelGroupElement);
-  return index != null ? [index, index + 1] : [-1, -1];
+  const index2 = getResizeHandleElementIndex(groupId, dragHandleId, panelGroupElement);
+  return index2 != null ? [index2, index2 + 1] : [-1, -1];
 }
 function getPanelGroupElement(id2, rootElement = document) {
   var _dataset;
@@ -29100,9 +29100,9 @@ function getResizeHandlePanelIds(groupId, handleId, panelsArray, scope = documen
   var _panelsArray$index$id, _panelsArray$index, _panelsArray$id, _panelsArray;
   const handle = getResizeHandleElement(handleId, scope);
   const handles = getResizeHandleElementsForGroup(groupId, scope);
-  const index = handle ? handles.indexOf(handle) : -1;
-  const idBefore = (_panelsArray$index$id = (_panelsArray$index = panelsArray[index]) === null || _panelsArray$index === void 0 ? void 0 : _panelsArray$index.id) !== null && _panelsArray$index$id !== void 0 ? _panelsArray$index$id : null;
-  const idAfter = (_panelsArray$id = (_panelsArray = panelsArray[index + 1]) === null || _panelsArray === void 0 ? void 0 : _panelsArray.id) !== null && _panelsArray$id !== void 0 ? _panelsArray$id : null;
+  const index2 = handle ? handles.indexOf(handle) : -1;
+  const idBefore = (_panelsArray$index$id = (_panelsArray$index = panelsArray[index2]) === null || _panelsArray$index === void 0 ? void 0 : _panelsArray$index.id) !== null && _panelsArray$index$id !== void 0 ? _panelsArray$index$id : null;
+  const idAfter = (_panelsArray$id = (_panelsArray = panelsArray[index2 + 1]) === null || _panelsArray === void 0 ? void 0 : _panelsArray.id) !== null && _panelsArray$id !== void 0 ? _panelsArray$id : null;
   return [idBefore, idAfter];
 }
 function useWindowSplitterPanelGroupBehavior({
@@ -29122,7 +29122,7 @@ function useWindowSplitterPanelGroupBehavior({
       return;
     }
     const resizeHandleElements = getResizeHandleElementsForGroup(groupId, panelGroupElement);
-    for (let index = 0; index < panelDataArray.length - 1; index++) {
+    for (let index2 = 0; index2 < panelDataArray.length - 1; index2++) {
       const {
         valueMax,
         valueMin,
@@ -29130,13 +29130,13 @@ function useWindowSplitterPanelGroupBehavior({
       } = calculateAriaValues({
         layout,
         panelsArray: panelDataArray,
-        pivotIndices: [index, index + 1]
+        pivotIndices: [index2, index2 + 1]
       });
-      const resizeHandleElement = resizeHandleElements[index];
+      const resizeHandleElement = resizeHandleElements[index2];
       if (resizeHandleElement == null) ;
       else {
-        const panelData = panelDataArray[index];
-        assert(panelData, `No panel data found for index "${index}"`);
+        const panelData = panelDataArray[index2];
+        assert(panelData, `No panel data found for index "${index2}"`);
         resizeHandleElement.setAttribute("aria-controls", panelData.id);
         resizeHandleElement.setAttribute("aria-valuemax", "" + Math.round(valueMax));
         resizeHandleElement.setAttribute("aria-valuemin", "" + Math.round(valueMin));
@@ -29144,7 +29144,7 @@ function useWindowSplitterPanelGroupBehavior({
       }
     }
     return () => {
-      resizeHandleElements.forEach((resizeHandleElement, index) => {
+      resizeHandleElements.forEach((resizeHandleElement, index2) => {
         resizeHandleElement.removeAttribute("aria-controls");
         resizeHandleElement.removeAttribute("aria-valuemax");
         resizeHandleElement.removeAttribute("aria-valuemin");
@@ -29180,11 +29180,11 @@ function useWindowSplitterPanelGroupBehavior({
         switch (event.key) {
           case "Enter": {
             event.preventDefault();
-            const index = panelDataArray2.findIndex((panelData) => panelData.id === idBefore);
-            if (index >= 0) {
-              const panelData = panelDataArray2[index];
-              assert(panelData, `No panel data found for index ${index}`);
-              const size = layout[index];
+            const index2 = panelDataArray2.findIndex((panelData) => panelData.id === idBefore);
+            if (index2 >= 0) {
+              const panelData = panelDataArray2[index2];
+              assert(panelData, `No panel data found for index ${index2}`);
+              const size = layout[index2];
               const {
                 collapsedSize = 0,
                 collapsible,
@@ -29222,8 +29222,8 @@ function areEqual(arrayA, arrayB) {
   if (arrayA.length !== arrayB.length) {
     return false;
   }
-  for (let index = 0; index < arrayA.length; index++) {
-    if (arrayA[index] !== arrayB[index]) {
+  for (let index2 = 0; index2 < arrayA.length; index2++) {
+    if (arrayA[index2] !== arrayB[index2]) {
       return false;
     }
   }
@@ -29302,21 +29302,21 @@ function calculateUnsafeDefaultLayout({
   const panelConstraintsArray = panelDataArray.map((panelData) => panelData.constraints);
   let numPanelsWithSizes = 0;
   let remainingSize = 100;
-  for (let index = 0; index < panelDataArray.length; index++) {
-    const panelConstraints = panelConstraintsArray[index];
-    assert(panelConstraints, `Panel constraints not found for index ${index}`);
+  for (let index2 = 0; index2 < panelDataArray.length; index2++) {
+    const panelConstraints = panelConstraintsArray[index2];
+    assert(panelConstraints, `Panel constraints not found for index ${index2}`);
     const {
       defaultSize: defaultSize2
     } = panelConstraints;
     if (defaultSize2 != null) {
       numPanelsWithSizes++;
-      layout[index] = defaultSize2;
+      layout[index2] = defaultSize2;
       remainingSize -= defaultSize2;
     }
   }
-  for (let index = 0; index < panelDataArray.length; index++) {
-    const panelConstraints = panelConstraintsArray[index];
-    assert(panelConstraints, `Panel constraints not found for index ${index}`);
+  for (let index2 = 0; index2 < panelDataArray.length; index2++) {
+    const panelConstraints = panelConstraintsArray[index2];
+    assert(panelConstraints, `Panel constraints not found for index ${index2}`);
     const {
       defaultSize: defaultSize2
     } = panelConstraints;
@@ -29326,15 +29326,15 @@ function calculateUnsafeDefaultLayout({
     const numRemainingPanels = panelDataArray.length - numPanelsWithSizes;
     const size = remainingSize / numRemainingPanels;
     numPanelsWithSizes++;
-    layout[index] = size;
+    layout[index2] = size;
     remainingSize -= size;
   }
   return layout;
 }
 function callPanelCallbacks(panelsArray, layout, panelIdToLastNotifiedSizeMap) {
-  layout.forEach((size, index) => {
-    const panelData = panelsArray[index];
-    assert(panelData, `Panel data not found for index ${index}`);
+  layout.forEach((size, index2) => {
+    const panelData = panelsArray[index2];
+    assert(panelData, `Panel data not found for index ${index2}`);
     const {
       callbacks,
       constraints,
@@ -29370,8 +29370,8 @@ function compareLayouts(a, b) {
   if (a.length !== b.length) {
     return false;
   } else {
-    for (let index = 0; index < a.length; index++) {
-      if (a[index] != b[index]) {
+    for (let index2 = 0; index2 < a.length; index2++) {
+      if (a[index2] != b[index2]) {
         return false;
       }
     }
@@ -29499,40 +29499,40 @@ function validatePanelGroupLayout({
   if (nextLayout.length !== panelConstraints.length) {
     throw Error(`Invalid ${panelConstraints.length} panel layout: ${nextLayout.map((size) => `${size}%`).join(", ")}`);
   } else if (!fuzzyNumbersEqual(nextLayoutTotalSize, 100) && nextLayout.length > 0) {
-    for (let index = 0; index < panelConstraints.length; index++) {
-      const unsafeSize = nextLayout[index];
-      assert(unsafeSize != null, `No layout data found for index ${index}`);
+    for (let index2 = 0; index2 < panelConstraints.length; index2++) {
+      const unsafeSize = nextLayout[index2];
+      assert(unsafeSize != null, `No layout data found for index ${index2}`);
       const safeSize = 100 / nextLayoutTotalSize * unsafeSize;
-      nextLayout[index] = safeSize;
+      nextLayout[index2] = safeSize;
     }
   }
   let remainingSize = 0;
-  for (let index = 0; index < panelConstraints.length; index++) {
-    const unsafeSize = nextLayout[index];
-    assert(unsafeSize != null, `No layout data found for index ${index}`);
+  for (let index2 = 0; index2 < panelConstraints.length; index2++) {
+    const unsafeSize = nextLayout[index2];
+    assert(unsafeSize != null, `No layout data found for index ${index2}`);
     const safeSize = resizePanel({
       panelConstraints,
-      panelIndex: index,
+      panelIndex: index2,
       size: unsafeSize
     });
     if (unsafeSize != safeSize) {
       remainingSize += unsafeSize - safeSize;
-      nextLayout[index] = safeSize;
+      nextLayout[index2] = safeSize;
     }
   }
   if (!fuzzyNumbersEqual(remainingSize, 0)) {
-    for (let index = 0; index < panelConstraints.length; index++) {
-      const prevSize = nextLayout[index];
-      assert(prevSize != null, `No layout data found for index ${index}`);
+    for (let index2 = 0; index2 < panelConstraints.length; index2++) {
+      const prevSize = nextLayout[index2];
+      assert(prevSize != null, `No layout data found for index ${index2}`);
       const unsafeSize = prevSize + remainingSize;
       const safeSize = resizePanel({
         panelConstraints,
-        panelIndex: index,
+        panelIndex: index2,
         size: unsafeSize
       });
       if (prevSize !== safeSize) {
         remainingSize -= safeSize - prevSize;
-        nextLayout[index] = safeSize;
+        nextLayout[index2] = safeSize;
         if (fuzzyNumbersEqual(remainingSize, 0)) {
           break;
         }
@@ -30017,9 +30017,9 @@ function PanelGroupWithForwardedRef({
     const {
       panelDataArray
     } = eagerValuesRef.current;
-    const index = findPanelDataIndex(panelDataArray, panelData);
-    if (index >= 0) {
-      panelDataArray.splice(index, 1);
+    const index2 = findPanelDataIndex(panelDataArray, panelData);
+    if (index2 >= 0) {
+      panelDataArray.splice(index2, 1);
       delete panelIdToLastNotifiedSizeMapRef.current[panelData.id];
       eagerValuesRef.current.panelDataArrayChanged = true;
       forceUpdate();
@@ -30123,9 +30123,9 @@ function useWindowSplitterResizeHandlerBehavior({
           const groupId = handleElement.getAttribute(DATA_ATTRIBUTES.groupId);
           assert(groupId, `No group element found for id "${groupId}"`);
           const handles = getResizeHandleElementsForGroup(groupId, panelGroupElement);
-          const index = getResizeHandleElementIndex(groupId, handleId, panelGroupElement);
-          assert(index !== null, `No resize element found for id "${handleId}"`);
-          const nextIndex = event.shiftKey ? index > 0 ? index - 1 : handles.length - 1 : index + 1 < handles.length ? index + 1 : 0;
+          const index2 = getResizeHandleElementIndex(groupId, handleId, panelGroupElement);
+          assert(index2 !== null, `No resize element found for id "${handleId}"`);
+          const nextIndex = event.shiftKey ? index2 > 0 ? index2 - 1 : handles.length - 1 : index2 + 1 < handles.length ? index2 + 1 : 0;
           const nextHandle = handles[nextIndex];
           nextHandle.focus();
           break;
@@ -30182,7 +30182,7 @@ function PanelResizeHandle({
     panelGroupElement
   } = panelGroupContext;
   const resizeHandleId = useUniqueId(idFromProps);
-  const [state, setState] = (0, import_react3.useState)("inactive");
+  const [state, setState2] = (0, import_react3.useState)("inactive");
   const [isFocused, setIsFocused] = (0, import_react3.useState)(false);
   const [resizeHandler, setResizeHandler] = (0, import_react3.useState)(null);
   const committedValuesRef = (0, import_react3.useRef)({
@@ -30210,12 +30210,12 @@ function PanelResizeHandle({
     let didMove = false;
     const setResizeHandlerState = (action, isActive, event) => {
       if (!isActive) {
-        setState("inactive");
+        setState2("inactive");
         return;
       }
       switch (action) {
         case "down": {
-          setState("drag");
+          setState2("drag");
           didMove = false;
           assert(event, 'Expected event to be defined for "down" action');
           startDragging(resizeHandleId, event);
@@ -30233,14 +30233,14 @@ function PanelResizeHandle({
           } = committedValuesRef.current;
           didMove = true;
           if (state2 !== "drag") {
-            setState("hover");
+            setState2("hover");
           }
           assert(event, 'Expected event to be defined for "move" action');
           resizeHandler(event);
           break;
         }
         case "up": {
-          setState("hover");
+          setState2("hover");
           stopDragging();
           const {
             onClick: onClick2,
@@ -30336,8 +30336,8 @@ function cc(names) {
       }
     }
   } else {
-    for (let k in names) {
-      if (names[k]) out += (out && " ") + k;
+    for (let k2 in names) {
+      if (names[k2]) out += (out && " ") + k2;
     }
   }
   return out;
@@ -30351,7 +30351,7 @@ var import_with_selector = __toESM(require_with_selector(), 1);
 var createStoreImpl = (createState) => {
   let state;
   const listeners = /* @__PURE__ */ new Set();
-  const setState = (partial, replace) => {
+  const setState2 = (partial, replace) => {
     const nextState = typeof partial === "function" ? partial(state) : partial;
     if (!Object.is(nextState, state)) {
       const previousState = state;
@@ -30359,7 +30359,7 @@ var createStoreImpl = (createState) => {
       listeners.forEach((listener) => listener(state, previousState));
     }
   };
-  const getState = () => state;
+  const getState2 = () => state;
   const getInitialState = () => initialState2;
   const subscribe = (listener) => {
     listeners.add(listener);
@@ -30373,8 +30373,8 @@ var createStoreImpl = (createState) => {
     }
     listeners.clear();
   };
-  const api = { setState, getState, getInitialState, subscribe, destroy };
-  const initialState2 = state = createState(setState, getState, api);
+  const api = { setState: setState2, getState: getState2, getInitialState, subscribe, destroy };
+  const initialState2 = state = createState(setState2, getState2, api);
   return api;
 };
 var createStore = (createState) => createState ? createStoreImpl(createState) : createStoreImpl;
@@ -30444,14 +30444,14 @@ function shallow$1(objA, objB) {
 var noop = { value: () => {
 } };
 function dispatch() {
-  for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
-    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
-    _[t] = [];
+  for (var i = 0, n = arguments.length, _2 = {}, t; i < n; ++i) {
+    if (!(t = arguments[i] + "") || t in _2 || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
+    _2[t] = [];
   }
-  return new Dispatch(_);
+  return new Dispatch(_2);
 }
-function Dispatch(_) {
-  this._ = _;
+function Dispatch(_2) {
+  this._ = _2;
 }
 function parseTypenames(typenames, types) {
   return typenames.trim().split(/^|\s+/).map(function(t) {
@@ -30464,21 +30464,21 @@ function parseTypenames(typenames, types) {
 Dispatch.prototype = dispatch.prototype = {
   constructor: Dispatch,
   on: function(typename, callback) {
-    var _ = this._, T = parseTypenames(typename + "", _), t, i = -1, n = T.length;
+    var _2 = this._, T = parseTypenames(typename + "", _2), t, i = -1, n = T.length;
     if (arguments.length < 2) {
-      while (++i < n) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
+      while (++i < n) if ((t = (typename = T[i]).type) && (t = get(_2[t], typename.name))) return t;
       return;
     }
     if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
     while (++i < n) {
-      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);
-      else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
+      if (t = (typename = T[i]).type) _2[t] = set(_2[t], typename.name, callback);
+      else if (callback == null) for (t in _2) _2[t] = set(_2[t], typename.name, null);
     }
     return this;
   },
   copy: function() {
-    var copy = {}, _ = this._;
-    for (var t in _) copy[t] = _[t].slice();
+    var copy = {}, _2 = this._;
+    for (var t in _2) copy[t] = _2[t].slice();
     return new Dispatch(copy);
   },
   call: function(type, that) {
@@ -30793,9 +30793,9 @@ function join_default(onenter, onupdate, onexit) {
 function merge_default(context) {
   var selection2 = context.selection ? context.selection() : context;
   for (var groups0 = this._groups, groups1 = selection2._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
-    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
+    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge2 = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
       if (node = group0[i] || group1[i]) {
-        merge[i] = node;
+        merge2[i] = node;
       }
     }
   }
@@ -30907,16 +30907,16 @@ function attrConstantNS(fullname, value) {
 }
 function attrFunction(name, value) {
   return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.removeAttribute(name);
-    else this.setAttribute(name, v);
+    var v2 = value.apply(this, arguments);
+    if (v2 == null) this.removeAttribute(name);
+    else this.setAttribute(name, v2);
   };
 }
 function attrFunctionNS(fullname, value) {
   return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
-    else this.setAttributeNS(fullname.space, fullname.local, v);
+    var v2 = value.apply(this, arguments);
+    if (v2 == null) this.removeAttributeNS(fullname.space, fullname.local);
+    else this.setAttributeNS(fullname.space, fullname.local, v2);
   };
 }
 function attr_default(name, value) {
@@ -30946,9 +30946,9 @@ function styleConstant(name, value, priority) {
 }
 function styleFunction(name, value, priority) {
   return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.style.removeProperty(name);
-    else this.style.setProperty(name, v, priority);
+    var v2 = value.apply(this, arguments);
+    if (v2 == null) this.style.removeProperty(name);
+    else this.style.setProperty(name, v2, priority);
   };
 }
 function style_default(name, value, priority) {
@@ -30971,9 +30971,9 @@ function propertyConstant(name, value) {
 }
 function propertyFunction(name, value) {
   return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) delete this[name];
-    else this[name] = v;
+    var v2 = value.apply(this, arguments);
+    if (v2 == null) delete this[name];
+    else this[name] = v2;
   };
 }
 function property_default(name, value) {
@@ -31054,8 +31054,8 @@ function textConstant(value) {
 }
 function textFunction(value) {
   return function() {
-    var v = value.apply(this, arguments);
-    this.textContent = v == null ? "" : v;
+    var v2 = value.apply(this, arguments);
+    this.textContent = v2 == null ? "" : v2;
   };
 }
 function text_default(value) {
@@ -31073,8 +31073,8 @@ function htmlConstant(value) {
 }
 function htmlFunction(value) {
   return function() {
-    var v = value.apply(this, arguments);
-    this.innerHTML = v == null ? "" : v;
+    var v2 = value.apply(this, arguments);
+    this.innerHTML = v2 == null ? "" : v2;
   };
 }
 function html_default(value) {
@@ -31099,9 +31099,9 @@ function lower_default() {
 
 // ../../node_modules/d3-selection/src/selection/append.js
 function append_default(name) {
-  var create2 = typeof name === "function" ? name : creator_default(name);
+  var create3 = typeof name === "function" ? name : creator_default(name);
   return this.select(function() {
-    return this.appendChild(create2.apply(this, arguments));
+    return this.appendChild(create3.apply(this, arguments));
   });
 }
 
@@ -31110,9 +31110,9 @@ function constantNull() {
   return null;
 }
 function insert_default(name, before) {
-  var create2 = typeof name === "function" ? name : creator_default(name), select = before == null ? constantNull : typeof before === "function" ? before : selector_default(before);
+  var create3 = typeof name === "function" ? name : creator_default(name), select = before == null ? constantNull : typeof before === "function" ? before : selector_default(before);
   return this.select(function() {
-    return this.insertBefore(create2.apply(this, arguments), select.apply(this, arguments) || null);
+    return this.insertBefore(create3.apply(this, arguments), select.apply(this, arguments) || null);
   });
 }
 
@@ -31520,24 +31520,24 @@ function drag_default() {
       );
     };
   }
-  drag.filter = function(_) {
-    return arguments.length ? (filter2 = typeof _ === "function" ? _ : constant_default2(!!_), drag) : filter2;
+  drag.filter = function(_2) {
+    return arguments.length ? (filter2 = typeof _2 === "function" ? _2 : constant_default2(!!_2), drag) : filter2;
   };
-  drag.container = function(_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : constant_default2(_), drag) : container;
+  drag.container = function(_2) {
+    return arguments.length ? (container = typeof _2 === "function" ? _2 : constant_default2(_2), drag) : container;
   };
-  drag.subject = function(_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : constant_default2(_), drag) : subject;
+  drag.subject = function(_2) {
+    return arguments.length ? (subject = typeof _2 === "function" ? _2 : constant_default2(_2), drag) : subject;
   };
-  drag.touchable = function(_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : constant_default2(!!_), drag) : touchable;
+  drag.touchable = function(_2) {
+    return arguments.length ? (touchable = typeof _2 === "function" ? _2 : constant_default2(!!_2), drag) : touchable;
   };
   drag.on = function() {
     var value = listeners.on.apply(listeners, arguments);
     return value === listeners ? drag : value;
   };
-  drag.clickDistance = function(_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
+  drag.clickDistance = function(_2) {
+    return arguments.length ? (clickDistance2 = (_2 = +_2) * _2, drag) : Math.sqrt(clickDistance2);
   };
   return drag;
 }
@@ -31746,9 +31746,9 @@ function color_formatRgb() {
   return this.rgb().formatRgb();
 }
 function color(format) {
-  var m, l;
+  var m, l2;
   format = (format + "").trim().toLowerCase();
-  return (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) : l === 3 ? new Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) : l === 8 ? rgba(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) : l === 4 ? rgba(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) : null) : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) : named.hasOwnProperty(format) ? rgbn(named[format]) : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0) : null;
+  return (m = reHex.exec(format)) ? (l2 = m[1].length, m = parseInt(m[1], 16), l2 === 6 ? rgbn(m) : l2 === 3 ? new Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) : l2 === 8 ? rgba(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) : l2 === 4 ? rgba(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) : null) : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) : named.hasOwnProperty(format) ? rgbn(named[format]) : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0) : null;
 }
 function rgbn(n) {
   return new Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
@@ -31773,13 +31773,13 @@ function Rgb(r2, g, b, opacity) {
   this.opacity = +opacity;
 }
 define_default(Rgb, rgb, extend(Color, {
-  brighter(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
+  brighter(k2) {
+    k2 = k2 == null ? brighter : Math.pow(brighter, k2);
+    return new Rgb(this.r * k2, this.g * k2, this.b * k2, this.opacity);
   },
-  darker(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
+  darker(k2) {
+    k2 = k2 == null ? darker : Math.pow(darker, k2);
+    return new Rgb(this.r * k2, this.g * k2, this.b * k2, this.opacity);
   },
   rgb() {
     return this;
@@ -31817,11 +31817,11 @@ function hex(value) {
   value = clampi(value);
   return (value < 16 ? "0" : "") + value.toString(16);
 }
-function hsla(h, s, l, a) {
-  if (a <= 0) h = s = l = NaN;
-  else if (l <= 0 || l >= 1) h = s = NaN;
-  else if (s <= 0) h = NaN;
-  return new Hsl(h, s, l, a);
+function hsla(h2, s, l2, a) {
+  if (a <= 0) h2 = s = l2 = NaN;
+  else if (l2 <= 0 || l2 >= 1) h2 = s = NaN;
+  else if (s <= 0) h2 = NaN;
+  return new Hsl(h2, s, l2, a);
 }
 function hslConvert(o) {
   if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
@@ -31829,42 +31829,42 @@ function hslConvert(o) {
   if (!o) return new Hsl();
   if (o instanceof Hsl) return o;
   o = o.rgb();
-  var r2 = o.r / 255, g = o.g / 255, b = o.b / 255, min = Math.min(r2, g, b), max = Math.max(r2, g, b), h = NaN, s = max - min, l = (max + min) / 2;
+  var r2 = o.r / 255, g = o.g / 255, b = o.b / 255, min = Math.min(r2, g, b), max = Math.max(r2, g, b), h2 = NaN, s = max - min, l2 = (max + min) / 2;
   if (s) {
-    if (r2 === max) h = (g - b) / s + (g < b) * 6;
-    else if (g === max) h = (b - r2) / s + 2;
-    else h = (r2 - g) / s + 4;
-    s /= l < 0.5 ? max + min : 2 - max - min;
-    h *= 60;
+    if (r2 === max) h2 = (g - b) / s + (g < b) * 6;
+    else if (g === max) h2 = (b - r2) / s + 2;
+    else h2 = (r2 - g) / s + 4;
+    s /= l2 < 0.5 ? max + min : 2 - max - min;
+    h2 *= 60;
   } else {
-    s = l > 0 && l < 1 ? 0 : h;
+    s = l2 > 0 && l2 < 1 ? 0 : h2;
   }
-  return new Hsl(h, s, l, o.opacity);
+  return new Hsl(h2, s, l2, o.opacity);
 }
-function hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
+function hsl(h2, s, l2, opacity) {
+  return arguments.length === 1 ? hslConvert(h2) : new Hsl(h2, s, l2, opacity == null ? 1 : opacity);
 }
-function Hsl(h, s, l, opacity) {
-  this.h = +h;
+function Hsl(h2, s, l2, opacity) {
+  this.h = +h2;
   this.s = +s;
-  this.l = +l;
+  this.l = +l2;
   this.opacity = +opacity;
 }
 define_default(Hsl, hsl, extend(Color, {
-  brighter(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Hsl(this.h, this.s, this.l * k, this.opacity);
+  brighter(k2) {
+    k2 = k2 == null ? brighter : Math.pow(brighter, k2);
+    return new Hsl(this.h, this.s, this.l * k2, this.opacity);
   },
-  darker(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Hsl(this.h, this.s, this.l * k, this.opacity);
+  darker(k2) {
+    k2 = k2 == null ? darker : Math.pow(darker, k2);
+    return new Hsl(this.h, this.s, this.l * k2, this.opacity);
   },
   rgb() {
-    var h = this.h % 360 + (this.h < 0) * 360, s = isNaN(h) || isNaN(this.s) ? 0 : this.s, l = this.l, m2 = l + (l < 0.5 ? l : 1 - l) * s, m1 = 2 * l - m2;
+    var h2 = this.h % 360 + (this.h < 0) * 360, s = isNaN(h2) || isNaN(this.s) ? 0 : this.s, l2 = this.l, m2 = l2 + (l2 < 0.5 ? l2 : 1 - l2) * s, m1 = 2 * l2 - m2;
     return new Rgb(
-      hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2),
-      hsl2rgb(h, m1, m2),
-      hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2),
+      hsl2rgb(h2 >= 240 ? h2 - 240 : h2 + 120, m1, m2),
+      hsl2rgb(h2, m1, m2),
+      hsl2rgb(h2 < 120 ? h2 + 240 : h2 - 120, m1, m2),
       this.opacity
     );
   },
@@ -31886,8 +31886,8 @@ function clamph(value) {
 function clampt(value) {
   return Math.max(0, Math.min(1, value || 0));
 }
-function hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
+function hsl2rgb(h2, m1, m2) {
+  return (h2 < 60 ? m1 + (m2 - m1) * h2 / 60 : h2 < 180 ? m2 : h2 < 240 ? m1 + (m2 - m1) * (240 - h2) / 60 : m1) * 255;
 }
 
 // ../../node_modules/d3-interpolate/src/basis.js
@@ -32134,21 +32134,21 @@ function tanh(x) {
 }
 var zoom_default = function zoomRho(rho, rho2, rho4) {
   function zoom(p0, p1) {
-    var ux0 = p0[0], uy0 = p0[1], w0 = p0[2], ux1 = p1[0], uy1 = p1[1], w1 = p1[2], dx = ux1 - ux0, dy = uy1 - uy0, d2 = dx * dx + dy * dy, i, S;
+    var ux0 = p0[0], uy0 = p0[1], w0 = p0[2], ux1 = p1[0], uy1 = p1[1], w1 = p1[2], dx = ux1 - ux0, dy = uy1 - uy0, d2 = dx * dx + dy * dy, i, S2;
     if (d2 < epsilon2) {
-      S = Math.log(w1 / w0) / rho;
+      S2 = Math.log(w1 / w0) / rho;
       i = function(t) {
         return [
           ux0 + t * dx,
           uy0 + t * dy,
-          w0 * Math.exp(rho * t * S)
+          w0 * Math.exp(rho * t * S2)
         ];
       };
     } else {
       var d1 = Math.sqrt(d2), b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1), b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1), r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0), r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / rho;
+      S2 = (r1 - r0) / rho;
       i = function(t) {
-        var s = t * S, coshr0 = cosh(r0), u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
+        var s = t * S2, coshr0 = cosh(r0), u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
         return [
           ux0 + u * dx,
           uy0 + u * dy,
@@ -32156,12 +32156,12 @@ var zoom_default = function zoomRho(rho, rho2, rho4) {
         ];
       };
     }
-    i.duration = S * 1e3 * rho / Math.SQRT2;
+    i.duration = S2 * 1e3 * rho / Math.SQRT2;
     return i;
   }
-  zoom.rho = function(_) {
-    var _1 = Math.max(1e-3, +_), _2 = _1 * _1, _4 = _2 * _2;
-    return zoomRho(_1, _2, _4);
+  zoom.rho = function(_2) {
+    var _1 = Math.max(1e-3, +_2), _22 = _1 * _1, _4 = _22 * _22;
+    return zoomRho(_1, _22, _4);
   };
   return zoom;
 }(Math.SQRT2, 2, 4);
@@ -32289,13 +32289,13 @@ var STARTED = 3;
 var RUNNING = 4;
 var ENDING = 5;
 var ENDED = 6;
-function schedule_default(node, name, id2, index, group, timing) {
+function schedule_default(node, name, id2, index2, group, timing) {
   var schedules = node.__transition;
   if (!schedules) node.__transition = {};
   else if (id2 in schedules) return;
   create(node, id2, {
     name,
-    index,
+    index: index2,
     // For context during callback.
     group,
     // For context during callback.
@@ -32620,9 +32620,9 @@ function ease_default(value) {
 // ../../node_modules/d3-transition/src/transition/easeVarying.js
 function easeVarying(id2, value) {
   return function() {
-    var v = value.apply(this, arguments);
-    if (typeof v !== "function") throw new Error();
-    set2(this, id2).ease = v;
+    var v2 = value.apply(this, arguments);
+    if (typeof v2 !== "function") throw new Error();
+    set2(this, id2).ease = v2;
   };
 }
 function easeVarying_default(value) {
@@ -32647,9 +32647,9 @@ function filter_default2(match) {
 function merge_default2(transition2) {
   if (transition2._id !== this._id) throw new Error();
   for (var groups0 = this._groups, groups1 = transition2._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
-    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
+    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge2 = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
       if (node = group0[i] || group1[i]) {
-        merge[i] = node;
+        merge2[i] = node;
       }
     }
   }
@@ -32715,9 +32715,9 @@ function selectAll_default2(select) {
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
-        for (var children2 = select.call(node, node.__data__, i, group), child, inherit2 = get2(node, id2), k = 0, l = children2.length; k < l; ++k) {
-          if (child = children2[k]) {
-            schedule_default(child, name, id2, k, children2, inherit2);
+        for (var children2 = select.call(node, node.__data__, i, group), child, inherit2 = get2(node, id2), k2 = 0, l2 = children2.length; k2 < l2; ++k2) {
+          if (child = children2[k2]) {
+            schedule_default(child, name, id2, k2, children2, inherit2);
           }
         }
         subgroups.push(children2);
@@ -32990,15 +32990,15 @@ function ZoomEvent(type, {
 }
 
 // ../../node_modules/d3-zoom/src/transform.js
-function Transform(k, x, y) {
-  this.k = k;
+function Transform(k2, x, y) {
+  this.k = k2;
   this.x = x;
   this.y = y;
 }
 Transform.prototype = {
   constructor: Transform,
-  scale: function(k) {
-    return k === 1 ? this : new Transform(this.k * k, this.x, this.y);
+  scale: function(k2) {
+    return k2 === 1 ? this : new Transform(this.k * k2, this.x, this.y);
   },
   translate: function(x, y) {
     return x === 0 & y === 0 ? this : new Transform(this.k, this.x + this.k * x, this.y + this.k * y);
@@ -33095,15 +33095,15 @@ function zoom_default2() {
       });
     }
   };
-  zoom.scaleBy = function(selection2, k, p, event) {
+  zoom.scaleBy = function(selection2, k2, p, event) {
     zoom.scaleTo(selection2, function() {
-      var k0 = this.__zoom.k, k1 = typeof k === "function" ? k.apply(this, arguments) : k;
+      var k0 = this.__zoom.k, k1 = typeof k2 === "function" ? k2.apply(this, arguments) : k2;
       return k0 * k1;
     }, p, event);
   };
-  zoom.scaleTo = function(selection2, k, p, event) {
+  zoom.scaleTo = function(selection2, k2, p, event) {
     zoom.transform(selection2, function() {
-      var e = extent.apply(this, arguments), t0 = this.__zoom, p0 = p == null ? centroid(e) : typeof p === "function" ? p.apply(this, arguments) : p, p1 = t0.invert(p0), k1 = typeof k === "function" ? k.apply(this, arguments) : k;
+      var e = extent.apply(this, arguments), t0 = this.__zoom, p0 = p == null ? centroid(e) : typeof p === "function" ? p.apply(this, arguments) : p, p1 = t0.invert(p0), k1 = typeof k2 === "function" ? k2.apply(this, arguments) : k2;
       return constrain(translate(scale(t0, k1), p0, p1), e, translateExtent);
     }, p, event);
   };
@@ -33124,9 +33124,9 @@ function zoom_default2() {
       ), e, translateExtent);
     }, p, event);
   };
-  function scale(transform2, k) {
-    k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], k));
-    return k === transform2.k ? transform2 : new Transform(k, transform2.x, transform2.y);
+  function scale(transform2, k2) {
+    k2 = Math.max(scaleExtent[0], Math.min(scaleExtent[1], k2));
+    return k2 === transform2.k ? transform2 : new Transform(k2, transform2.x, transform2.y);
   }
   function translate(transform2, p0, p1) {
     var x = p0[0] - p1[0] * transform2.k, y = p0[1] - p1[1] * transform2.k;
@@ -33145,8 +33145,8 @@ function zoom_default2() {
       return function(t) {
         if (t === 1) t = b;
         else {
-          var l = i(t), k = w / l[2];
-          t = new Transform(k, p[0] - l[0] * k, p[1] - l[1] * k);
+          var l2 = i(t), k2 = w / l2[2];
+          t = new Transform(k2, p[0] - l2[0] * k2, p[1] - l2[1] * k2);
         }
         g.zoom(null, t);
       };
@@ -33208,13 +33208,13 @@ function zoom_default2() {
   };
   function wheeled(event, ...args) {
     if (!filter2.apply(this, arguments)) return;
-    var g = gesture(this, args).event(event), t = this.__zoom, k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta2.apply(this, arguments)))), p = pointer_default(event);
+    var g = gesture(this, args).event(event), t = this.__zoom, k2 = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta2.apply(this, arguments)))), p = pointer_default(event);
     if (g.wheel) {
       if (g.mouse[0][0] !== p[0] || g.mouse[0][1] !== p[1]) {
         g.mouse[1] = t.invert(g.mouse[0] = p);
       }
       clearTimeout(g.wheel);
-    } else if (t.k === k) return;
+    } else if (t.k === k2) return;
     else {
       g.mouse = [p, t.invert(p)];
       interrupt_default(this);
@@ -33222,7 +33222,7 @@ function zoom_default2() {
     }
     noevent_default2(event);
     g.wheel = setTimeout(wheelidled, wheelDelay);
-    g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
+    g.zoom("mouse", constrain(translate(scale(t, k2), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
     function wheelidled() {
       g.wheel = null;
       g.end();
@@ -33230,7 +33230,7 @@ function zoom_default2() {
   }
   function mousedowned(event, ...args) {
     if (touchending || !filter2.apply(this, arguments)) return;
-    var currentTarget = event.currentTarget, g = gesture(this, args, true).event(event), v = select_default2(event.view).on("mousemove.zoom", mousemoved, true).on("mouseup.zoom", mouseupped, true), p = pointer_default(event, currentTarget), x0 = event.clientX, y0 = event.clientY;
+    var currentTarget = event.currentTarget, g = gesture(this, args, true).event(event), v2 = select_default2(event.view).on("mousemove.zoom", mousemoved, true).on("mouseup.zoom", mouseupped, true), p = pointer_default(event, currentTarget), x0 = event.clientX, y0 = event.clientY;
     nodrag_default(event.view);
     nopropagation2(event);
     g.mouse = [p, this.__zoom.invert(p)];
@@ -33245,7 +33245,7 @@ function zoom_default2() {
       g.event(event2).zoom("mouse", constrain(translate(g.that.__zoom, g.mouse[0] = pointer_default(event2, currentTarget), g.mouse[1]), g.extent, translateExtent));
     }
     function mouseupped(event2) {
-      v.on("mousemove.zoom mouseup.zoom", null);
+      v2.on("mousemove.zoom mouseup.zoom", null);
       yesdrag(event2.view, g.moved);
       noevent_default2(event2);
       g.event(event2).end();
@@ -33279,7 +33279,7 @@ function zoom_default2() {
   }
   function touchmoved(event, ...args) {
     if (!this.__zooming) return;
-    var g = gesture(this, args).event(event), touches = event.changedTouches, n = touches.length, i, t, p, l;
+    var g = gesture(this, args).event(event), touches = event.changedTouches, n = touches.length, i, t, p, l2;
     noevent_default2(event);
     for (i = 0; i < n; ++i) {
       t = touches[i], p = pointer_default(t, this);
@@ -33291,10 +33291,10 @@ function zoom_default2() {
       var p0 = g.touch0[0], l0 = g.touch0[1], p1 = g.touch1[0], l1 = g.touch1[1], dp = (dp = p1[0] - p0[0]) * dp + (dp = p1[1] - p0[1]) * dp, dl = (dl = l1[0] - l0[0]) * dl + (dl = l1[1] - l0[1]) * dl;
       t = scale(t, Math.sqrt(dp / dl));
       p = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
-      l = [(l0[0] + l1[0]) / 2, (l0[1] + l1[1]) / 2];
-    } else if (g.touch0) p = g.touch0[0], l = g.touch0[1];
+      l2 = [(l0[0] + l1[0]) / 2, (l0[1] + l1[1]) / 2];
+    } else if (g.touch0) p = g.touch0[0], l2 = g.touch0[1];
     else return;
-    g.zoom("touch", constrain(translate(t, p, l), g.extent, translateExtent));
+    g.zoom("touch", constrain(translate(t, p, l2), g.extent, translateExtent));
   }
   function touchended(event, ...args) {
     if (!this.__zooming) return;
@@ -33322,42 +33322,42 @@ function zoom_default2() {
       }
     }
   }
-  zoom.wheelDelta = function(_) {
-    return arguments.length ? (wheelDelta2 = typeof _ === "function" ? _ : constant_default4(+_), zoom) : wheelDelta2;
+  zoom.wheelDelta = function(_2) {
+    return arguments.length ? (wheelDelta2 = typeof _2 === "function" ? _2 : constant_default4(+_2), zoom) : wheelDelta2;
   };
-  zoom.filter = function(_) {
-    return arguments.length ? (filter2 = typeof _ === "function" ? _ : constant_default4(!!_), zoom) : filter2;
+  zoom.filter = function(_2) {
+    return arguments.length ? (filter2 = typeof _2 === "function" ? _2 : constant_default4(!!_2), zoom) : filter2;
   };
-  zoom.touchable = function(_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : constant_default4(!!_), zoom) : touchable;
+  zoom.touchable = function(_2) {
+    return arguments.length ? (touchable = typeof _2 === "function" ? _2 : constant_default4(!!_2), zoom) : touchable;
   };
-  zoom.extent = function(_) {
-    return arguments.length ? (extent = typeof _ === "function" ? _ : constant_default4([[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]]), zoom) : extent;
+  zoom.extent = function(_2) {
+    return arguments.length ? (extent = typeof _2 === "function" ? _2 : constant_default4([[+_2[0][0], +_2[0][1]], [+_2[1][0], +_2[1][1]]]), zoom) : extent;
   };
-  zoom.scaleExtent = function(_) {
-    return arguments.length ? (scaleExtent[0] = +_[0], scaleExtent[1] = +_[1], zoom) : [scaleExtent[0], scaleExtent[1]];
+  zoom.scaleExtent = function(_2) {
+    return arguments.length ? (scaleExtent[0] = +_2[0], scaleExtent[1] = +_2[1], zoom) : [scaleExtent[0], scaleExtent[1]];
   };
-  zoom.translateExtent = function(_) {
-    return arguments.length ? (translateExtent[0][0] = +_[0][0], translateExtent[1][0] = +_[1][0], translateExtent[0][1] = +_[0][1], translateExtent[1][1] = +_[1][1], zoom) : [[translateExtent[0][0], translateExtent[0][1]], [translateExtent[1][0], translateExtent[1][1]]];
+  zoom.translateExtent = function(_2) {
+    return arguments.length ? (translateExtent[0][0] = +_2[0][0], translateExtent[1][0] = +_2[1][0], translateExtent[0][1] = +_2[0][1], translateExtent[1][1] = +_2[1][1], zoom) : [[translateExtent[0][0], translateExtent[0][1]], [translateExtent[1][0], translateExtent[1][1]]];
   };
-  zoom.constrain = function(_) {
-    return arguments.length ? (constrain = _, zoom) : constrain;
+  zoom.constrain = function(_2) {
+    return arguments.length ? (constrain = _2, zoom) : constrain;
   };
-  zoom.duration = function(_) {
-    return arguments.length ? (duration = +_, zoom) : duration;
+  zoom.duration = function(_2) {
+    return arguments.length ? (duration = +_2, zoom) : duration;
   };
-  zoom.interpolate = function(_) {
-    return arguments.length ? (interpolate = _, zoom) : interpolate;
+  zoom.interpolate = function(_2) {
+    return arguments.length ? (interpolate = _2, zoom) : interpolate;
   };
   zoom.on = function() {
     var value = listeners.on.apply(listeners, arguments);
     return value === listeners ? zoom : value;
   };
-  zoom.clickDistance = function(_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, zoom) : Math.sqrt(clickDistance2);
+  zoom.clickDistance = function(_2) {
+    return arguments.length ? (clickDistance2 = (_2 = +_2) * _2, zoom) : Math.sqrt(clickDistance2);
   };
-  zoom.tapDistance = function(_) {
-    return arguments.length ? (tapDistance = +_, zoom) : tapDistance;
+  zoom.tapDistance = function(_2) {
+    return arguments.length ? (tapDistance = +_2, zoom) : tapDistance;
   };
   return zoom;
 }
@@ -33532,9 +33532,9 @@ var BaseEdge = ({ id: id2, path, labelX, labelY, label, labelStyle, labelShowBg,
   );
 };
 BaseEdge.displayName = "BaseEdge";
-function getMouseHandler$1(id2, getState, handler) {
+function getMouseHandler$1(id2, getState2, handler) {
   return handler === void 0 ? handler : (event) => {
-    const edge = getState().edges.find((e) => e.id === id2);
+    const edge = getState2().edges.find((e) => e.id === id2);
     if (edge) {
       handler(event, { ...edge });
     }
@@ -34024,14 +34024,14 @@ var getD3Transition = (selection2, duration = 0) => {
   return selection2.transition().duration(duration);
 };
 function getHandles(node, handleBounds, type, currentHandle) {
-  return (handleBounds[type] || []).reduce((res, h) => {
-    if (`${node.id}-${h.id}-${type}` !== currentHandle) {
+  return (handleBounds[type] || []).reduce((res, h2) => {
+    if (`${node.id}-${h2.id}-${type}` !== currentHandle) {
       res.push({
-        id: h.id || null,
+        id: h2.id || null,
         type,
         nodeId: node.id,
-        x: (node.positionAbsolute?.x ?? 0) + h.x + h.width / 2,
-        y: (node.positionAbsolute?.y ?? 0) + h.y + h.height / 2
+        x: (node.positionAbsolute?.x ?? 0) + h2.x + h2.width / 2,
+        y: (node.positionAbsolute?.y ?? 0) + h2.y + h2.height / 2
       });
     }
     return res;
@@ -34048,7 +34048,7 @@ function getClosestHandle(event, doc, pos, connectionRadius, handles, validator)
       const handleId = handleBelow.getAttribute("data-handleid");
       const validHandleResult = validator({ nodeId: handleNodeId, id: handleId, type: handleType });
       if (validHandleResult) {
-        const handle = handles.find((h) => h.nodeId === handleNodeId && h.type === handleType && h.id === handleId);
+        const handle = handles.find((h2) => h2.nodeId === handleNodeId && h2.type === handleType && h2.id === handleId);
         return {
           handle: {
             id: handleId,
@@ -34168,9 +34168,9 @@ function getConnectionStatus(isInsideConnectionRadius, isHandleValid) {
   }
   return connectionStatus;
 }
-function handlePointerDown2({ event, handleId, nodeId, onConnect, isTarget, getState, setState, isValidConnection, edgeUpdaterType, onReconnectEnd }) {
+function handlePointerDown2({ event, handleId, nodeId, onConnect, isTarget, getState: getState2, setState: setState2, isValidConnection, edgeUpdaterType, onReconnectEnd }) {
   const doc = getHostForElement(event.target);
-  const { connectionMode, domNode, autoPanOnConnect, connectionRadius, onConnectStart, panBy, getNodes, cancelConnection } = getState();
+  const { connectionMode, domNode, autoPanOnConnect, connectionRadius, onConnectStart, panBy, getNodes, cancelConnection } = getState2();
   let autoPanId = 0;
   let closestHandle;
   const { x, y } = getEventPosition(event);
@@ -34200,7 +34200,7 @@ function handlePointerDown2({ event, handleId, nodeId, onConnect, isTarget, getS
     panBy({ x: xMovement, y: yMovement });
     autoPanId = requestAnimationFrame(autoPan);
   };
-  setState({
+  setState2({
     connectionPosition,
     connectionStatus: null,
     // connectionNodeId etc will be removed in the next major in favor of connectionStartHandle
@@ -34216,7 +34216,7 @@ function handlePointerDown2({ event, handleId, nodeId, onConnect, isTarget, getS
   });
   onConnectStart?.(event, { nodeId, handleId, handleType });
   function onPointerMove(event2) {
-    const { transform: transform2 } = getState();
+    const { transform: transform2 } = getState2();
     connectionPosition = getEventPosition(event2, containerBounds);
     const { handle, validHandleResult } = getClosestHandle(event2, doc, pointToRendererPoint(connectionPosition, transform2, false, [1, 1]), connectionRadius, handleLookup, (handle2) => isValidHandle(handle2, connectionMode, nodeId, handleId, isTarget ? "target" : "source", isValidConnection, doc));
     closestHandle = handle;
@@ -34227,7 +34227,7 @@ function handlePointerDown2({ event, handleId, nodeId, onConnect, isTarget, getS
     handleDomNode = validHandleResult.handleDomNode;
     connection = validHandleResult.connection;
     isValid = validHandleResult.isValid;
-    setState({
+    setState2({
       connectionPosition: closestHandle && isValid ? rendererPointToPoint({
         x: closestHandle.x,
         y: closestHandle.y
@@ -34250,7 +34250,7 @@ function handlePointerDown2({ event, handleId, nodeId, onConnect, isTarget, getS
     if ((closestHandle || handleDomNode) && connection && isValid) {
       onConnect?.(connection);
     }
-    getState().onConnectEnd?.(event2);
+    getState2().onConnectEnd?.(event2);
     if (edgeUpdaterType) {
       onReconnectEnd?.(event2);
     }
@@ -34446,10 +34446,10 @@ function useStoreUpdater(value, setStoreState) {
     }
   }, [value]);
 }
-function useDirectStoreUpdater(key, value, setState) {
+function useDirectStoreUpdater(key, value, setState2) {
   (0, import_react5.useEffect)(() => {
     if (typeof value !== "undefined") {
-      setState({ [key]: value });
+      setState2({ [key]: value });
     }
   }, [value]);
 }
@@ -34609,7 +34609,7 @@ var useKeyPress = (keyCode = null, options = { actInsideInputWithModifier: true 
   return keyPressed;
 };
 function isMatchingKey(keyCodes, pressedKeys, isUp) {
-  return keyCodes.filter((keys) => isUp || keys.length === pressedKeys.size).some((keys) => keys.every((k) => pressedKeys.has(k)));
+  return keyCodes.filter((keys) => isUp || keys.length === pressedKeys.size).some((keys) => keys.every((k2) => pressedKeys.has(k2)));
 }
 function useKeyOrCode(eventCode, keysToWatch) {
   return keysToWatch.includes(eventCode) ? "code" : "key";
@@ -35711,9 +35711,9 @@ var getHandleBounds = (selector4, nodeElement, zoom, nodeOrigin) => {
     };
   });
 };
-function getMouseHandler(id2, getState, handler) {
+function getMouseHandler(id2, getState2, handler) {
   return handler === void 0 ? handler : (event) => {
-    const node = getState().nodeInternals.get(id2);
+    const node = getState2().nodeInternals.get(id2);
     if (node) {
       handler(event, { ...node });
     }
@@ -35753,7 +35753,7 @@ function useGetPointerPosition() {
   return getPointerPosition;
 }
 function wrapSelectionDragFunc(selectionFunc) {
-  return (event, _, nodes) => selectionFunc?.(event, nodes);
+  return (event, _2, nodes) => selectionFunc?.(event, nodes);
 }
 function useDrag({ nodeRef, disabled = false, noDragClassName, handleSelector, nodeId, isSelectable, selectNodesOnDrag }) {
   const store = useStoreApi();
@@ -36203,7 +36203,7 @@ function createNodeTypes(nodeTypes) {
     group: wrapNode(nodeTypes.group || GroupNode)
   };
   const wrappedTypes = {};
-  const specialTypes = Object.keys(nodeTypes).filter((k) => !["input", "default", "output", "group"].includes(k)).reduce((res, key) => {
+  const specialTypes = Object.keys(nodeTypes).filter((k2) => !["input", "default", "output", "group"].includes(k2)).reduce((res, key) => {
     res[key] = wrapNode(nodeTypes[key] || DefaultNode$1);
     return res;
   }, wrappedTypes);
@@ -36411,7 +36411,7 @@ function createEdgeTypes(edgeTypes) {
     simplebezier: wrapEdge(edgeTypes.simplebezier || SimpleBezierEdge)
   };
   const wrappedTypes = {};
-  const specialTypes = Object.keys(edgeTypes).filter((k) => !["default", "bezier"].includes(k)).reduce((res, key) => {
+  const specialTypes = Object.keys(edgeTypes).filter((k2) => !["default", "bezier"].includes(k2)).reduce((res, key) => {
     res[key] = wrapEdge(edgeTypes[key] || BezierEdge);
     return res;
   }, wrappedTypes);
@@ -37709,13 +37709,660 @@ function ToastOverlay({ toasts }) {
   )) });
 }
 
+// ../../node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js
+function _arrayLikeToArray(r2, a) {
+  (null == a || a > r2.length) && (a = r2.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r2[e];
+  return n;
+}
+function _arrayWithHoles(r2) {
+  if (Array.isArray(r2)) return r2;
+}
+function _defineProperty(e, r2, t) {
+  return (r2 = _toPropertyKey(r2)) in e ? Object.defineProperty(e, r2, {
+    value: t,
+    enumerable: true,
+    configurable: true,
+    writable: true
+  }) : e[r2] = t, e;
+}
+function _iterableToArrayLimit(r2, l2) {
+  var t = null == r2 ? null : "undefined" != typeof Symbol && r2[Symbol.iterator] || r2["@@iterator"];
+  if (null != t) {
+    var e, n, i, u, a = [], f = true, o = false;
+    try {
+      if (i = (t = t.call(r2)).next, 0 === l2) ;
+      else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l2); f = true) ;
+    } catch (r3) {
+      o = true, n = r3;
+    } finally {
+      try {
+        if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;
+      } finally {
+        if (o) throw n;
+      }
+    }
+    return a;
+  }
+}
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function ownKeys(e, r2) {
+  var t = Object.keys(e);
+  if (Object.getOwnPropertySymbols) {
+    var o = Object.getOwnPropertySymbols(e);
+    r2 && (o = o.filter(function(r3) {
+      return Object.getOwnPropertyDescriptor(e, r3).enumerable;
+    })), t.push.apply(t, o);
+  }
+  return t;
+}
+function _objectSpread2(e) {
+  for (var r2 = 1; r2 < arguments.length; r2++) {
+    var t = null != arguments[r2] ? arguments[r2] : {};
+    r2 % 2 ? ownKeys(Object(t), true).forEach(function(r3) {
+      _defineProperty(e, r3, t[r3]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function(r3) {
+      Object.defineProperty(e, r3, Object.getOwnPropertyDescriptor(t, r3));
+    });
+  }
+  return e;
+}
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o, r2, i = _objectWithoutPropertiesLoose(e, t);
+  if (Object.getOwnPropertySymbols) {
+    var n = Object.getOwnPropertySymbols(e);
+    for (r2 = 0; r2 < n.length; r2++) o = n[r2], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+  }
+  return i;
+}
+function _objectWithoutPropertiesLoose(r2, e) {
+  if (null == r2) return {};
+  var t = {};
+  for (var n in r2) if ({}.hasOwnProperty.call(r2, n)) {
+    if (-1 !== e.indexOf(n)) continue;
+    t[n] = r2[n];
+  }
+  return t;
+}
+function _slicedToArray(r2, e) {
+  return _arrayWithHoles(r2) || _iterableToArrayLimit(r2, e) || _unsupportedIterableToArray(r2, e) || _nonIterableRest();
+}
+function _toPrimitive(t, r2) {
+  if ("object" != typeof t || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r2);
+    if ("object" != typeof i) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r2 ? String : Number)(t);
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
+  return "symbol" == typeof i ? i : i + "";
+}
+function _unsupportedIterableToArray(r2, a) {
+  if (r2) {
+    if ("string" == typeof r2) return _arrayLikeToArray(r2, a);
+    var t = {}.toString.call(r2).slice(8, -1);
+    return "Object" === t && r2.constructor && (t = r2.constructor.name), "Map" === t || "Set" === t ? Array.from(r2) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r2, a) : void 0;
+  }
+}
+
+// ../../node_modules/state-local/lib/es/state-local.js
+function _defineProperty2(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+function ownKeys2(object, enumerableOnly) {
+  var keys = Object.keys(object);
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function(sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+  return keys;
+}
+function _objectSpread22(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    if (i % 2) {
+      ownKeys2(Object(source), true).forEach(function(key) {
+        _defineProperty2(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys2(Object(source)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+  return target;
+}
+function compose() {
+  for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
+    fns[_key] = arguments[_key];
+  }
+  return function(x) {
+    return fns.reduceRight(function(y, f) {
+      return f(y);
+    }, x);
+  };
+}
+function curry(fn) {
+  return function curried() {
+    var _this = this;
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+    return args.length >= fn.length ? fn.apply(this, args) : function() {
+      for (var _len3 = arguments.length, nextArgs = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        nextArgs[_key3] = arguments[_key3];
+      }
+      return curried.apply(_this, [].concat(args, nextArgs));
+    };
+  };
+}
+function isObject(value) {
+  return {}.toString.call(value).includes("Object");
+}
+function isEmpty(obj) {
+  return !Object.keys(obj).length;
+}
+function isFunction2(value) {
+  return typeof value === "function";
+}
+function hasOwnProperty(object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property);
+}
+function validateChanges(initial, changes) {
+  if (!isObject(changes)) errorHandler("changeType");
+  if (Object.keys(changes).some(function(field) {
+    return !hasOwnProperty(initial, field);
+  })) errorHandler("changeField");
+  return changes;
+}
+function validateSelector(selector4) {
+  if (!isFunction2(selector4)) errorHandler("selectorType");
+}
+function validateHandler(handler) {
+  if (!(isFunction2(handler) || isObject(handler))) errorHandler("handlerType");
+  if (isObject(handler) && Object.values(handler).some(function(_handler) {
+    return !isFunction2(_handler);
+  })) errorHandler("handlersType");
+}
+function validateInitial(initial) {
+  if (!initial) errorHandler("initialIsRequired");
+  if (!isObject(initial)) errorHandler("initialType");
+  if (isEmpty(initial)) errorHandler("initialContent");
+}
+function throwError(errorMessages4, type) {
+  throw new Error(errorMessages4[type] || errorMessages4["default"]);
+}
+var errorMessages2 = {
+  initialIsRequired: "initial state is required",
+  initialType: "initial state should be an object",
+  initialContent: "initial state shouldn't be an empty object",
+  handlerType: "handler should be an object or a function",
+  handlersType: "all handlers should be a functions",
+  selectorType: "selector should be a function",
+  changeType: "provided value of changes should be an object",
+  changeField: 'it seams you want to change a field in the state which is not specified in the "initial" state',
+  "default": "an unknown error accured in `state-local` package"
+};
+var errorHandler = curry(throwError)(errorMessages2);
+var validators = {
+  changes: validateChanges,
+  selector: validateSelector,
+  handler: validateHandler,
+  initial: validateInitial
+};
+function create2(initial) {
+  var handler = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+  validators.initial(initial);
+  validators.handler(handler);
+  var state = {
+    current: initial
+  };
+  var didUpdate = curry(didStateUpdate)(state, handler);
+  var update = curry(updateState)(state);
+  var validate = curry(validators.changes)(initial);
+  var getChanges = curry(extractChanges)(state);
+  function getState2() {
+    var selector4 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : function(state2) {
+      return state2;
+    };
+    validators.selector(selector4);
+    return selector4(state.current);
+  }
+  function setState2(causedChanges) {
+    compose(didUpdate, update, validate, getChanges)(causedChanges);
+  }
+  return [getState2, setState2];
+}
+function extractChanges(state, causedChanges) {
+  return isFunction2(causedChanges) ? causedChanges(state.current) : causedChanges;
+}
+function updateState(state, changes) {
+  state.current = _objectSpread22(_objectSpread22({}, state.current), changes);
+  return changes;
+}
+function didStateUpdate(state, handler, changes) {
+  isFunction2(handler) ? handler(state.current) : Object.keys(changes).forEach(function(field) {
+    var _handler$field;
+    return (_handler$field = handler[field]) === null || _handler$field === void 0 ? void 0 : _handler$field.call(handler, state.current[field]);
+  });
+  return changes;
+}
+var index = {
+  create: create2
+};
+var state_local_default = index;
+
+// ../../node_modules/@monaco-editor/loader/lib/es/config/index.js
+var config = {
+  paths: {
+    vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs"
+  }
+};
+
+// ../../node_modules/@monaco-editor/loader/lib/es/utils/curry.js
+function curry2(fn) {
+  return function curried() {
+    var _this = this;
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    return args.length >= fn.length ? fn.apply(this, args) : function() {
+      for (var _len2 = arguments.length, nextArgs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        nextArgs[_key2] = arguments[_key2];
+      }
+      return curried.apply(_this, [].concat(args, nextArgs));
+    };
+  };
+}
+
+// ../../node_modules/@monaco-editor/loader/lib/es/utils/isObject.js
+function isObject2(value) {
+  return {}.toString.call(value).includes("Object");
+}
+
+// ../../node_modules/@monaco-editor/loader/lib/es/validators/index.js
+function validateConfig(config3) {
+  if (!config3) errorHandler2("configIsRequired");
+  if (!isObject2(config3)) errorHandler2("configType");
+  if (config3.urls) {
+    informAboutDeprecation();
+    return {
+      paths: {
+        vs: config3.urls.monacoBase
+      }
+    };
+  }
+  return config3;
+}
+function informAboutDeprecation() {
+  console.warn(errorMessages3.deprecation);
+}
+function throwError2(errorMessages4, type) {
+  throw new Error(errorMessages4[type] || errorMessages4["default"]);
+}
+var errorMessages3 = {
+  configIsRequired: "the configuration object is required",
+  configType: "the configuration object should be an object",
+  "default": "an unknown error accured in `@monaco-editor/loader` package",
+  deprecation: "Deprecation warning!\n    You are using deprecated way of configuration.\n\n    Instead of using\n      monaco.config({ urls: { monacoBase: '...' } })\n    use\n      monaco.config({ paths: { vs: '...' } })\n\n    For more please check the link https://github.com/suren-atoyan/monaco-loader#config\n  "
+};
+var errorHandler2 = curry2(throwError2)(errorMessages3);
+var validators2 = {
+  config: validateConfig
+};
+
+// ../../node_modules/@monaco-editor/loader/lib/es/utils/compose.js
+var compose2 = function compose3() {
+  for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
+    fns[_key] = arguments[_key];
+  }
+  return function(x) {
+    return fns.reduceRight(function(y, f) {
+      return f(y);
+    }, x);
+  };
+};
+
+// ../../node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js
+function merge(target, source) {
+  Object.keys(source).forEach(function(key) {
+    if (source[key] instanceof Object) {
+      if (target[key]) {
+        Object.assign(source[key], merge(target[key], source[key]));
+      }
+    }
+  });
+  return _objectSpread2(_objectSpread2({}, target), source);
+}
+
+// ../../node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js
+var CANCELATION_MESSAGE = {
+  type: "cancelation",
+  msg: "operation is manually canceled"
+};
+function makeCancelable(promise) {
+  var hasCanceled_ = false;
+  var wrappedPromise = new Promise(function(resolve, reject) {
+    promise.then(function(val) {
+      return hasCanceled_ ? reject(CANCELATION_MESSAGE) : resolve(val);
+    });
+    promise["catch"](reject);
+  });
+  return wrappedPromise.cancel = function() {
+    return hasCanceled_ = true;
+  }, wrappedPromise;
+}
+
+// ../../node_modules/@monaco-editor/loader/lib/es/loader/index.js
+var _excluded = ["monaco"];
+var _state$create = state_local_default.create({
+  config,
+  isInitialized: false,
+  resolve: null,
+  reject: null,
+  monaco: null
+});
+var _state$create2 = _slicedToArray(_state$create, 2);
+var getState = _state$create2[0];
+var setState = _state$create2[1];
+function config2(globalConfig) {
+  var _validators$config = validators2.config(globalConfig), monaco = _validators$config.monaco, config3 = _objectWithoutProperties(_validators$config, _excluded);
+  setState(function(state) {
+    return {
+      config: merge(state.config, config3),
+      monaco
+    };
+  });
+}
+function init2() {
+  var state = getState(function(_ref) {
+    var monaco = _ref.monaco, isInitialized = _ref.isInitialized, resolve = _ref.resolve;
+    return {
+      monaco,
+      isInitialized,
+      resolve
+    };
+  });
+  if (!state.isInitialized) {
+    setState({
+      isInitialized: true
+    });
+    if (state.monaco) {
+      state.resolve(state.monaco);
+      return makeCancelable(wrapperPromise);
+    }
+    if (window.monaco && window.monaco.editor) {
+      storeMonacoInstance(window.monaco);
+      state.resolve(window.monaco);
+      return makeCancelable(wrapperPromise);
+    }
+    compose2(injectScripts, getMonacoLoaderScript)(configureLoader);
+  }
+  return makeCancelable(wrapperPromise);
+}
+function injectScripts(script) {
+  return document.body.appendChild(script);
+}
+function createScript(src) {
+  var script = document.createElement("script");
+  return src && (script.src = src), script;
+}
+function getMonacoLoaderScript(configureLoader2) {
+  var state = getState(function(_ref2) {
+    var config3 = _ref2.config, reject = _ref2.reject;
+    return {
+      config: config3,
+      reject
+    };
+  });
+  var loaderScript = createScript("".concat(state.config.paths.vs, "/loader.js"));
+  loaderScript.onload = function() {
+    return configureLoader2();
+  };
+  loaderScript.onerror = state.reject;
+  return loaderScript;
+}
+function configureLoader() {
+  var state = getState(function(_ref3) {
+    var config3 = _ref3.config, resolve = _ref3.resolve, reject = _ref3.reject;
+    return {
+      config: config3,
+      resolve,
+      reject
+    };
+  });
+  var require2 = window.require;
+  require2.config(state.config);
+  require2(["vs/editor/editor.main"], function(loaded) {
+    var monaco = loaded.m || loaded;
+    storeMonacoInstance(monaco);
+    state.resolve(monaco);
+  }, function(error) {
+    state.reject(error);
+  });
+}
+function storeMonacoInstance(monaco) {
+  if (!getState().monaco) {
+    setState({
+      monaco
+    });
+  }
+}
+function __getMonacoInstance() {
+  return getState(function(_ref4) {
+    var monaco = _ref4.monaco;
+    return monaco;
+  });
+}
+var wrapperPromise = new Promise(function(resolve, reject) {
+  return setState({
+    resolve,
+    reject
+  });
+});
+var loader = {
+  config: config2,
+  init: init2,
+  __getMonacoInstance
+};
+
+// ../../node_modules/@monaco-editor/react/dist/index.mjs
+var import_react13 = __toESM(require_react(), 1);
+var import_react14 = __toESM(require_react(), 1);
+var import_react15 = __toESM(require_react(), 1);
+var import_react16 = __toESM(require_react(), 1);
+var import_react17 = __toESM(require_react(), 1);
+var import_react18 = __toESM(require_react(), 1);
+var import_react19 = __toESM(require_react(), 1);
+var import_react20 = __toESM(require_react(), 1);
+var import_react21 = __toESM(require_react(), 1);
+var import_react22 = __toESM(require_react(), 1);
+var import_react23 = __toESM(require_react(), 1);
+var le = { wrapper: { display: "flex", position: "relative", textAlign: "initial" }, fullWidth: { width: "100%" }, hide: { display: "none" } };
+var v = le;
+var ae = { container: { display: "flex", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" } };
+var Y = ae;
+function Me({ children: e }) {
+  return import_react17.default.createElement("div", { style: Y.container }, e);
+}
+var Z = Me;
+var $ = Z;
+function Ee({ width: e, height: r2, isEditorReady: n, loading: t, _ref: a, className: m, wrapperProps: E }) {
+  return import_react16.default.createElement("section", { style: { ...v.wrapper, width: e, height: r2 }, ...E }, !n && import_react16.default.createElement($, null, t), import_react16.default.createElement("div", { ref: a, style: { ...v.fullWidth, ...!n && v.hide }, className: m }));
+}
+var ee = Ee;
+var H = (0, import_react15.memo)(ee);
+function Ce(e) {
+  (0, import_react18.useEffect)(e, []);
+}
+var k = Ce;
+function he(e, r2, n = true) {
+  let t = (0, import_react19.useRef)(true);
+  (0, import_react19.useEffect)(t.current || !n ? () => {
+    t.current = false;
+  } : e, r2);
+}
+var l = he;
+function D() {
+}
+function h(e, r2, n, t) {
+  return De(e, t) || be(e, r2, n, t);
+}
+function De(e, r2) {
+  return e.editor.getModel(te(e, r2));
+}
+function be(e, r2, n, t) {
+  return e.editor.createModel(r2, n, t ? te(e, t) : void 0);
+}
+function te(e, r2) {
+  return e.Uri.parse(r2);
+}
+function Oe({ original: e, modified: r2, language: n, originalLanguage: t, modifiedLanguage: a, originalModelPath: m, modifiedModelPath: E, keepCurrentOriginalModel: g = false, keepCurrentModifiedModel: N = false, theme: x = "light", loading: P = "Loading...", options: y = {}, height: V = "100%", width: z = "100%", className: F, wrapperProps: j = {}, beforeMount: A = D, onMount: q = D }) {
+  let [M, O] = (0, import_react14.useState)(false), [T, s] = (0, import_react14.useState)(true), u = (0, import_react14.useRef)(null), c = (0, import_react14.useRef)(null), w = (0, import_react14.useRef)(null), d = (0, import_react14.useRef)(q), o = (0, import_react14.useRef)(A), b = (0, import_react14.useRef)(false);
+  k(() => {
+    let i = loader.init();
+    return i.then((f) => (c.current = f) && s(false)).catch((f) => f?.type !== "cancelation" && console.error("Monaco initialization: error:", f)), () => u.current ? I() : i.cancel();
+  }), l(() => {
+    if (u.current && c.current) {
+      let i = u.current.getOriginalEditor(), f = h(c.current, e || "", t || n || "text", m || "");
+      f !== i.getModel() && i.setModel(f);
+    }
+  }, [m], M), l(() => {
+    if (u.current && c.current) {
+      let i = u.current.getModifiedEditor(), f = h(c.current, r2 || "", a || n || "text", E || "");
+      f !== i.getModel() && i.setModel(f);
+    }
+  }, [E], M), l(() => {
+    let i = u.current.getModifiedEditor();
+    i.getOption(c.current.editor.EditorOption.readOnly) ? i.setValue(r2 || "") : r2 !== i.getValue() && (i.executeEdits("", [{ range: i.getModel().getFullModelRange(), text: r2 || "", forceMoveMarkers: true }]), i.pushUndoStop());
+  }, [r2], M), l(() => {
+    u.current?.getModel()?.original.setValue(e || "");
+  }, [e], M), l(() => {
+    let { original: i, modified: f } = u.current.getModel();
+    c.current.editor.setModelLanguage(i, t || n || "text"), c.current.editor.setModelLanguage(f, a || n || "text");
+  }, [n, t, a], M), l(() => {
+    c.current?.editor.setTheme(x);
+  }, [x], M), l(() => {
+    u.current?.updateOptions(y);
+  }, [y], M);
+  let L = (0, import_react14.useCallback)(() => {
+    if (!c.current) return;
+    o.current(c.current);
+    let i = h(c.current, e || "", t || n || "text", m || ""), f = h(c.current, r2 || "", a || n || "text", E || "");
+    u.current?.setModel({ original: i, modified: f });
+  }, [n, r2, a, e, t, m, E]), U = (0, import_react14.useCallback)(() => {
+    !b.current && w.current && (u.current = c.current.editor.createDiffEditor(w.current, { automaticLayout: true, ...y }), L(), c.current?.editor.setTheme(x), O(true), b.current = true);
+  }, [y, x, L]);
+  (0, import_react14.useEffect)(() => {
+    M && d.current(u.current, c.current);
+  }, [M]), (0, import_react14.useEffect)(() => {
+    !T && !M && U();
+  }, [T, M, U]);
+  function I() {
+    let i = u.current?.getModel();
+    g || i?.original?.dispose(), N || i?.modified?.dispose(), u.current?.dispose();
+  }
+  return import_react14.default.createElement(H, { width: z, height: V, isEditorReady: M, loading: P, _ref: w, className: F, wrapperProps: j });
+}
+var ie = Oe;
+var we = (0, import_react13.memo)(ie);
+function He(e) {
+  let r2 = (0, import_react23.useRef)();
+  return (0, import_react23.useEffect)(() => {
+    r2.current = e;
+  }, [e]), r2.current;
+}
+var se = He;
+var _ = /* @__PURE__ */ new Map();
+function Ve({ defaultValue: e, defaultLanguage: r2, defaultPath: n, value: t, language: a, path: m, theme: E = "light", line: g, loading: N = "Loading...", options: x = {}, overrideServices: P = {}, saveViewState: y = true, keepCurrentModel: V = false, width: z = "100%", height: F = "100%", className: j, wrapperProps: A = {}, beforeMount: q = D, onMount: M = D, onChange: O, onValidate: T = D }) {
+  let [s, u] = (0, import_react22.useState)(false), [c, w] = (0, import_react22.useState)(true), d = (0, import_react22.useRef)(null), o = (0, import_react22.useRef)(null), b = (0, import_react22.useRef)(null), L = (0, import_react22.useRef)(M), U = (0, import_react22.useRef)(q), I = (0, import_react22.useRef)(), i = (0, import_react22.useRef)(t), f = se(m), Q = (0, import_react22.useRef)(false), B = (0, import_react22.useRef)(false);
+  k(() => {
+    let p = loader.init();
+    return p.then((R) => (d.current = R) && w(false)).catch((R) => R?.type !== "cancelation" && console.error("Monaco initialization: error:", R)), () => o.current ? pe() : p.cancel();
+  }), l(() => {
+    let p = h(d.current, e || t || "", r2 || a || "", m || n || "");
+    p !== o.current?.getModel() && (y && _.set(f, o.current?.saveViewState()), o.current?.setModel(p), y && o.current?.restoreViewState(_.get(m)));
+  }, [m], s), l(() => {
+    o.current?.updateOptions(x);
+  }, [x], s), l(() => {
+    !o.current || t === void 0 || (o.current.getOption(d.current.editor.EditorOption.readOnly) ? o.current.setValue(t) : t !== o.current.getValue() && (B.current = true, o.current.executeEdits("", [{ range: o.current.getModel().getFullModelRange(), text: t, forceMoveMarkers: true }]), o.current.pushUndoStop(), B.current = false));
+  }, [t], s), l(() => {
+    let p = o.current?.getModel();
+    p && a && d.current?.editor.setModelLanguage(p, a);
+  }, [a], s), l(() => {
+    g !== void 0 && o.current?.revealLine(g);
+  }, [g], s), l(() => {
+    d.current?.editor.setTheme(E);
+  }, [E], s);
+  let X = (0, import_react22.useCallback)(() => {
+    if (!(!b.current || !d.current) && !Q.current) {
+      U.current(d.current);
+      let p = m || n, R = h(d.current, t || e || "", r2 || a || "", p || "");
+      o.current = d.current?.editor.create(b.current, { model: R, automaticLayout: true, ...x }, P), y && o.current.restoreViewState(_.get(p)), d.current.editor.setTheme(E), g !== void 0 && o.current.revealLine(g), u(true), Q.current = true;
+    }
+  }, [e, r2, n, t, a, m, x, P, y, E, g]);
+  (0, import_react22.useEffect)(() => {
+    s && L.current(o.current, d.current);
+  }, [s]), (0, import_react22.useEffect)(() => {
+    !c && !s && X();
+  }, [c, s, X]), i.current = t, (0, import_react22.useEffect)(() => {
+    s && O && (I.current?.dispose(), I.current = o.current?.onDidChangeModelContent((p) => {
+      B.current || O(o.current.getValue(), p);
+    }));
+  }, [s, O]), (0, import_react22.useEffect)(() => {
+    if (s) {
+      let p = d.current.editor.onDidChangeMarkers((R) => {
+        let G = o.current.getModel()?.uri;
+        if (G && R.find((J) => J.path === G.path)) {
+          let J = d.current.editor.getModelMarkers({ resource: G });
+          T?.(J);
+        }
+      });
+      return () => {
+        p?.dispose();
+      };
+    }
+    return () => {
+    };
+  }, [s, T]);
+  function pe() {
+    I.current?.dispose(), V ? y && _.set(m, o.current.saveViewState()) : o.current.getModel()?.dispose(), o.current.dispose();
+  }
+  return import_react22.default.createElement(H, { width: z, height: F, isEditorReady: s, loading: N, _ref: b, className: j, wrapperProps: A });
+}
+var fe = Ve;
+var de = (0, import_react21.memo)(fe);
+var Ft = de;
+
 // src/renderer/index.tsx
 var import_jsx_runtime16 = __toESM(require_jsx_runtime());
 var PLAYGROUND_URL = "http://localhost:8080/";
 var PLAYGROUND_BUILD = "./dist/develop/index.html";
 function useIPC() {
-  const [projectPath, setProjectPath] = (0, import_react13.useState)("");
-  (0, import_react13.useEffect)(() => {
+  const [projectPath, setProjectPath] = (0, import_react24.useState)("");
+  (0, import_react24.useEffect)(() => {
     window.ccStudio?.getProjectPath?.().then(setProjectPath).catch(() => {
     });
   }, []);
@@ -37723,34 +38370,35 @@ function useIPC() {
 }
 function App() {
   const { projectPath } = useIPC();
-  const [leftTab, setLeftTab] = (0, import_react13.useState)("artwork");
-  const [rightTab, setRightTab] = (0, import_react13.useState)("props");
-  const [libraryOpen, setLibraryOpen] = (0, import_react13.useState)(true);
-  const [playgroundSrc, setPlaygroundSrc] = (0, import_react13.useState)("dev");
-  const [devUrl, setDevUrl] = (0, import_react13.useState)(PLAYGROUND_URL);
-  const [buildUrl, setBuildUrl] = (0, import_react13.useState)(PLAYGROUND_BUILD);
-  const [settingsOpen, setSettingsOpen] = (0, import_react13.useState)(false);
-  const [settings, setSettings] = (0, import_react13.useState)(null);
-  const [remoteComponents, setRemoteComponents] = (0, import_react13.useState)([]);
+  const [leftTab, setLeftTab] = (0, import_react24.useState)("artwork");
+  const [rightTab, setRightTab] = (0, import_react24.useState)("props");
+  const [libraryOpen, setLibraryOpen] = (0, import_react24.useState)(true);
+  const [playgroundSrc, setPlaygroundSrc] = (0, import_react24.useState)("dev");
+  const [devUrl, setDevUrl] = (0, import_react24.useState)(PLAYGROUND_URL);
+  const [buildUrl, setBuildUrl] = (0, import_react24.useState)(PLAYGROUND_BUILD);
+  const [settingsOpen, setSettingsOpen] = (0, import_react24.useState)(false);
+  const [settings, setSettings] = (0, import_react24.useState)(null);
+  const [remoteComponents, setRemoteComponents] = (0, import_react24.useState)([]);
   const workspacePath = settings?.workspace?.trim() || projectPath;
   const { toasts, push } = useToasts();
-  const debugRef = (0, import_react13.useRef)(null);
-  const [debugLines, setDebugLines] = (0, import_react13.useState)([]);
-  const frameRef = (0, import_react13.useRef)(null);
-  const [parameterState, setParameterState] = (0, import_react13.useState)(null);
-  const [paramFilter, setParamFilter] = (0, import_react13.useState)("");
-  const [agents] = (0, import_react13.useState)([
+  const [codeValue, setCodeValue] = (0, import_react24.useState)("// Code-Editor\n");
+  const debugRef = (0, import_react24.useRef)(null);
+  const [debugLines, setDebugLines] = (0, import_react24.useState)([]);
+  const frameRef = (0, import_react24.useRef)(null);
+  const [parameterState, setParameterState] = (0, import_react24.useState)(null);
+  const [paramFilter, setParamFilter] = (0, import_react24.useState)("");
+  const [agents] = (0, import_react24.useState)([
     { name: "Background", visible: true, active: true, ticks: 120, hooks: ["draw"] },
     { name: "Grid Manager", visible: true, active: true, ticks: 120, hooks: ["update", "draw"] },
     { name: "ColorSet", visible: true, active: true, ticks: 60, hooks: ["animate_slow"] },
     { name: "Custom Agent", visible: false, active: false, ticks: 0, hooks: [] }
   ]);
-  const [timelinePos, setTimelinePos] = (0, import_react13.useState)(0);
-  const [timelineItems] = (0, import_react13.useState)([
+  const [timelinePos, setTimelinePos] = (0, import_react24.useState)(0);
+  const [timelineItems] = (0, import_react24.useState)([
     { id: "flash-bg", from: 0, to: 5, loop: true },
     { id: "move-grid", from: 2, to: 10 }
   ]);
-  const componentLibrary = (0, import_react13.useMemo)(
+  const componentLibrary = (0, import_react24.useMemo)(
     () => [
       { id: "background", name: "Background", category: "Canvas", desc: "F\xFCllt den Hintergrund" },
       { id: "grid", name: "Grid Manager", category: "Layout", desc: "Raster/Entities" },
@@ -37761,7 +38409,7 @@ function App() {
     ],
     []
   );
-  (0, import_react13.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     const listener = (event) => {
       if (event.data?.type === "parameter-dump") {
         setParameterState(event.data.payload);
@@ -37790,7 +38438,7 @@ function App() {
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
   }, []);
-  (0, import_react13.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     const onCtx = (e) => {
       e.preventDefault();
       window.ccStudio?.inspectAt?.(e.clientX, e.clientY);
@@ -37798,11 +38446,11 @@ function App() {
     window.addEventListener("contextmenu", onCtx);
     return () => window.removeEventListener("contextmenu", onCtx);
   }, []);
-  (0, import_react13.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     window.ccStudio?.getSettings?.().then((s) => setSettings(s || null)).catch(() => {
     });
   }, []);
-  (0, import_react13.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     if (!settings) return;
     const theme = settings.theme || "dark";
     document.documentElement.dataset.theme = theme;
@@ -37837,13 +38485,13 @@ ${content}`, ...prev]);
   const saveFile = async () => {
     requestDump();
   };
-  const debugView = (0, import_react13.useMemo)(() => debugLines.join("\n\n"), [debugLines]);
-  const filteredParamsView = (0, import_react13.useMemo)(() => {
+  const debugView = (0, import_react24.useMemo)(() => debugLines.join("\n\n"), [debugLines]);
+  const filteredParamsView = (0, import_react24.useMemo)(() => {
     if (!parameterState) return null;
     if (!paramFilter.trim()) return parameterState;
     try {
       const json = JSON.stringify(parameterState, null, 2);
-      const lines = json.split("\n").filter((l) => l.toLowerCase().includes(paramFilter.toLowerCase()));
+      const lines = json.split("\n").filter((l2) => l2.toLowerCase().includes(paramFilter.toLowerCase()));
       return lines.length ? lines.join("\n") : "Kein Treffer";
     } catch {
       return parameterState;
@@ -37858,13 +38506,13 @@ ${content}`, ...prev]);
     }
     if (Array.isArray(value)) {
       return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "pl-3 border-l border-slate-700 space-y-1", children: [
-        value.slice(0, 20).map((v, i) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2", children: [
+        value.slice(0, 20).map((v2, i) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2", children: [
           /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "text-slate-500", children: [
             "[",
             i,
             "]"
           ] }),
-          renderTree(v, [...path, String(i)])
+          renderTree(v2, [...path, String(i)])
         ] }, i)),
         value.length > 20 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-xs text-slate-500", children: [
           "\u2026 ",
@@ -37875,13 +38523,13 @@ ${content}`, ...prev]);
     }
     const entries = Object.entries(value).slice(0, 40);
     return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "pl-3 border-l border-slate-700 space-y-1", children: [
-      entries.map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2 items-start", children: [
+      entries.map(([k2, v2]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2 items-start", children: [
         /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "text-slate-300", children: [
-          k,
+          k2,
           ":"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-1", children: renderTree(v, [...path, k]) })
-      ] }, k)),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-1", children: renderTree(v2, [...path, k2]) })
+      ] }, k2)),
       Object.keys(value).length > 40 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-xs text-slate-500", children: [
         "\u2026 ",
         Object.keys(value).length - 40,
@@ -37922,7 +38570,7 @@ ${content}`, ...prev]);
           {
             variant: "secondary",
             size: "sm",
-            onClick: () => setLibraryOpen((v) => !v),
+            onClick: () => setLibraryOpen((v2) => !v2),
             className: "hidden sm:inline-flex",
             children: libraryOpen ? "Library <<" : "Library >>"
           }
@@ -37959,7 +38607,7 @@ ${content}`, ...prev]);
         )) }) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PanelGroup2, { direction: "horizontal", className: "flex-1 min-h-0", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 55, minSize: 20, className: "mr-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Root2, { value: leftTab, onValueChange: (v) => setLeftTab(v), className: "flex-1 flex flex-col min-h-0", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 55, minSize: 20, className: "mr-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Root2, { value: leftTab, onValueChange: (v2) => setLeftTab(v2), className: "flex-1 flex flex-col min-h-0", children: [
           /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(List, { className: "flex gap-2 p-2", "aria-label": "Left Tabs", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             Trigger,
             {
@@ -38001,7 +38649,7 @@ ${content}`, ...prev]);
           ) })
         ] }) }) }),
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Handle, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 45, minSize: 25, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Root2, { value: rightTab, onValueChange: (v) => setRightTab(v), className: "flex-1 flex flex-col min-h-0", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 45, minSize: 25, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Root2, { value: rightTab, onValueChange: (v2) => setRightTab(v2), className: "flex-1 flex flex-col min-h-0", children: [
           /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(List, { className: "flex gap-2 p-2", "aria-label": "Right Tabs", children: [
             /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
               Trigger,
@@ -38023,6 +38671,17 @@ ${content}`, ...prev]);
                   rightTab === "node" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
                 ),
                 children: "Node-Editor"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+              Trigger,
+              {
+                value: "code",
+                className: cn(
+                  "px-3 py-2 rounded border text-sm",
+                  rightTab === "code" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
+                ),
+                children: "Code"
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
@@ -38221,6 +38880,25 @@ ${content}`, ...prev]);
                   children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(NodeEditor, { className: "flex-1 min-h-0 w-full h-full" })
                 }
               )
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            Content,
+            {
+              value: "code",
+              className: "flex-1 min-h-0 flex flex-col",
+              style: { display: rightTab === "code" ? "flex" : "none" },
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                Ft,
+                {
+                  height: "100%",
+                  defaultLanguage: "typescript",
+                  theme: settings?.theme === "light" ? "light" : "vs-dark",
+                  value: codeValue,
+                  onChange: (v2) => setCodeValue(v2 ?? ""),
+                  options: { minimap: { enabled: false }, fontSize: 13, wordWrap: "on" }
+                }
+              ) })
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(

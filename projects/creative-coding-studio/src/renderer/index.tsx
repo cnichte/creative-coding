@@ -11,6 +11,7 @@ import { NodeEditor } from "./ui/node-editor";
 import { SettingsDialog } from "./components/SettingsDialog";
 import type { StudioSettings } from "./settings";
 import { ToastOverlay, useToasts } from "./components/Toast";
+import Editor from "@monaco-editor/react";
 
 const PLAYGROUND_URL = "http://localhost:8080/";
 const PLAYGROUND_BUILD = "./dist/develop/index.html";
@@ -23,7 +24,7 @@ type DumpMessage = {
 type DebugLine = string;
 
 type LeftTabKey = "artwork";
-type RightTabKey = "props" | "node" | "debug";
+type RightTabKey = "props" | "node" | "code" | "debug";
 type LibraryItem = { id: string; name: string; category: string; desc: string };
 type RemoteComponent = { id: string; name?: string };
 
@@ -48,6 +49,7 @@ function App() {
   const [remoteComponents, setRemoteComponents] = useState<RemoteComponent[]>([]);
   const workspacePath = settings?.workspace?.trim() || projectPath;
   const { toasts, push } = useToasts();
+  const [codeValue, setCodeValue] = useState<string>("// Code-Editor\n");
   const debugRef = useRef<HTMLPreElement | null>(null);
   const [debugLines, setDebugLines] = useState<DebugLine[]>([]);
   const frameRef = useRef<HTMLIFrameElement | null>(null);
@@ -344,9 +346,9 @@ function App() {
             <Panel defaultSize={libraryOpen ? 50 : 45} minSize={25}>
               <div className="h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col">
                 <Tabs.Root value={rightTab} onValueChange={(v) => setRightTab(v as RightTabKey)} className="flex-1 flex flex-col min-h-0">
-              <Tabs.List className="flex gap-2 p-2" aria-label="Right Tabs">
-                <Tabs.Trigger
-                  value="props"
+                <Tabs.List className="flex gap-2 p-2" aria-label="Right Tabs">
+                  <Tabs.Trigger
+                    value="props"
                   className={cn(
                     "px-3 py-2 rounded border text-sm",
                     rightTab === "props"
@@ -356,8 +358,8 @@ function App() {
                 >
                   Properties
                 </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="node"
+                  <Tabs.Trigger
+                    value="node"
                   className={cn(
                     "px-3 py-2 rounded border text-sm",
                     rightTab === "node"
@@ -367,8 +369,19 @@ function App() {
                 >
                   Node-Editor
                 </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="debug"
+                  <Tabs.Trigger
+                    value="code"
+                    className={cn(
+                      "px-3 py-2 rounded border text-sm",
+                      rightTab === "code"
+                        ? "bg-slate-700 border-slate-500"
+                        : "bg-slate-800 border-slate-700 hover:border-slate-600"
+                    )}
+                  >
+                    Code
+                  </Tabs.Trigger>
+                  <Tabs.Trigger
+                    value="debug"
                   className={cn(
                     "px-3 py-2 rounded border text-sm",
                     rightTab === "debug"
@@ -573,36 +586,53 @@ function App() {
                     </Card>
                   </div>
                 </ScrollArea>
-              </Tabs.Content>
+                </Tabs.Content>
 
-              <Tabs.Content
-                value="node"
-                className="flex-1 min-h-0 flex flex-col"
-                style={{ display: rightTab === "node" ? "flex" : "none" }}
-              >
-                <div
-                  className="w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const item = parseDragData(e);
-                    if (item) {
-                      setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50));
-                      push("success", `Drop to NodeEditor: ${item.name}`);
-                      window.ccStudio?.writeLog?.(`Drop->NodeEditor: ${item.id}`);
-                    }
-                  }}
+                <Tabs.Content
+                  value="node"
+                  className="flex-1 min-h-0 flex flex-col"
+                  style={{ display: rightTab === "node" ? "flex" : "none" }}
                 >
-                  <NodeEditor className="flex-1 min-h-0 w-full h-full" />
-                </div>
-              </Tabs.Content>
+                  <div
+                    className="w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const item = parseDragData(e);
+                      if (item) {
+                        setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50));
+                        push("success", `Drop to NodeEditor: ${item.name}`);
+                        window.ccStudio?.writeLog?.(`Drop->NodeEditor: ${item.id}`);
+                      }
+                    }}
+                  >
+                    <NodeEditor className="flex-1 min-h-0 w-full h-full" />
+                  </div>
+                </Tabs.Content>
 
-              <Tabs.Content
-                value="debug"
-                className="flex-1 min-h-0 flex flex-col"
-                style={{ display: rightTab === "debug" ? "flex" : "none" }}
-              >
-                <div className="flex-1 bg-slate-900/80 border border-slate-700 rounded min-h-0 flex flex-col">
+                <Tabs.Content
+                  value="code"
+                  className="flex-1 min-h-0 flex flex-col"
+                  style={{ display: rightTab === "code" ? "flex" : "none" }}
+                >
+                  <div className="w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0">
+                    <Editor
+                      height="100%"
+                      defaultLanguage="typescript"
+                      theme={settings?.theme === "light" ? "light" : "vs-dark"}
+                      value={codeValue}
+                      onChange={(v) => setCodeValue(v ?? "")}
+                      options={{ minimap: { enabled: false }, fontSize: 13, wordWrap: "on" }}
+                    />
+                  </div>
+                </Tabs.Content>
+
+                <Tabs.Content
+                  value="debug"
+                  className="flex-1 min-h-0 flex flex-col"
+                  style={{ display: rightTab === "debug" ? "flex" : "none" }}
+                >
+                  <div className="flex-1 bg-slate-900/80 border border-slate-700 rounded min-h-0 flex flex-col">
                   <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-700">
                     <Button size="sm" variant="secondary" onClick={requestDump}>
                       Refresh

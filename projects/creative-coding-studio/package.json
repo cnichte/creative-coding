@@ -10,12 +10,14 @@
     "build:renderer": "esbuild src/renderer/index.tsx --bundle --outfile=src/renderer/bundle.js --platform=browser --format=esm --jsx=automatic --sourcemap --loader:.css=css"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-tabs": "^1.1.13",
     "autoprefixer": "^10.4.22",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "electron": "^28.2.0",
+    "monaco-editor": "^0.52.0",
     "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

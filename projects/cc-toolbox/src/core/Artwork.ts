@@ -49,7 +49,7 @@ import { ParameterManager } from "./ParameterManager";
 import { IOManager } from "./IOManager";
 import type { Tweakpane_Items } from "./TweakpaneSupport";
 import { TweakpaneManager } from "./TweakpaneManager";
-import { TimelinePlayer } from "./TimelinePlayer";
+import { TimelinePlayer, type TimelineItem } from "./TimelinePlayer";
 import type { ComponentAddedAck, LibraryComponent } from "./MessageBridge";
 import { isAddComponentMessage } from "./MessageBridge";
 import { ComponentRegistry } from "./ComponentRegistry";
@@ -170,6 +170,17 @@ export class Artwork {
       grid: () => {
         Grid_Manager.ensureParameterSet(this.parameter);
         return { status: "ok", message: "grid ready" };
+      },
+      timeline: () => {
+        const item: TimelineItem = {
+          id: `studio-${Date.now()}`,
+          from: 0,
+          to: this.parameter.artwork?.animation?.duration ?? 60,
+          loop: true,
+          onTick: () => {},
+        };
+        this.timelinePlayer.add(item);
+        return { status: "ok", message: "timeline item added" };
       },
     });
 
