@@ -6,6 +6,9 @@ contextBridge.exposeInMainWorld("ccStudio", {
   readFile: (filePath) => ipcRenderer.invoke("readFile", filePath),
   writeFile: (filePath, content) => ipcRenderer.invoke("writeFile", filePath, content),
   inspectAt: (x, y) => ipcRenderer.send("inspect-at", x, y),
+  getSettings: () => ipcRenderer.invoke("getSettings"),
+  saveSettings: (settings) => ipcRenderer.invoke("saveSettings", settings),
+  writeLog: (payload) => ipcRenderer.invoke("writeLog", payload),
   onMenu: (channel, handler) => {
     const valid = ["menu-open", "menu-save", "menu-save-as", "menu-toggle-debug"];
     if (valid.includes(channel)) {

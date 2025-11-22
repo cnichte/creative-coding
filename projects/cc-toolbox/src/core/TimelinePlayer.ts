@@ -33,9 +33,18 @@ export interface TimelinePlayerTweakpaneOptions {
   title?: string;
 }
 
+export interface TimelineItem {
+  id: string;
+  from: number; // seconds
+  to: number; // seconds
+  loop?: boolean;
+  onTick: (timeSeconds: number, parameter: any) => void;
+}
+
 export class TimelinePlayer {
   private parameter: any;
   private state: TimelinePlayerState;
+  private items: TimelineItem[] = [];
 
   constructor(parameter: any, opts: TimelinePlayerOptions = {}) {
     this.parameter = parameter;
@@ -92,6 +101,8 @@ export class TimelinePlayer {
     animation.timeStamp = newTime;
     this.state.duration = clampedDuration;
     this.state.position = position;
+
+    this.notifyItems(newTime, clampedDuration);
   }
 
   /**
@@ -117,6 +128,15 @@ export class TimelinePlayer {
 
   public setPlaybackRate(rate: number) {
     this.state.playbackRate = rate;
+  }
+
+  public add(item: TimelineItem) {
+    this.items = this.items.filter((i) => i.id !== item.id);
+    this.items.push(item);
+  }
+
+  public remove(id: string) {
+    this.items = this.items.filter((i) => i.id !== id);
   }
 
   public registerTweakpane(
@@ -203,5 +223,26 @@ export class TimelinePlayer {
     );
 
     return module;
+  }
+
+  private notifyItems(timeSeconds: number, duration: number) {
+    const t = timeSeconds;
+    this.items.forEach((item) => {
+      const start = Math.min(item.from, item.to);
+      const end = Math.max(item.from, item.to);
+      const loop = item.loop ?? true;
+      let tt = t;
+      if (loop) {
+        const span = Math.max(0.0001, end - start);
+        tt = ((t - start) % span + span) % span + start;
+      }
+      if (tt >= start && tt <= end) {
+        try {
+          item.onTick(tt, this.parameter);
+        } catch {
+          // ignore user callback errors
+        }
+      }
+    });
   }
 }

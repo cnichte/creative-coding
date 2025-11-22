@@ -8,8 +8,12 @@ import { Separator } from "./ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { PanelGroup, Panel, Handle } from "./ui/resizable";
 import { NodeEditor } from "./ui/node-editor";
+import { SettingsDialog } from "./components/SettingsDialog";
+import type { StudioSettings } from "./settings";
+import { ToastOverlay, useToasts } from "./components/Toast";
 
 const PLAYGROUND_URL = "http://localhost:8080/";
+const PLAYGROUND_BUILD = "./dist/develop/index.html";
 
 type DumpMessage = {
   type: "parameter-dump";
@@ -21,6 +25,7 @@ type DebugLine = string;
 type LeftTabKey = "artwork";
 type RightTabKey = "props" | "node" | "debug";
 type LibraryItem = { id: string; name: string; category: string; desc: string };
+type RemoteComponent = { id: string; name?: string };
 
 function useIPC() {
   const [projectPath, setProjectPath] = useState<string>("");
@@ -35,6 +40,14 @@ function App() {
   const [leftTab, setLeftTab] = useState<LeftTabKey>("artwork");
   const [rightTab, setRightTab] = useState<RightTabKey>("props");
   const [libraryOpen, setLibraryOpen] = useState(true);
+  const [playgroundSrc, setPlaygroundSrc] = useState<"dev" | "build">("dev");
+  const [devUrl, setDevUrl] = useState(PLAYGROUND_URL);
+  const [buildUrl, setBuildUrl] = useState(PLAYGROUND_BUILD);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState<StudioSettings | null>(null);
+  const [remoteComponents, setRemoteComponents] = useState<RemoteComponent[]>([]);
+  const workspacePath = settings?.workspace?.trim() || projectPath;
+  const { toasts, push } = useToasts();
   const debugRef = useRef<HTMLPreElement | null>(null);
   const [debugLines, setDebugLines] = useState<DebugLine[]>([]);
   const frameRef = useRef<HTMLIFrameElement | null>(null);
@@ -71,6 +84,25 @@ function App() {
         setParameterState(event.data.payload);
         setDebugLines((prev) => [JSON.stringify(event.data.payload, null, 2), ...prev].slice(0, 50));
       }
+      if ((event.data as any)?.type === "component-added") {
+        const d: any = event.data;
+        setDebugLines((prev) => [
+          `ACK from Artwork: ${d.name || d.id} (${d.status || "ok"})${d.error ? " - " + d.error : ""}`,
+          ...prev,
+        ].slice(0, 50));
+        if (d.status === "ok") {
+          push("success", `Added ${d.name || d.id} (${d.total ?? ""})`);
+        } else {
+          push("error", `Failed ${d.name || d.id}: ${d.error || "unsupported"}`);
+        }
+        }
+      if ((event.data as any)?.type === "artwork-state") {
+        const d: any = event.data;
+        if (Array.isArray(d.addedComponents)) {
+          setRemoteComponents(d.addedComponents);
+        }
+        setDebugLines((prev) => [`State from Artwork: ${JSON.stringify(d.addedComponents || [])}`, ...prev].slice(0, 50));
+      }
     };
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
@@ -85,6 +117,21 @@ function App() {
     window.addEventListener("contextmenu", onCtx);
     return () => window.removeEventListener("contextmenu", onCtx);
   }, []);
+
+  // load settings once
+  useEffect(() => {
+    window.ccStudio
+      ?.getSettings?.()
+      .then((s) => setSettings(s || null))
+      .catch(() => {});
+  }, []);
+
+  // apply theme
+  useEffect(() => {
+    if (!settings) return;
+    const theme = settings.theme || "dark";
+    document.documentElement.dataset.theme = theme;
+  }, [settings]);
 
   const parseDragData = (e: React.DragEvent): LibraryItem | null => {
     const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain");
@@ -175,8 +222,28 @@ function App() {
     <div className="h-dvh min-h-0 flex flex-col">
       <div className="flex items-center gap-4 p-3 bg-slate-800 border-b border-slate-700">
         <div className="text-lg font-semibold">Creative Coding Studio</div>
-        <div className="text-xs text-slate-400 truncate max-w-xs">{projectPath}</div>
+        <div className="text-xs text-slate-400 truncate max-w-xs">{workspacePath}</div>
         <div className="ml-auto flex gap-2">
+          <div className="hidden sm:flex items-center gap-2 border border-slate-700 rounded px-2 py-1">
+            <select
+              className="bg-slate-900 text-xs border border-slate-700 rounded px-2 py-1"
+              value={playgroundSrc}
+              onChange={(e) => setPlaygroundSrc(e.target.value as "dev" | "build")}
+            >
+              <option value="dev">Dev URL</option>
+              <option value="build">Local Build</option>
+            </select>
+            <input
+              className="bg-slate-900 text-xs border border-slate-700 rounded px-2 py-1 w-48"
+              value={playgroundSrc === "dev" ? devUrl : buildUrl}
+              onChange={(e) =>
+                playgroundSrc === "dev" ? setDevUrl(e.target.value) : setBuildUrl(e.target.value)
+              }
+            />
+          </div>
+          <Button variant="secondary" size="sm" onClick={() => setSettingsOpen(true)}>
+            Settings
+          </Button>
           <Button
             variant="secondary"
             size="sm"
@@ -188,11 +255,11 @@ function App() {
           <Button variant="secondary" size="sm" onClick={openFile}>
             Open
           </Button>
-          <Button variant="secondary" size="sm" onClick={saveFile}>
-            Save
-          </Button>
-        </div>
+        <Button variant="secondary" size="sm" onClick={saveFile}>
+          Save
+        </Button>
       </div>
+    </div>
 
       <div className="flex flex-1 min-h-0 px-3 pb-3 gap-2">
         {libraryOpen && (
@@ -246,24 +313,30 @@ function App() {
                       </Tabs.Trigger>
                     </Tabs.List>
                     <Tabs.Content value="artwork" className="flex-1 min-h-0 flex">
-                      <div
-                        className="w-full h-full"
-                        onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const item = parseDragData(e);
+                  <div
+                    className="w-full h-full"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const item = parseDragData(e);
                     if (item) {
                       frameRef.current?.contentWindow?.postMessage(
                         { type: "add-component", component: item },
                         "*"
                       );
                       setDebugLines((prev) => [`Drop->Artwork: ${item.name}`, ...prev].slice(0, 50));
+                      push("success", `Drop to Artwork: ${item.name}`);
+                      window.ccStudio?.writeLog?.(`Drop->Artwork: ${item.id}`);
                     }
                   }}
                 >
-                  <iframe ref={frameRef} className="w-full h-full border-0" src={PLAYGROUND_URL} />
-                </div>
-              </Tabs.Content>
+                    <iframe
+                      ref={frameRef}
+                      className="w-full h-full border-0"
+                      src={playgroundSrc === "dev" ? devUrl : buildUrl}
+                    />
+                  </div>
+                </Tabs.Content>
             </Tabs.Root>
           </div>
             </Panel>
@@ -313,11 +386,34 @@ function App() {
                 style={{ display: rightTab === "props" ? "flex" : "none" }}
               >
                 <ScrollArea className="flex-1 min-h-0 h-full pr-1">
-                  <div className="flex-1 min-h-0 flex flex-col gap-2 pb-2">
-                    <Card className="bg-slate-800/80 border-slate-700">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Parameter Explorer</CardTitle>
-                      </CardHeader>
+                    <div className="flex-1 min-h-0 flex flex-col gap-2 pb-2">
+                      <Card className="bg-slate-800/80 border-slate-700">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm">Artwork Components</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {remoteComponents.length === 0 ? (
+                            <div className="text-xs text-slate-500">Noch keine Komponenten hinzugefügt.</div>
+                          ) : (
+                            <ul className="text-xs text-slate-200 space-y-1">
+                              {remoteComponents.map((c) => (
+                                <li key={`${c.id}-${c.name ?? ""}`} className="flex items-center gap-2">
+                                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" />
+                                  <div className="flex-1">
+                                    <div className="font-semibold">{c.name || c.id}</div>
+                                    <div className="text-[11px] text-slate-400">{c.id}</div>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-slate-800/80 border-slate-700">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm">Parameter Explorer</CardTitle>
+                        </CardHeader>
                       <CardContent className="flex flex-col gap-2">
                         <div className="flex gap-2 items-center">
                           <Button size="sm" onClick={requestDump}>
@@ -484,13 +580,20 @@ function App() {
                 className="flex-1 min-h-0 flex flex-col"
                 style={{ display: rightTab === "node" ? "flex" : "none" }}
               >
-                <div className="w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0">
-                  <NodeEditor
-                    className="flex-1 min-h-0 w-full h-full"
-                    onDropComponent={(item) =>
-                      setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50))
+                <div
+                  className="w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const item = parseDragData(e);
+                    if (item) {
+                      setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50));
+                      push("success", `Drop to NodeEditor: ${item.name}`);
+                      window.ccStudio?.writeLog?.(`Drop->NodeEditor: ${item.id}`);
                     }
-                  />
+                  }}
+                >
+                  <NodeEditor className="flex-1 min-h-0 w-full h-full" />
                 </div>
               </Tabs.Content>
 
@@ -523,6 +626,16 @@ function App() {
       <div className="h-8 bg-slate-900 border-t border-slate-800 text-xs text-slate-400 flex items-center px-3">
         Status: Ready
       </div>
+      <ToastOverlay toasts={toasts} />
+      <SettingsDialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onSave={(s) => {
+          setSettings(s);
+          window.ccStudio?.saveSettings?.(s);
+          setSettingsOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -1083,7 +1083,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher.useContext(Context);
         }
-        function useState9(initialState2) {
+        function useState11(initialState2) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState2);
         }
@@ -1095,7 +1095,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect12(create2, deps) {
+        function useEffect14(create2, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create2, deps);
         }
@@ -1878,7 +1878,7 @@ var require_react_development = __commonJS({
         exports.useContext = useContext5;
         exports.useDebugValue = useDebugValue2;
         exports.useDeferredValue = useDeferredValue;
-        exports.useEffect = useEffect12;
+        exports.useEffect = useEffect14;
         exports.useId = useId3;
         exports.useImperativeHandle = useImperativeHandle2;
         exports.useInsertionEffect = useInsertionEffect2;
@@ -1886,7 +1886,7 @@ var require_react_development = __commonJS({
         exports.useMemo = useMemo8;
         exports.useReducer = useReducer3;
         exports.useRef = useRef12;
-        exports.useState = useState9;
+        exports.useState = useState11;
         exports.useSyncExternalStore = useSyncExternalStore;
         exports.useTransition = useTransition;
         exports.version = ReactVersion;
@@ -2382,9 +2382,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React29 = require_react();
+        var React31 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React29.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React31.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3991,7 +3991,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props2.value == null) {
               if (typeof props2.children === "object" && props2.children !== null) {
-                React29.Children.forEach(props2.children, function(child) {
+                React31.Children.forEach(props2.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -23587,7 +23587,7 @@ var require_react_jsx_runtime_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React29 = require_react();
+        var React31 = require_react();
         var REACT_ELEMENT_TYPE = Symbol.for("react.element");
         var REACT_PORTAL_TYPE = Symbol.for("react.portal");
         var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23613,7 +23613,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return null;
         }
-        var ReactSharedInternals = React29.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React31.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function error(format) {
           {
             {
@@ -24463,11 +24463,11 @@ var require_react_jsx_runtime_development = __commonJS({
             return jsxWithValidation(type, props2, key, false);
           }
         }
-        var jsx14 = jsxWithValidationDynamic;
-        var jsxs3 = jsxWithValidationStatic;
+        var jsx16 = jsxWithValidationDynamic;
+        var jsxs4 = jsxWithValidationStatic;
         exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = jsx14;
-        exports.jsxs = jsxs3;
+        exports.jsx = jsx16;
+        exports.jsxs = jsxs4;
       })();
     }
   }
@@ -24494,7 +24494,7 @@ var require_use_sync_external_store_shim_development = __commonJS({
         return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
       }
       function useSyncExternalStore$2(subscribe, getSnapshot) {
-        didWarnOld18Alpha || void 0 === React29.startTransition || (didWarnOld18Alpha = true, console.error(
+        didWarnOld18Alpha || void 0 === React31.startTransition || (didWarnOld18Alpha = true, console.error(
           "You are using an outdated, pre-release alpha of React 18 that does not support useSyncExternalStore. The use-sync-external-store shim will not work correctly. Upgrade to a newer pre-release."
         ));
         var value = getSnapshot();
@@ -24504,7 +24504,7 @@ var require_use_sync_external_store_shim_development = __commonJS({
             "The result of getSnapshot should be cached to avoid an infinite loop"
           ), didWarnUncachedGetSnapshot = true);
         }
-        cachedValue = useState9({
+        cachedValue = useState11({
           inst: { value, getSnapshot }
         });
         var inst = cachedValue[0].inst, forceUpdate = cachedValue[1];
@@ -24516,7 +24516,7 @@ var require_use_sync_external_store_shim_development = __commonJS({
           },
           [subscribe, value, getSnapshot]
         );
-        useEffect12(
+        useEffect14(
           function() {
             checkIfSnapshotChanged(inst) && forceUpdate({ inst });
             return subscribe(function() {
@@ -24542,8 +24542,8 @@ var require_use_sync_external_store_shim_development = __commonJS({
         return getSnapshot();
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState9 = React29.useState, useEffect12 = React29.useEffect, useLayoutEffect4 = React29.useLayoutEffect, useDebugValue2 = React29.useDebugValue, didWarnOld18Alpha = false, didWarnUncachedGetSnapshot = false, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
-      exports.useSyncExternalStore = void 0 !== React29.useSyncExternalStore ? React29.useSyncExternalStore : shim;
+      var React31 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState11 = React31.useState, useEffect14 = React31.useEffect, useLayoutEffect4 = React31.useLayoutEffect, useDebugValue2 = React31.useDebugValue, didWarnOld18Alpha = false, didWarnUncachedGetSnapshot = false, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+      exports.useSyncExternalStore = void 0 !== React31.useSyncExternalStore ? React31.useSyncExternalStore : shim;
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
     })();
   }
@@ -24570,7 +24570,7 @@ var require_with_selector_development = __commonJS({
         return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React29 = require_react(), shim = require_shim(), objectIs = "function" === typeof Object.is ? Object.is : is, useSyncExternalStore = shim.useSyncExternalStore, useRef12 = React29.useRef, useEffect12 = React29.useEffect, useMemo8 = React29.useMemo, useDebugValue2 = React29.useDebugValue;
+      var React31 = require_react(), shim = require_shim(), objectIs = "function" === typeof Object.is ? Object.is : is, useSyncExternalStore = shim.useSyncExternalStore, useRef12 = React31.useRef, useEffect14 = React31.useEffect, useMemo8 = React31.useMemo, useDebugValue2 = React31.useDebugValue;
       exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector4, isEqual) {
         var instRef = useRef12(null);
         if (null === instRef.current) {
@@ -24613,7 +24613,7 @@ var require_with_selector_development = __commonJS({
           [getSnapshot, getServerSnapshot, selector4, isEqual]
         );
         var value = useSyncExternalStore(subscribe, instRef[0], instRef[1]);
-        useEffect12(
+        useEffect14(
           function() {
             inst.hasValue = true;
             inst.value = value;
@@ -24641,7 +24641,7 @@ var require_with_selector = __commonJS({
 });
 
 // src/renderer/index.tsx
-var import_react11 = __toESM(require_react());
+var import_react13 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // ../../node_modules/@radix-ui/react-tabs/dist/index.mjs
@@ -37591,12 +37591,131 @@ function NodeEditor({
   return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cn("h-full min-h-0 w-full", className), style: { minHeight: "100%", height: "100%" }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ReactFlowProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "w-full h-full", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(NodeEditorCanvas, { onDropComponent }) }) }) });
 }
 
-// src/renderer/index.tsx
+// src/renderer/components/SettingsDialog.tsx
+var import_react11 = __toESM(require_react());
+
+// src/renderer/settings.ts
+var defaultSettings = {
+  theme: "dark",
+  workspace: "",
+  logsEnabled: true
+};
+
+// src/renderer/components/SettingsDialog.tsx
 var import_jsx_runtime14 = __toESM(require_jsx_runtime());
-var PLAYGROUND_URL = "http://localhost:8080/";
-function useIPC() {
-  const [projectPath, setProjectPath] = (0, import_react11.useState)("");
+function SettingsDialog({
+  open,
+  onClose,
+  onSave
+}) {
+  const [settings, setSettings] = (0, import_react11.useState)(defaultSettings);
+  const [loading, setLoading] = (0, import_react11.useState)(false);
+  const [error, setError] = (0, import_react11.useState)(null);
   (0, import_react11.useEffect)(() => {
+    if (open) {
+      setLoading(true);
+      setError(null);
+      window.ccStudio?.getSettings?.().then((s) => setSettings(s || defaultSettings)).catch((err) => setError(String(err))).finally(() => setLoading(false));
+    }
+  }, [open]);
+  const save = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const ok = await window.ccStudio?.saveSettings?.(settings);
+      if (ok) onSave(settings);
+    } catch (err) {
+      setError(String(err?.message || err));
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (!open) return null;
+  return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "fixed inset-0 bg-black/60 z-50 flex items-center justify-center", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "w-full max-w-lg bg-slate-900 border border-slate-800 rounded shadow-xl p-4 flex flex-col gap-3", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-lg font-semibold", children: "Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: onClose, children: "\xD7" })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "max-h-[70vh]", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-4 p-1", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-sm text-slate-200", children: "Theme" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+          "select",
+          {
+            className: "bg-slate-800 border border-slate-700 rounded px-2 py-1 text-sm",
+            value: settings.theme,
+            onChange: (e) => setSettings({ ...settings, theme: e.target.value }),
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "dark", children: "Dark" }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "light", children: "Light" })
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-sm text-slate-200", children: "Workspace" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          "input",
+          {
+            className: "bg-slate-800 border border-slate-700 rounded px-2 py-1 text-sm w-full",
+            value: settings.workspace,
+            onChange: (e) => setSettings({ ...settings, workspace: e.target.value }),
+            placeholder: "/Users/<user>/creative-coding-studio"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "space-y-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "flex items-center gap-2 text-sm text-slate-200", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          "input",
+          {
+            type: "checkbox",
+            checked: settings.logsEnabled,
+            onChange: (e) => setSettings({ ...settings, logsEnabled: e.target.checked })
+          }
+        ),
+        "Logs schreiben (workspace/logs)"
+      ] }) })
+    ] }) }),
+    error && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-amber-400", children: error }),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex justify-end gap-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: onClose, children: "Abbrechen" }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "secondary", onClick: save, disabled: loading, children: loading ? "Speichern\u2026" : "Speichern" })
+    ] })
+  ] }) });
+}
+
+// src/renderer/components/Toast.tsx
+var import_react12 = __toESM(require_react());
+var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+function useToasts() {
+  const [toasts, setToasts] = (0, import_react12.useState)([]);
+  const push = (type, message, duration = 3e3) => {
+    const id2 = Date.now();
+    setToasts((prev) => [...prev, { id: id2, type, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id2));
+    }, duration);
+  };
+  return { toasts, push };
+}
+function ToastOverlay({ toasts }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "fixed top-4 right-4 z-50 flex flex-col gap-2", children: toasts.map((t) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    "div",
+    {
+      className: `px-3 py-2 rounded shadow text-sm border ${t.type === "success" ? "bg-emerald-900/80 border-emerald-500 text-emerald-100" : "bg-rose-900/80 border-rose-500 text-rose-100"}`,
+      children: t.message
+    },
+    t.id
+  )) });
+}
+
+// src/renderer/index.tsx
+var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+var PLAYGROUND_URL = "http://localhost:8080/";
+var PLAYGROUND_BUILD = "./dist/develop/index.html";
+function useIPC() {
+  const [projectPath, setProjectPath] = (0, import_react13.useState)("");
+  (0, import_react13.useEffect)(() => {
     window.ccStudio?.getProjectPath?.().then(setProjectPath).catch(() => {
     });
   }, []);
@@ -37604,26 +37723,34 @@ function useIPC() {
 }
 function App() {
   const { projectPath } = useIPC();
-  const [leftTab, setLeftTab] = (0, import_react11.useState)("artwork");
-  const [rightTab, setRightTab] = (0, import_react11.useState)("props");
-  const [libraryOpen, setLibraryOpen] = (0, import_react11.useState)(true);
-  const debugRef = (0, import_react11.useRef)(null);
-  const [debugLines, setDebugLines] = (0, import_react11.useState)([]);
-  const frameRef = (0, import_react11.useRef)(null);
-  const [parameterState, setParameterState] = (0, import_react11.useState)(null);
-  const [paramFilter, setParamFilter] = (0, import_react11.useState)("");
-  const [agents] = (0, import_react11.useState)([
+  const [leftTab, setLeftTab] = (0, import_react13.useState)("artwork");
+  const [rightTab, setRightTab] = (0, import_react13.useState)("props");
+  const [libraryOpen, setLibraryOpen] = (0, import_react13.useState)(true);
+  const [playgroundSrc, setPlaygroundSrc] = (0, import_react13.useState)("dev");
+  const [devUrl, setDevUrl] = (0, import_react13.useState)(PLAYGROUND_URL);
+  const [buildUrl, setBuildUrl] = (0, import_react13.useState)(PLAYGROUND_BUILD);
+  const [settingsOpen, setSettingsOpen] = (0, import_react13.useState)(false);
+  const [settings, setSettings] = (0, import_react13.useState)(null);
+  const [remoteComponents, setRemoteComponents] = (0, import_react13.useState)([]);
+  const workspacePath = settings?.workspace?.trim() || projectPath;
+  const { toasts, push } = useToasts();
+  const debugRef = (0, import_react13.useRef)(null);
+  const [debugLines, setDebugLines] = (0, import_react13.useState)([]);
+  const frameRef = (0, import_react13.useRef)(null);
+  const [parameterState, setParameterState] = (0, import_react13.useState)(null);
+  const [paramFilter, setParamFilter] = (0, import_react13.useState)("");
+  const [agents] = (0, import_react13.useState)([
     { name: "Background", visible: true, active: true, ticks: 120, hooks: ["draw"] },
     { name: "Grid Manager", visible: true, active: true, ticks: 120, hooks: ["update", "draw"] },
     { name: "ColorSet", visible: true, active: true, ticks: 60, hooks: ["animate_slow"] },
     { name: "Custom Agent", visible: false, active: false, ticks: 0, hooks: [] }
   ]);
-  const [timelinePos, setTimelinePos] = (0, import_react11.useState)(0);
-  const [timelineItems] = (0, import_react11.useState)([
+  const [timelinePos, setTimelinePos] = (0, import_react13.useState)(0);
+  const [timelineItems] = (0, import_react13.useState)([
     { id: "flash-bg", from: 0, to: 5, loop: true },
     { id: "move-grid", from: 2, to: 10 }
   ]);
-  const componentLibrary = (0, import_react11.useMemo)(
+  const componentLibrary = (0, import_react13.useMemo)(
     () => [
       { id: "background", name: "Background", category: "Canvas", desc: "F\xFCllt den Hintergrund" },
       { id: "grid", name: "Grid Manager", category: "Layout", desc: "Raster/Entities" },
@@ -37634,17 +37761,36 @@ function App() {
     ],
     []
   );
-  (0, import_react11.useEffect)(() => {
+  (0, import_react13.useEffect)(() => {
     const listener = (event) => {
       if (event.data?.type === "parameter-dump") {
         setParameterState(event.data.payload);
         setDebugLines((prev) => [JSON.stringify(event.data.payload, null, 2), ...prev].slice(0, 50));
       }
+      if (event.data?.type === "component-added") {
+        const d = event.data;
+        setDebugLines((prev) => [
+          `ACK from Artwork: ${d.name || d.id} (${d.status || "ok"})${d.error ? " - " + d.error : ""}`,
+          ...prev
+        ].slice(0, 50));
+        if (d.status === "ok") {
+          push("success", `Added ${d.name || d.id} (${d.total ?? ""})`);
+        } else {
+          push("error", `Failed ${d.name || d.id}: ${d.error || "unsupported"}`);
+        }
+      }
+      if (event.data?.type === "artwork-state") {
+        const d = event.data;
+        if (Array.isArray(d.addedComponents)) {
+          setRemoteComponents(d.addedComponents);
+        }
+        setDebugLines((prev) => [`State from Artwork: ${JSON.stringify(d.addedComponents || [])}`, ...prev].slice(0, 50));
+      }
     };
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
   }, []);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react13.useEffect)(() => {
     const onCtx = (e) => {
       e.preventDefault();
       window.ccStudio?.inspectAt?.(e.clientX, e.clientY);
@@ -37652,6 +37798,15 @@ function App() {
     window.addEventListener("contextmenu", onCtx);
     return () => window.removeEventListener("contextmenu", onCtx);
   }, []);
+  (0, import_react13.useEffect)(() => {
+    window.ccStudio?.getSettings?.().then((s) => setSettings(s || null)).catch(() => {
+    });
+  }, []);
+  (0, import_react13.useEffect)(() => {
+    if (!settings) return;
+    const theme = settings.theme || "dark";
+    document.documentElement.dataset.theme = theme;
+  }, [settings]);
   const parseDragData = (e) => {
     const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain");
     if (!raw) return null;
@@ -37682,8 +37837,8 @@ ${content}`, ...prev]);
   const saveFile = async () => {
     requestDump();
   };
-  const debugView = (0, import_react11.useMemo)(() => debugLines.join("\n\n"), [debugLines]);
-  const filteredParamsView = (0, import_react11.useMemo)(() => {
+  const debugView = (0, import_react13.useMemo)(() => debugLines.join("\n\n"), [debugLines]);
+  const filteredParamsView = (0, import_react13.useMemo)(() => {
     if (!parameterState) return null;
     if (!paramFilter.trim()) return parameterState;
     try {
@@ -37696,22 +37851,22 @@ ${content}`, ...prev]);
   }, [parameterState, paramFilter]);
   const renderTree = (value, path = []) => {
     if (value === null || value === void 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-slate-400", children: "null" });
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-slate-400", children: "null" });
     }
     if (typeof value !== "object") {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "text-amber-200", children: String(value) });
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-amber-200", children: String(value) });
     }
     if (Array.isArray(value)) {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "pl-3 border-l border-slate-700 space-y-1", children: [
-        value.slice(0, 20).map((v, i) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex gap-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "text-slate-500", children: [
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "pl-3 border-l border-slate-700 space-y-1", children: [
+        value.slice(0, 20).map((v, i) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "text-slate-500", children: [
             "[",
             i,
             "]"
           ] }),
           renderTree(v, [...path, String(i)])
         ] }, i)),
-        value.length > 20 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-xs text-slate-500", children: [
+        value.length > 20 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-xs text-slate-500", children: [
           "\u2026 ",
           value.length - 20,
           " more"
@@ -37719,27 +37874,50 @@ ${content}`, ...prev]);
       ] });
     }
     const entries = Object.entries(value).slice(0, 40);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "pl-3 border-l border-slate-700 space-y-1", children: [
-      entries.map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex gap-2 items-start", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "text-slate-300", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "pl-3 border-l border-slate-700 space-y-1", children: [
+      entries.map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2 items-start", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "text-slate-300", children: [
           k,
           ":"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "flex-1", children: renderTree(v, [...path, k]) })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-1", children: renderTree(v, [...path, k]) })
       ] }, k)),
-      Object.keys(value).length > 40 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-xs text-slate-500", children: [
+      Object.keys(value).length > 40 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-xs text-slate-500", children: [
         "\u2026 ",
         Object.keys(value).length - 40,
         " more"
       ] })
     ] });
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "h-dvh min-h-0 flex flex-col", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-4 p-3 bg-slate-800 border-b border-slate-700", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-lg font-semibold", children: "Creative Coding Studio" }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-400 truncate max-w-xs", children: projectPath }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "ml-auto flex gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "h-dvh min-h-0 flex flex-col", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-4 p-3 bg-slate-800 border-b border-slate-700", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-lg font-semibold", children: "Creative Coding Studio" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs text-slate-400 truncate max-w-xs", children: workspacePath }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "ml-auto flex gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "hidden sm:flex items-center gap-2 border border-slate-700 rounded px-2 py-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+            "select",
+            {
+              className: "bg-slate-900 text-xs border border-slate-700 rounded px-2 py-1",
+              value: playgroundSrc,
+              onChange: (e) => setPlaygroundSrc(e.target.value),
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "dev", children: "Dev URL" }),
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("option", { value: "build", children: "Local Build" })
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "input",
+            {
+              className: "bg-slate-900 text-xs border border-slate-700 rounded px-2 py-1 w-48",
+              value: playgroundSrc === "dev" ? devUrl : buildUrl,
+              onChange: (e) => playgroundSrc === "dev" ? setDevUrl(e.target.value) : setBuildUrl(e.target.value)
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { variant: "secondary", size: "sm", onClick: () => setSettingsOpen(true), children: "Settings" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           Button,
           {
             variant: "secondary",
@@ -37749,17 +37927,17 @@ ${content}`, ...prev]);
             children: libraryOpen ? "Library <<" : "Library >>"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { variant: "secondary", size: "sm", onClick: openFile, children: "Open" }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { variant: "secondary", size: "sm", onClick: saveFile, children: "Save" })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { variant: "secondary", size: "sm", onClick: openFile, children: "Open" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { variant: "secondary", size: "sm", onClick: saveFile, children: "Save" })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-1 min-h-0 px-3 pb-3 gap-2", children: [
-      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "w-56 min-w-[14rem] bg-slate-900 border border-slate-800 rounded flex flex-col overflow-hidden", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between px-3 py-2 border-b border-slate-800", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-sm font-semibold text-slate-100", children: "Library" }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", className: "h-8 px-2", onClick: () => setLibraryOpen(false), children: "\xD7" })
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex flex-1 min-h-0 px-3 pb-3 gap-2", children: [
+      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "w-56 min-w-[14rem] bg-slate-900 border border-slate-800 rounded flex flex-col overflow-hidden", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center justify-between px-3 py-2 border-b border-slate-800", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-sm font-semibold text-slate-100", children: "Library" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { size: "sm", variant: "ghost", className: "h-8 px-2", onClick: () => setLibraryOpen(false), children: "\xD7" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "p-2 space-y-2", children: componentLibrary.map((c) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "p-2 space-y-2", children: componentLibrary.map((c) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
           "div",
           {
             draggable: true,
@@ -37772,17 +37950,17 @@ ${content}`, ...prev]);
             className: "rounded border border-slate-700 bg-slate-800/80 p-2 cursor-grab hover:border-emerald-400",
             title: c.desc,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs uppercase text-slate-400", children: c.category }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-sm font-semibold text-slate-100", children: c.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-[11px] text-slate-400", children: c.desc })
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs uppercase text-slate-400", children: c.category }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-sm font-semibold text-slate-100", children: c.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-[11px] text-slate-400", children: c.desc })
             ]
           },
           c.id
         )) }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(PanelGroup2, { direction: "horizontal", className: "flex-1 min-h-0", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 55, minSize: 20, className: "mr-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Root2, { value: leftTab, onValueChange: (v) => setLeftTab(v), className: "flex-1 flex flex-col min-h-0", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(List, { className: "flex gap-2 p-2", "aria-label": "Left Tabs", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PanelGroup2, { direction: "horizontal", className: "flex-1 min-h-0", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 55, minSize: 20, className: "mr-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Root2, { value: leftTab, onValueChange: (v) => setLeftTab(v), className: "flex-1 flex flex-col min-h-0", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(List, { className: "flex gap-2 p-2", "aria-label": "Left Tabs", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             Trigger,
             {
               value: "artwork",
@@ -37793,7 +37971,7 @@ ${content}`, ...prev]);
               children: "Artwork"
             }
           ) }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Content, { value: "artwork", className: "flex-1 min-h-0 flex", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Content, { value: "artwork", className: "flex-1 min-h-0 flex", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "div",
             {
               className: "w-full h-full",
@@ -37807,16 +37985,25 @@ ${content}`, ...prev]);
                     "*"
                   );
                   setDebugLines((prev) => [`Drop->Artwork: ${item.name}`, ...prev].slice(0, 50));
+                  push("success", `Drop to Artwork: ${item.name}`);
+                  window.ccStudio?.writeLog?.(`Drop->Artwork: ${item.id}`);
                 }
               },
-              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("iframe", { ref: frameRef, className: "w-full h-full border-0", src: PLAYGROUND_URL })
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                "iframe",
+                {
+                  ref: frameRef,
+                  className: "w-full h-full border-0",
+                  src: playgroundSrc === "dev" ? devUrl : buildUrl
+                }
+              )
             }
           ) })
         ] }) }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Handle, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 45, minSize: 25, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Root2, { value: rightTab, onValueChange: (v) => setRightTab(v), className: "flex-1 flex flex-col min-h-0", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(List, { className: "flex gap-2 p-2", "aria-label": "Right Tabs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Handle, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 45, minSize: 25, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Root2, { value: rightTab, onValueChange: (v) => setRightTab(v), className: "flex-1 flex flex-col min-h-0", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(List, { className: "flex gap-2 p-2", "aria-label": "Right Tabs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
               Trigger,
               {
                 value: "props",
@@ -37827,7 +38014,7 @@ ${content}`, ...prev]);
                 children: "Properties"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
               Trigger,
               {
                 value: "node",
@@ -37838,7 +38025,7 @@ ${content}`, ...prev]);
                 children: "Node-Editor"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
               Trigger,
               {
                 value: "debug",
@@ -37850,20 +38037,30 @@ ${content}`, ...prev]);
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             Content,
             {
               value: "props",
               className: "flex-1 min-h-0 flex flex-col",
               style: { display: rightTab === "props" ? "flex" : "none" },
-              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0 h-full pr-1", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 min-h-0 flex flex-col gap-2 pb-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Parameter Explorer" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "flex flex-col gap-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex gap-2 items-center", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", onClick: requestDump, children: "Refresh" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Debug-Panel im Playground" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ScrollArea, { className: "flex-1 min-h-0 h-full pr-1", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex-1 min-h-0 flex flex-col gap-2 pb-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardTitle, { className: "text-sm", children: "Artwork Components" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardContent, { children: remoteComponents.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs text-slate-500", children: "Noch keine Komponenten hinzugef\xFCgt." }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ul", { className: "text-xs text-slate-200 space-y-1", children: remoteComponents.map((c) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("li", { className: "flex items-center gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "inline-block h-2 w-2 rounded-full bg-emerald-400" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex-1", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "font-semibold", children: c.name || c.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-[11px] text-slate-400", children: c.id })
+                    ] })
+                  ] }, `${c.id}-${c.name ?? ""}`)) }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardTitle, { className: "text-sm", children: "Parameter Explorer" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardContent, { className: "flex flex-col gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex gap-2 items-center", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { size: "sm", onClick: requestDump, children: "Refresh" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Debug-Panel im Playground" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                         "input",
                         {
                           className: "px-2 py-1 bg-slate-900 border border-slate-700 rounded text-xs flex-1",
@@ -37873,13 +38070,13 @@ ${content}`, ...prev]);
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "h-48 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: parameterState ? paramFilter.trim() ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("pre", { className: "text-[11px] text-slate-200 whitespace-pre-wrap", children: filteredParamsView }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200 space-y-1", children: renderTree(parameterState) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-500", children: "Noch kein Parameter-Dump geladen." }) })
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ScrollArea, { className: "h-48 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: parameterState ? paramFilter.trim() ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("pre", { className: "text-[11px] text-slate-200 whitespace-pre-wrap", children: filteredParamsView }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs text-slate-200 space-y-1", children: renderTree(parameterState) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs text-slate-500", children: "Noch kein Parameter-Dump geladen." }) })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Agents (SceneGraph)" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "h-28", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("ul", { className: "text-xs text-slate-200 space-y-2", children: agents.map((a) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("li", { className: "flex items-center gap-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardTitle, { className: "text-sm", children: "Agents (SceneGraph)" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ScrollArea, { className: "h-28", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ul", { className: "text-xs text-slate-200 space-y-2", children: agents.map((a) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("li", { className: "flex items-center gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                       "span",
                       {
                         className: cn(
@@ -37888,9 +38085,9 @@ ${content}`, ...prev]);
                         )
                       }
                     ),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-semibold", children: a.name }),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex-1", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "font-semibold", children: a.name }),
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
                         a.visible ? "visible" : "hidden",
                         " \xB7 ",
                         a.ticks,
@@ -37901,15 +38098,15 @@ ${content}`, ...prev]);
                     ] })
                   ] }, a.name)) }) }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700 flex min-h-0 flex-col", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Timeline" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "flex-1 min-h-0 flex flex-col gap-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2 text-xs text-slate-300", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "h-2 w-2 rounded-full bg-amber-400" }),
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700 flex min-h-0 flex-col", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardTitle, { className: "text-sm", children: "Timeline" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardContent, { className: "flex-1 min-h-0 flex flex-col gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-2 text-xs text-slate-300", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "h-2 w-2 rounded-full bg-amber-400" }),
                         "Playhead"
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                         Button,
                         {
                           size: "sm",
@@ -37919,17 +38116,17 @@ ${content}`, ...prev]);
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-2 w-full rounded bg-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-2 w-full rounded bg-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                       "div",
                       {
                         className: "h-2 bg-emerald-400 rounded",
                         style: { width: `${Math.min(Math.max(timelinePos, 0), 100)}%` }
                       }
                     ) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200 space-y-2", children: timelineItems.map((t) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-semibold", children: t.id }),
-                        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ScrollArea, { className: "flex-1 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs text-slate-200 space-y-2", children: timelineItems.map((t) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center justify-between", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "font-semibold", children: t.id }),
+                        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
                           t.from,
                           "s \u2192 ",
                           t.to,
@@ -37937,7 +38134,7 @@ ${content}`, ...prev]);
                           t.loop ? "\xB7 loop" : ""
                         ] })
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                         Button,
                         {
                           size: "sm",
@@ -37950,8 +38147,8 @@ ${content}`, ...prev]);
                         }
                       )
                     ] }, t.id)) }) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                         "input",
                         {
                           type: "range",
@@ -37969,18 +38166,18 @@ ${content}`, ...prev]);
                           className: "flex-1"
                         }
                       ),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "text-xs text-slate-300 w-10 text-right", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "text-xs text-slate-300 w-10 text-right", children: [
                         timelinePos,
                         "%"
                       ] })
                     ] })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "IO Debug" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "space-y-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200", children: "tweakpane \u2192 parameter (live), sensors (stub)" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardTitle, { className: "text-sm", children: "IO Debug" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardContent, { className: "space-y-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "text-xs text-slate-200", children: "tweakpane \u2192 parameter (live), sensors (stub)" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
                       Button,
                       {
                         size: "sm",
@@ -38001,45 +38198,68 @@ ${content}`, ...prev]);
               ] }) })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             Content,
             {
               value: "node",
               className: "flex-1 min-h-0 flex flex-col",
               style: { display: rightTab === "node" ? "flex" : "none" },
-              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                NodeEditor,
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                "div",
                 {
-                  className: "flex-1 min-h-0 w-full h-full",
-                  onDropComponent: (item) => setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50))
+                  className: "w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0",
+                  onDragOver: (e) => e.preventDefault(),
+                  onDrop: (e) => {
+                    e.preventDefault();
+                    const item = parseDragData(e);
+                    if (item) {
+                      setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50));
+                      push("success", `Drop to NodeEditor: ${item.name}`);
+                      window.ccStudio?.writeLog?.(`Drop->NodeEditor: ${item.id}`);
+                    }
+                  },
+                  children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(NodeEditor, { className: "flex-1 min-h-0 w-full h-full" })
                 }
-              ) })
+              )
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             Content,
             {
               value: "debug",
               className: "flex-1 min-h-0 flex flex-col",
               style: { display: rightTab === "debug" ? "flex" : "none" },
-              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 bg-slate-900/80 border border-slate-700 rounded min-h-0 flex flex-col", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2 px-3 py-2 border-b border-slate-700", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "secondary", onClick: requestDump, children: "Refresh" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Toggle Debug Panel (Playground)" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex-1 bg-slate-900/80 border border-slate-700 rounded min-h-0 flex flex-col", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "flex items-center gap-2 px-3 py-2 border-b border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { size: "sm", variant: "secondary", onClick: requestDump, children: "Refresh" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Toggle Debug Panel (Playground)" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("pre", { ref: debugRef, className: "text-xs whitespace-pre-wrap p-3 h-full overflow-auto font-mono", children: debugView }) })
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("pre", { ref: debugRef, className: "text-xs whitespace-pre-wrap p-3 h-full overflow-auto font-mono", children: debugView }) })
               ] })
             }
           )
         ] }) }) })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-8 bg-slate-900 border-t border-slate-800 text-xs text-slate-400 flex items-center px-3", children: "Status: Ready" })
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-8 bg-slate-900 border-t border-slate-800 text-xs text-slate-400 flex items-center px-3", children: "Status: Ready" }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ToastOverlay, { toasts }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      SettingsDialog,
+      {
+        open: settingsOpen,
+        onClose: () => setSettingsOpen(false),
+        onSave: (s) => {
+          setSettings(s);
+          window.ccStudio?.saveSettings?.(s);
+          setSettingsOpen(false);
+        }
+      }
+    )
   ] });
 }
 var rootEl = document.getElementById("root");
 if (rootEl) {
-  (0, import_client.createRoot)(rootEl).render(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)(App, {}));
+  (0, import_client.createRoot)(rootEl).render(/* @__PURE__ */ (0, import_jsx_runtime16.jsx)(App, {}));
 }
 /*! Bundled license information:
 

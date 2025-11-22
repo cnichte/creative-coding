@@ -69,7 +69,7 @@ export { Random } from "./utils/Random";
 export { ColorUtils } from "./utils/ColorUtils";
 export { Noise } from "./utils/Noise";
 export { Mathematics } from "./utils/Mathematics";
-export { TimelinePlayer } from "./core/TimelinePlayer";
+export { TimelinePlayer, type TimelineItem } from "./core/TimelinePlayer";
 export { TweakpaneSupport, 
     type Provide_Tweakpane_To_Props, 
     type Tweakpane_Items, 
@@ -88,3 +88,15 @@ export {
   type TweakpaneModuleOptions,
   type TweakpaneContainer,
 } from "./core/TweakpaneManager";
+export {
+  type MessageBridge,
+  type LibraryComponent,
+  type ComponentAddedAck,
+  type StudioIncomingMessage,
+  isAddComponentMessage,
+} from "./core/MessageBridge";
+export {
+  ComponentRegistry,
+  type ComponentFactory,
+  type ComponentFactoryResult,
+} from "./core/ComponentRegistry";

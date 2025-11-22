@@ -50,6 +50,12 @@ import { IOManager } from "./IOManager";
 import type { Tweakpane_Items } from "./TweakpaneSupport";
 import { TweakpaneManager } from "./TweakpaneManager";
 import { TimelinePlayer } from "./TimelinePlayer";
+import type { ComponentAddedAck, LibraryComponent } from "./MessageBridge";
+import { isAddComponentMessage } from "./MessageBridge";
+import { ComponentRegistry } from "./ComponentRegistry";
+import { Background } from "../agents/Background";
+import { ColorSet } from "../colors/ColorSet";
+import { Grid_Manager } from "../agents/Grid_Manager";
 
 
 export interface Artwork_ParameterSet {
@@ -100,6 +106,7 @@ export class Artwork {
   private window: any;
   private document: any;
   private parameter: any;
+  private messageListener: ((event: MessageEvent) => void) | null = null;
 
   private format: Format;
 
@@ -113,6 +120,8 @@ export class Artwork {
   private sketchRunner: SketchRunner;
   private ioManager: IOManager;
   private timelinePlayer: TimelinePlayer;
+  private componentRegistry: ComponentRegistry;
+  private addedComponents: LibraryComponent[] = [];
 
   /**
    * Bundles everything that makes up my artwork.
@@ -149,6 +158,20 @@ export class Artwork {
     this.ioManager = IOManager.from(parameter);
     this.timelinePlayer = new TimelinePlayer(this.parameter);
     (this.parameter as any).__timelinePlayer = this.timelinePlayer;
+    this.componentRegistry = ComponentRegistry.withDefaults({
+      background: () => {
+        Background.ensureParameterSet(this.parameter);
+        return { status: "ok", message: "background ready" };
+      },
+      colorset: () => {
+        ColorSet.ensureParameterSet(this.parameter);
+        return { status: "ok", message: "colorset ready" };
+      },
+      grid: () => {
+        Grid_Manager.ensureParameterSet(this.parameter);
+        return { status: "ok", message: "grid ready" };
+      },
+    });
 
     //* HTML Content, im wesentlichen das <canvas> Element.
 
@@ -227,6 +250,34 @@ export class Artwork {
     this.format = new Format(this.parameter);
 
     this.ctx = this.theCanvas.getContext("2d"); // TODO Type: CanvasRenderingContext2D | null
+
+    // Message bridge: listen for add-component from Studio
+    this.messageListener = (event: MessageEvent) => {
+      const data: any = event.data;
+      if (!data || typeof data !== "object") return;
+      if (isAddComponentMessage(data)) {
+        const comp = data.component as LibraryComponent;
+        const result = this.componentRegistry.handle(comp);
+        if (result.status === "ok") {
+          this.addedComponents.push(comp);
+        }
+        const ack: ComponentAddedAck = {
+          type: "component-added",
+          id: comp.id,
+          name: comp.name,
+          status: result.status === "error" ? "error" : result.status === "unsupported" ? "error" : "ok",
+          total: this.addedComponents.length,
+          error: result.message,
+        };
+        this.window.postMessage(ack, "*");
+        // optional state snapshot for Studio
+        this.postState();
+      }
+      if (data.type === "request-state") {
+        this.postState();
+      }
+    };
+    this.window.addEventListener("message", this.messageListener);
 
     // <canvas/ id="theCanvas"> should have the desired size
     this.theCanvas.width = this.parameter.artwork.canvas.size.width;
@@ -553,6 +604,16 @@ export class Artwork {
     return elm_wrapper;
   } // getHTMLContent
 
+
+  private postState() {
+    this.window.postMessage(
+      {
+        type: "artwork-state",
+        addedComponents: this.addedComponents,
+      },
+      "*"
+    );
+  }
 
   //* --------------------------------------------------------------------
   //* Provide Default Parameter-Set

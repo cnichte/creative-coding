@@ -7,6 +7,20 @@ body {
   @apply bg-slate-900 text-slate-50;
 }
 
+:root[data-theme="light"] body {
+  background: #f8fafc;
+  color: #0f172a;
+}
+:root[data-theme="light"] .bg-slate-900 { background: #f8fafc !important; }
+:root[data-theme="light"] .bg-slate-800 { background: #e2e8f0 !important; }
+:root[data-theme="light"] .bg-slate-700 { background: #cbd5e1 !important; }
+:root[data-theme="light"] .text-slate-50 { color: #0f172a !important; }
+:root[data-theme="light"] .text-slate-100 { color: #0f172a !important; }
+:root[data-theme="light"] .text-slate-200 { color: #1f2937 !important; }
+:root[data-theme="light"] .text-slate-300 { color: #334155 !important; }
+:root[data-theme="light"] .border-slate-700,
+:root[data-theme="light"] .border-slate-800 { border-color: #cbd5e1 !important; }
+
 :root,
 html,
 body,
