@@ -37504,50 +37504,91 @@ var initialEdges = [
   { id: "e1-2", source: "input", target: "mapper", animated: true },
   { id: "e2-3", source: "mapper", target: "output" }
 ];
-function NodeEditorCanvas() {
+function NodeEditorCanvas({ onDropComponent }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const rf = useReactFlow();
   const nodeTypes = (0, import_react10.useMemo)(() => ({}), []);
   const fitView2 = () => rf.fitView({ padding: 0.1 });
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "w-full h-full min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-    ReactFlow,
-    {
-      className: "w-full h-full",
-      nodes,
-      edges,
-      onNodesChange,
-      onEdgesChange,
-      fitView: true,
-      nodeTypes,
-      nodesDraggable: true,
-      nodesConnectable: true,
-      elevateEdgesOnSelect: true,
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Background$1, { gap: 16, color: "#1f2937" }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Controls$1, { showInteractive: false }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(MiniMap$1, { pannable: true, zoomable: true }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Panel3, { position: "top-right", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex gap-2 bg-slate-800/80 border border-slate-700 rounded px-3 py-2 shadow-lg", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { size: "sm", variant: "secondary", onClick: fitView2, children: "Fit View" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-            Button,
-            {
-              size: "sm",
-              variant: "ghost",
-              onClick: () => {
-                setNodes(initialNodes);
-                setEdges(initialEdges);
-              },
-              children: "Reset"
-            }
-          )
-        ] }) })
-      ]
+  const zoomIn = () => rf.zoomIn({ duration: 200 });
+  const zoomOut = () => rf.zoomOut({ duration: 200 });
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain");
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      if (data?.id && data?.name) {
+        const pos = rf.screenToFlowPosition({ x: e.clientX, y: e.clientY });
+        const newNode = {
+          id: `node-${Date.now()}`,
+          position: pos,
+          data: { label: data.name }
+        };
+        setNodes((nds) => nds.concat(newNode));
+        if (onDropComponent) {
+          onDropComponent({ id: data.id, name: data.name });
+        }
+      }
+    } catch {
     }
-  ) });
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    "div",
+    {
+      className: "w-full h-full min-h-0 flex-1 reactflow-wrapper relative",
+      onDragOver: (e) => e.preventDefault(),
+      onDrop: handleDrop,
+      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+        ReactFlow,
+        {
+          className: "w-full h-full",
+          nodes,
+          edges,
+          onNodesChange,
+          onEdgesChange,
+          fitView: true,
+          nodeTypes,
+          nodesDraggable: true,
+          nodesConnectable: true,
+          elevateEdgesOnSelect: true,
+          panOnDrag: true,
+          selectionOnDrag: true,
+          proOptions: { hideAttribution: true },
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Background$1, { gap: 16, color: "#1f2937" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Controls$1, { showInteractive: true, style: { left: 8, bottom: 8 } }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(MiniMap$1, { pannable: true, zoomable: true, position: "top-left", style: { left: 8, top: 8 } }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Panel3, { position: "top-right", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "flex flex-col gap-2 bg-slate-800/80 border border-slate-700 rounded px-2 py-2 shadow-lg", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { size: "sm", variant: "secondary", className: "h-8 w-8 p-0", onClick: fitView2, "aria-label": "Fit View", children: "F" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { size: "sm", variant: "secondary", className: "h-8 w-8 p-0", onClick: zoomIn, "aria-label": "Zoom In", children: "+" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { size: "sm", variant: "secondary", className: "h-8 w-8 p-0", onClick: zoomOut, "aria-label": "Zoom Out", children: "-" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                Button,
+                {
+                  size: "sm",
+                  variant: "ghost",
+                  className: "h-8 w-8 p-0",
+                  onClick: () => {
+                    setNodes(initialNodes);
+                    setEdges(initialEdges);
+                  },
+                  "aria-label": "Reset Graph",
+                  children: "Reset"
+                }
+              )
+            ] }) })
+          ]
+        }
+      )
+    }
+  );
 }
-function NodeEditor({ className }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cn("h-full min-h-0 w-full", className), style: { minHeight: "100%", height: "100%" }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ReactFlowProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "w-full h-full", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(NodeEditorCanvas, {}) }) }) });
+function NodeEditor({
+  className,
+  onDropComponent
+}) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cn("h-full min-h-0 w-full", className), style: { minHeight: "100%", height: "100%" }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ReactFlowProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "w-full h-full", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(NodeEditorCanvas, { onDropComponent }) }) }) });
 }
 
 // src/renderer/index.tsx
@@ -37565,6 +37606,7 @@ function App() {
   const { projectPath } = useIPC();
   const [leftTab, setLeftTab] = (0, import_react11.useState)("artwork");
   const [rightTab, setRightTab] = (0, import_react11.useState)("props");
+  const [libraryOpen, setLibraryOpen] = (0, import_react11.useState)(true);
   const debugRef = (0, import_react11.useRef)(null);
   const [debugLines, setDebugLines] = (0, import_react11.useState)([]);
   const frameRef = (0, import_react11.useRef)(null);
@@ -37581,6 +37623,17 @@ function App() {
     { id: "flash-bg", from: 0, to: 5, loop: true },
     { id: "move-grid", from: 2, to: 10 }
   ]);
+  const componentLibrary = (0, import_react11.useMemo)(
+    () => [
+      { id: "background", name: "Background", category: "Canvas", desc: "F\xFCllt den Hintergrund" },
+      { id: "grid", name: "Grid Manager", category: "Layout", desc: "Raster/Entities" },
+      { id: "colorset", name: "ColorSet", category: "Palette", desc: "Paletten/Animation" },
+      { id: "particle", name: "Particles", category: "Agents", desc: "Partikelsystem" },
+      { id: "sensor", name: "Sensor Input", category: "IO", desc: "Externe Datenquelle" },
+      { id: "timeline", name: "Timeline Item", category: "Animation", desc: "Zeitgesteuertes Event" }
+    ],
+    []
+  );
   (0, import_react11.useEffect)(() => {
     const listener = (event) => {
       if (event.data?.type === "parameter-dump") {
@@ -37599,6 +37652,19 @@ function App() {
     window.addEventListener("contextmenu", onCtx);
     return () => window.removeEventListener("contextmenu", onCtx);
   }, []);
+  const parseDragData = (e) => {
+    const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain");
+    if (!raw) return null;
+    try {
+      const data = JSON.parse(raw);
+      if (data?.id && data?.name) {
+        return data;
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  };
   const requestDump = () => {
     frameRef.current?.contentWindow?.postMessage({ type: "request-parameter-dump" }, "*");
   };
@@ -37673,245 +37739,300 @@ ${content}`, ...prev]);
       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-lg font-semibold", children: "Creative Coding Studio" }),
       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-400 truncate max-w-xs", children: projectPath }),
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "ml-auto flex gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          Button,
+          {
+            variant: "secondary",
+            size: "sm",
+            onClick: () => setLibraryOpen((v) => !v),
+            className: "hidden sm:inline-flex",
+            children: libraryOpen ? "Library <<" : "Library >>"
+          }
+        ),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { variant: "secondary", size: "sm", onClick: openFile, children: "Open" }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { variant: "secondary", size: "sm", onClick: saveFile, children: "Save" })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(PanelGroup2, { direction: "horizontal", className: "flex-1 min-h-0 px-3 pb-3", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Panel2, { defaultSize: 55, minSize: 25, className: "mr-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Root2, { value: leftTab, onValueChange: (v) => setLeftTab(v), className: "flex-1 flex flex-col min-h-0", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(List, { className: "flex gap-2 p-2", "aria-label": "Left Tabs", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          Trigger,
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex flex-1 min-h-0 px-3 pb-3 gap-2", children: [
+      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "w-56 min-w-[14rem] bg-slate-900 border border-slate-800 rounded flex flex-col overflow-hidden", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between px-3 py-2 border-b border-slate-800", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-sm font-semibold text-slate-100", children: "Library" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", className: "h-8 px-2", onClick: () => setLibraryOpen(false), children: "\xD7" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "p-2 space-y-2", children: componentLibrary.map((c) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+          "div",
           {
-            value: "artwork",
-            className: cn(
-              "px-3 py-2 rounded border text-sm",
-              leftTab === "artwork" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
-            ),
-            children: "Artwork"
-          }
-        ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Content, { value: "artwork", className: "flex-1 min-h-0 flex", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("iframe", { ref: frameRef, className: "w-full h-full border-0", src: PLAYGROUND_URL }) })
-      ] }) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Handle, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Panel2, { defaultSize: 45, minSize: 25, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Root2, { value: rightTab, onValueChange: (v) => setRightTab(v), className: "flex-1 flex flex-col min-h-0", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(List, { className: "flex gap-2 p-2", "aria-label": "Right Tabs", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            draggable: true,
+            onDragStart: (e) => {
+              const payload = JSON.stringify(c);
+              e.dataTransfer.setData("application/json", payload);
+              e.dataTransfer.setData("text/plain", payload);
+              e.dataTransfer.effectAllowed = "copy";
+            },
+            className: "rounded border border-slate-700 bg-slate-800/80 p-2 cursor-grab hover:border-emerald-400",
+            title: c.desc,
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs uppercase text-slate-400", children: c.category }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-sm font-semibold text-slate-100", children: c.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-[11px] text-slate-400", children: c.desc })
+            ]
+          },
+          c.id
+        )) }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(PanelGroup2, { direction: "horizontal", className: "flex-1 min-h-0", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 55, minSize: 20, className: "mr-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Root2, { value: leftTab, onValueChange: (v) => setLeftTab(v), className: "flex-1 flex flex-col min-h-0", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(List, { className: "flex gap-2 p-2", "aria-label": "Left Tabs", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             Trigger,
+            {
+              value: "artwork",
+              className: cn(
+                "px-3 py-2 rounded border text-sm",
+                leftTab === "artwork" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
+              ),
+              children: "Artwork"
+            }
+          ) }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Content, { value: "artwork", className: "flex-1 min-h-0 flex", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            "div",
+            {
+              className: "w-full h-full",
+              onDragOver: (e) => e.preventDefault(),
+              onDrop: (e) => {
+                e.preventDefault();
+                const item = parseDragData(e);
+                if (item) {
+                  frameRef.current?.contentWindow?.postMessage(
+                    { type: "add-component", component: item },
+                    "*"
+                  );
+                  setDebugLines((prev) => [`Drop->Artwork: ${item.name}`, ...prev].slice(0, 50));
+                }
+              },
+              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("iframe", { ref: frameRef, className: "w-full h-full border-0", src: PLAYGROUND_URL })
+            }
+          ) })
+        ] }) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Handle, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Panel2, { defaultSize: libraryOpen ? 50 : 45, minSize: 25, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Root2, { value: rightTab, onValueChange: (v) => setRightTab(v), className: "flex-1 flex flex-col min-h-0", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(List, { className: "flex gap-2 p-2", "aria-label": "Right Tabs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              Trigger,
+              {
+                value: "props",
+                className: cn(
+                  "px-3 py-2 rounded border text-sm",
+                  rightTab === "props" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
+                ),
+                children: "Properties"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              Trigger,
+              {
+                value: "node",
+                className: cn(
+                  "px-3 py-2 rounded border text-sm",
+                  rightTab === "node" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
+                ),
+                children: "Node-Editor"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              Trigger,
+              {
+                value: "debug",
+                className: cn(
+                  "px-3 py-2 rounded border text-sm",
+                  rightTab === "debug" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
+                ),
+                children: "Debug"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            Content,
             {
               value: "props",
-              className: cn(
-                "px-3 py-2 rounded border text-sm",
-                rightTab === "props" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
-              ),
-              children: "Properties"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            Trigger,
-            {
-              value: "node",
-              className: cn(
-                "px-3 py-2 rounded border text-sm",
-                rightTab === "node" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
-              ),
-              children: "Node-Editor"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            Trigger,
-            {
-              value: "debug",
-              className: cn(
-                "px-3 py-2 rounded border text-sm",
-                rightTab === "debug" ? "bg-slate-700 border-slate-500" : "bg-slate-800 border-slate-700 hover:border-slate-600"
-              ),
-              children: "Debug"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          Content,
-          {
-            value: "props",
-            className: "flex-1 min-h-0 flex flex-col",
-            style: { display: rightTab === "props" ? "flex" : "none" },
-            children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0 h-full pr-1", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 min-h-0 flex flex-col gap-2 pb-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Parameter Explorer" }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "flex flex-col gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex gap-2 items-center", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", onClick: requestDump, children: "Refresh" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Debug-Panel im Playground" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                      "input",
-                      {
-                        className: "px-2 py-1 bg-slate-900 border border-slate-700 rounded text-xs flex-1",
-                        placeholder: "Search...",
-                        value: paramFilter,
-                        onChange: (e) => setParamFilter(e.target.value)
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "h-48 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: parameterState ? paramFilter.trim() ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("pre", { className: "text-[11px] text-slate-200 whitespace-pre-wrap", children: filteredParamsView }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200 space-y-1", children: renderTree(parameterState) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-500", children: "Noch kein Parameter-Dump geladen." }) })
-                ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Agents (SceneGraph)" }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "h-28", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("ul", { className: "text-xs text-slate-200 space-y-2", children: agents.map((a) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("li", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                    "span",
-                    {
-                      className: cn(
-                        "inline-block h-2 w-2 rounded-full",
-                        a.active ? "bg-emerald-400" : "bg-slate-600"
+              className: "flex-1 min-h-0 flex flex-col",
+              style: { display: rightTab === "props" ? "flex" : "none" },
+              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0 h-full pr-1", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 min-h-0 flex flex-col gap-2 pb-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Parameter Explorer" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "flex flex-col gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex gap-2 items-center", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", onClick: requestDump, children: "Refresh" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Debug-Panel im Playground" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                        "input",
+                        {
+                          className: "px-2 py-1 bg-slate-900 border border-slate-700 rounded text-xs flex-1",
+                          placeholder: "Search...",
+                          value: paramFilter,
+                          onChange: (e) => setParamFilter(e.target.value)
+                        }
                       )
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-semibold", children: a.name }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
-                      a.visible ? "visible" : "hidden",
-                      " \xB7 ",
-                      a.ticks,
-                      " ticks \xB7 Hooks:",
-                      " ",
-                      a.hooks.join(", ") || "-"
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "h-48 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: parameterState ? paramFilter.trim() ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("pre", { className: "text-[11px] text-slate-200 whitespace-pre-wrap", children: filteredParamsView }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200 space-y-1", children: renderTree(parameterState) }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-500", children: "Noch kein Parameter-Dump geladen." }) })
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Agents (SceneGraph)" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "h-28", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("ul", { className: "text-xs text-slate-200 space-y-2", children: agents.map((a) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("li", { className: "flex items-center gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                      "span",
+                      {
+                        className: cn(
+                          "inline-block h-2 w-2 rounded-full",
+                          a.active ? "bg-emerald-400" : "bg-slate-600"
+                        )
+                      }
+                    ),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-semibold", children: a.name }),
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
+                        a.visible ? "visible" : "hidden",
+                        " \xB7 ",
+                        a.ticks,
+                        " ticks \xB7 Hooks:",
+                        " ",
+                        a.hooks.join(", ") || "-"
+                      ] })
+                    ] })
+                  ] }, a.name)) }) }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700 flex min-h-0 flex-col", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Timeline" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "flex-1 min-h-0 flex flex-col gap-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2 text-xs text-slate-300", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "h-2 w-2 rounded-full bg-amber-400" }),
+                        "Playhead"
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                        Button,
+                        {
+                          size: "sm",
+                          variant: "secondary",
+                          onClick: () => frameRef.current?.contentWindow?.postMessage({ type: "timeline-play-toggle" }, "*"),
+                          children: "Play/Pause"
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-2 w-full rounded bg-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                      "div",
+                      {
+                        className: "h-2 bg-emerald-400 rounded",
+                        style: { width: `${Math.min(Math.max(timelinePos, 0), 100)}%` }
+                      }
+                    ) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200 space-y-2", children: timelineItems.map((t) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-semibold", children: t.id }),
+                        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
+                          t.from,
+                          "s \u2192 ",
+                          t.to,
+                          "s ",
+                          t.loop ? "\xB7 loop" : ""
+                        ] })
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                        Button,
+                        {
+                          size: "sm",
+                          variant: "ghost",
+                          onClick: () => frameRef.current?.contentWindow?.postMessage(
+                            { type: "timeline-scrub", position: t.from },
+                            "*"
+                          ),
+                          children: "Jump"
+                        }
+                      )
+                    ] }, t.id)) }) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                        "input",
+                        {
+                          type: "range",
+                          min: 0,
+                          max: 100,
+                          value: timelinePos,
+                          onChange: (e) => {
+                            const val = Number(e.target.value);
+                            setTimelinePos(val);
+                            frameRef.current?.contentWindow?.postMessage(
+                              { type: "timeline-scrub", position: val / 10 },
+                              "*"
+                            );
+                          },
+                          className: "flex-1"
+                        }
+                      ),
+                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "text-xs text-slate-300 w-10 text-right", children: [
+                        timelinePos,
+                        "%"
+                      ] })
                     ] })
                   ] })
-                ] }, a.name)) }) }) })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700 flex min-h-0 flex-col", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "Timeline" }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "flex-1 min-h-0 flex flex-col gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2 text-xs text-slate-300", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "h-2 w-2 rounded-full bg-amber-400" }),
-                      "Playhead"
-                    ] }),
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "IO Debug" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "space-y-2", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200", children: "tweakpane \u2192 parameter (live), sensors (stub)" }),
                     /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
                       Button,
                       {
                         size: "sm",
                         variant: "secondary",
-                        onClick: () => frameRef.current?.contentWindow?.postMessage({ type: "timeline-play-toggle" }, "*"),
-                        children: "Play/Pause"
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-2 w-full rounded bg-slate-700", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                    "div",
-                    {
-                      className: "h-2 bg-emerald-400 rounded",
-                      style: { width: `${Math.min(Math.max(timelinePos, 0), 100)}%` }
-                    }
-                  ) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 rounded border border-slate-700/70 bg-slate-900/50 p-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200 space-y-2", children: timelineItems.map((t) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center justify-between", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "font-semibold", children: t.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "text-[11px] text-slate-400", children: [
-                        t.from,
-                        "s \u2192 ",
-                        t.to,
-                        "s ",
-                        t.loop ? "\xB7 loop" : ""
-                      ] })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                      Button,
-                      {
-                        size: "sm",
-                        variant: "ghost",
-                        onClick: () => frameRef.current?.contentWindow?.postMessage(
-                          { type: "timeline-scrub", position: t.from },
-                          "*"
-                        ),
-                        children: "Jump"
-                      }
-                    )
-                  ] }, t.id)) }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                      "input",
-                      {
-                        type: "range",
-                        min: 0,
-                        max: 100,
-                        value: timelinePos,
-                        onChange: (e) => {
-                          const val = Number(e.target.value);
-                          setTimelinePos(val);
-                          frameRef.current?.contentWindow?.postMessage(
-                            { type: "timeline-scrub", position: val / 10 },
-                            "*"
-                          );
+                        onClick: () => {
+                          const snapshot = {
+                            channel: "tweakpane",
+                            last: Date.now(),
+                            keys: ["colorset.mode", "format.width", "background.color"]
+                          };
+                          setDebugLines((prev) => [JSON.stringify(snapshot, null, 2), ...prev].slice(0, 50));
                         },
-                        className: "flex-1"
+                        children: "Snapshot"
                       }
-                    ),
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "text-xs text-slate-300 w-10 text-right", children: [
-                      timelinePos,
-                      "%"
-                    ] })
+                    )
                   ] })
                 ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(Card, { className: "bg-slate-800/80 border-slate-700", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CardTitle, { className: "text-sm", children: "IO Debug" }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(CardContent, { className: "space-y-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "text-xs text-slate-200", children: "tweakpane \u2192 parameter (live), sensors (stub)" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                    Button,
-                    {
-                      size: "sm",
-                      variant: "secondary",
-                      onClick: () => {
-                        const snapshot = {
-                          channel: "tweakpane",
-                          last: Date.now(),
-                          keys: ["colorset.mode", "format.width", "background.color"]
-                        };
-                        setDebugLines((prev) => [JSON.stringify(snapshot, null, 2), ...prev].slice(0, 50));
-                      },
-                      children: "Snapshot"
-                    }
-                  )
-                ] })
-              ] })
-            ] }) })
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          Content,
-          {
-            value: "node",
-            className: "flex-1 min-h-0 flex flex-col",
-            style: { display: rightTab === "node" ? "flex" : "none" },
-            children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NodeEditor, { className: "flex-1 min-h-0 w-full h-full" }) })
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          Content,
-          {
-            value: "debug",
-            className: "flex-1 min-h-0 flex flex-col",
-            style: { display: rightTab === "debug" ? "flex" : "none" },
-            children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 bg-slate-900/80 border border-slate-700 rounded min-h-0 flex flex-col", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2 px-3 py-2 border-b border-slate-700", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "secondary", onClick: requestDump, children: "Refresh" }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Toggle Debug Panel (Playground)" })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                "pre",
+              ] }) })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            Content,
+            {
+              value: "node",
+              className: "flex-1 min-h-0 flex flex-col",
+              style: { display: rightTab === "node" ? "flex" : "none" },
+              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                NodeEditor,
                 {
-                  ref: debugRef,
-                  className: "text-xs whitespace-pre-wrap p-3 h-full overflow-auto font-mono",
-                  children: debugView
+                  className: "flex-1 min-h-0 w-full h-full",
+                  onDropComponent: (item) => setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50))
                 }
               ) })
-            ] })
-          }
-        )
-      ] }) }) })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            Content,
+            {
+              value: "debug",
+              className: "flex-1 min-h-0 flex flex-col",
+              style: { display: rightTab === "debug" ? "flex" : "none" },
+              children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex-1 bg-slate-900/80 border border-slate-700 rounded min-h-0 flex flex-col", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex items-center gap-2 px-3 py-2 border-b border-slate-700", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "secondary", onClick: requestDump, children: "Refresh" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { size: "sm", variant: "ghost", onClick: toggleDebugPanel, children: "Toggle Debug Panel (Playground)" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ScrollArea, { className: "flex-1 min-h-0", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("pre", { ref: debugRef, className: "text-xs whitespace-pre-wrap p-3 h-full overflow-auto font-mono", children: debugView }) })
+              ] })
+            }
+          )
+        ] }) }) })
+      ] })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "h-8 bg-slate-900 border-t border-slate-800 text-xs text-slate-400 flex items-center px-3", children: "Status: Ready" })
   ] });

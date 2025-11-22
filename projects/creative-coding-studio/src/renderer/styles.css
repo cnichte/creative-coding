@@ -823,12 +823,24 @@ video {
   width: 0.5rem;
 }
 
+.w-56 {
+  width: 14rem;
+}
+
+.w-8 {
+  width: 2rem;
+}
+
 .w-full {
   width: 100%;
 }
 
 .w-px {
   width: 1px;
+}
+
+.min-w-\[14rem\] {
+  min-width: 14rem;
 }
 
 .max-w-xs {
@@ -857,6 +869,10 @@ video {
 
 .cursor-col-resize {
   cursor: col-resize;
+}
+
+.cursor-grab {
+  cursor: grab;
 }
 
 .touch-pinch-zoom {
@@ -1174,6 +1190,10 @@ video {
   background-repeat: repeat;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-2 {
   padding: 0.5rem;
 }
@@ -1356,6 +1376,11 @@ video {
 .text-amber-200 {
   --tw-text-opacity: 1;
   color: rgb(253 230 138 / var(--tw-text-opacity, 1));
+}
+
+.text-slate-100 {
+  --tw-text-opacity: 1;
+  color: rgb(241 245 249 / var(--tw-text-opacity, 1));
 }
 
 .text-slate-200 {
@@ -1550,6 +1575,48 @@ body,
           user-select: none;
 }
 
+/* ReactFlow overrides to ensure full size and clickable UI */
+
+.reactflow-wrapper {
+  position: relative;
+  pointer-events: auto;
+}
+
+.react-flow {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.react-flow__renderer {
+  width: 100%;
+  height: 100%;
+}
+
+.react-flow__pane {
+  cursor: grab;
+}
+
+.react-flow__minimap {
+  width: 140px;
+  height: 100px;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.react-flow__controls {
+  bottom: 8px;
+  pointer-events: auto;
+}
+
+.react-flow__panel {
+  pointer-events: auto;
+}
+
+.hover\:border-emerald-400:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(52 211 153 / var(--tw-border-opacity, 1));
+}
+
 .hover\:border-slate-600:hover {
   --tw-border-opacity: 1;
   border-color: rgb(71 85 105 / var(--tw-border-opacity, 1));
@@ -1600,4 +1667,10 @@ body,
 
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
+}
+
+@media (min-width: 640px) {
+  .sm\:inline-flex {
+    display: inline-flex;
+  }
 }

@@ -20,6 +20,7 @@ type DebugLine = string;
 
 type LeftTabKey = "artwork";
 type RightTabKey = "props" | "node" | "debug";
+type LibraryItem = { id: string; name: string; category: string; desc: string };
 
 function useIPC() {
   const [projectPath, setProjectPath] = useState<string>("");
@@ -33,6 +34,7 @@ function App() {
   const { projectPath } = useIPC();
   const [leftTab, setLeftTab] = useState<LeftTabKey>("artwork");
   const [rightTab, setRightTab] = useState<RightTabKey>("props");
+  const [libraryOpen, setLibraryOpen] = useState(true);
   const debugRef = useRef<HTMLPreElement | null>(null);
   const [debugLines, setDebugLines] = useState<DebugLine[]>([]);
   const frameRef = useRef<HTMLIFrameElement | null>(null);
@@ -51,6 +53,17 @@ function App() {
     { id: "flash-bg", from: 0, to: 5, loop: true },
     { id: "move-grid", from: 2, to: 10 },
   ]);
+  const componentLibrary = useMemo<LibraryItem[]>(
+    () => [
+      { id: "background", name: "Background", category: "Canvas", desc: "Füllt den Hintergrund" },
+      { id: "grid", name: "Grid Manager", category: "Layout", desc: "Raster/Entities" },
+      { id: "colorset", name: "ColorSet", category: "Palette", desc: "Paletten/Animation" },
+      { id: "particle", name: "Particles", category: "Agents", desc: "Partikelsystem" },
+      { id: "sensor", name: "Sensor Input", category: "IO", desc: "Externe Datenquelle" },
+      { id: "timeline", name: "Timeline Item", category: "Animation", desc: "Zeitgesteuertes Event" },
+    ],
+    []
+  );
 
   useEffect(() => {
     const listener = (event: MessageEvent<DumpMessage>) => {
@@ -72,6 +85,20 @@ function App() {
     window.addEventListener("contextmenu", onCtx);
     return () => window.removeEventListener("contextmenu", onCtx);
   }, []);
+
+  const parseDragData = (e: React.DragEvent): LibraryItem | null => {
+    const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain");
+    if (!raw) return null;
+    try {
+      const data = JSON.parse(raw);
+      if (data?.id && data?.name) {
+        return data as LibraryItem;
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  };
 
   const requestDump = () => {
     frameRef.current?.contentWindow?.postMessage({ type: "request-parameter-dump" }, "*");
@@ -150,6 +177,14 @@ function App() {
         <div className="text-lg font-semibold">Creative Coding Studio</div>
         <div className="text-xs text-slate-400 truncate max-w-xs">{projectPath}</div>
         <div className="ml-auto flex gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setLibraryOpen((v) => !v)}
+            className="hidden sm:inline-flex"
+          >
+            {libraryOpen ? "Library <<" : "Library >>"}
+          </Button>
           <Button variant="secondary" size="sm" onClick={openFile}>
             Open
           </Button>
@@ -159,33 +194,83 @@ function App() {
         </div>
       </div>
 
-      <PanelGroup direction="horizontal" className="flex-1 min-h-0 px-3 pb-3">
-        <Panel defaultSize={55} minSize={25} className="mr-2">
-          <div className="h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col">
-            <Tabs.Root value={leftTab} onValueChange={(v) => setLeftTab(v as LeftTabKey)} className="flex-1 flex flex-col min-h-0">
-              <Tabs.List className="flex gap-2 p-2" aria-label="Left Tabs">
-                <Tabs.Trigger
-                  value="artwork"
-                  className={cn(
-                    "px-3 py-2 rounded border text-sm",
-                    leftTab === "artwork"
-                      ? "bg-slate-700 border-slate-500"
-                      : "bg-slate-800 border-slate-700 hover:border-slate-600"
-                  )}
+      <div className="flex flex-1 min-h-0 px-3 pb-3 gap-2">
+        {libraryOpen && (
+          <div className="w-56 min-w-[14rem] bg-slate-900 border border-slate-800 rounded flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800">
+              <div className="text-sm font-semibold text-slate-100">Library</div>
+              <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => setLibraryOpen(false)}>
+                ×
+              </Button>
+            </div>
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="p-2 space-y-2">
+                {componentLibrary.map((c) => (
+                  <div
+                    key={c.id}
+                    draggable
+                    onDragStart={(e) => {
+                      const payload = JSON.stringify(c);
+                      e.dataTransfer.setData("application/json", payload);
+                      e.dataTransfer.setData("text/plain", payload);
+                      e.dataTransfer.effectAllowed = "copy";
+                    }}
+                    className="rounded border border-slate-700 bg-slate-800/80 p-2 cursor-grab hover:border-emerald-400"
+                    title={c.desc}
+                  >
+                    <div className="text-xs uppercase text-slate-400">{c.category}</div>
+                    <div className="text-sm font-semibold text-slate-100">{c.name}</div>
+                    <div className="text-[11px] text-slate-400">{c.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
+
+        <PanelGroup direction="horizontal" className="flex-1 min-h-0">
+              <Panel defaultSize={libraryOpen ? 50 : 55} minSize={20} className="mr-2">
+                <div className="h-full bg-slate-900 border border-slate-800 rounded overflow-hidden flex flex-col">
+                  <Tabs.Root value={leftTab} onValueChange={(v) => setLeftTab(v as LeftTabKey)} className="flex-1 flex flex-col min-h-0">
+                    <Tabs.List className="flex gap-2 p-2" aria-label="Left Tabs">
+                      <Tabs.Trigger
+                        value="artwork"
+                        className={cn(
+                          "px-3 py-2 rounded border text-sm",
+                          leftTab === "artwork"
+                            ? "bg-slate-700 border-slate-500"
+                            : "bg-slate-800 border-slate-700 hover:border-slate-600"
+                        )}
+                      >
+                        Artwork
+                      </Tabs.Trigger>
+                    </Tabs.List>
+                    <Tabs.Content value="artwork" className="flex-1 min-h-0 flex">
+                      <div
+                        className="w-full h-full"
+                        onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const item = parseDragData(e);
+                    if (item) {
+                      frameRef.current?.contentWindow?.postMessage(
+                        { type: "add-component", component: item },
+                        "*"
+                      );
+                      setDebugLines((prev) => [`Drop->Artwork: ${item.name}`, ...prev].slice(0, 50));
+                    }
+                  }}
                 >
-                  Artwork
-                </Tabs.Trigger>
-              </Tabs.List>
-              <Tabs.Content value="artwork" className="flex-1 min-h-0 flex">
-                <iframe ref={frameRef} className="w-full h-full border-0" src={PLAYGROUND_URL} />
+                  <iframe ref={frameRef} className="w-full h-full border-0" src={PLAYGROUND_URL} />
+                </div>
               </Tabs.Content>
             </Tabs.Root>
           </div>
-        </Panel>
-        <Handle />
-        <Panel defaultSize={45} minSize={25}>
-          <div className="h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col">
-            <Tabs.Root value={rightTab} onValueChange={(v) => setRightTab(v as RightTabKey)} className="flex-1 flex flex-col min-h-0">
+            </Panel>
+            <Handle />
+            <Panel defaultSize={libraryOpen ? 50 : 45} minSize={25}>
+              <div className="h-full bg-slate-800 border border-slate-700 rounded p-2 overflow-hidden flex flex-col">
+                <Tabs.Root value={rightTab} onValueChange={(v) => setRightTab(v as RightTabKey)} className="flex-1 flex flex-col min-h-0">
               <Tabs.List className="flex gap-2 p-2" aria-label="Right Tabs">
                 <Tabs.Trigger
                   value="props"
@@ -400,7 +485,12 @@ function App() {
                 style={{ display: rightTab === "node" ? "flex" : "none" }}
               >
                 <div className="w-full h-full rounded border border-slate-700 overflow-hidden bg-slate-900/60 flex flex-1 min-h-0">
-                  <NodeEditor className="flex-1 min-h-0 w-full h-full" />
+                  <NodeEditor
+                    className="flex-1 min-h-0 w-full h-full"
+                    onDropComponent={(item) =>
+                      setDebugLines((prev) => [`Drop->NodeEditor: ${item.name}`, ...prev].slice(0, 50))
+                    }
+                  />
                 </div>
               </Tabs.Content>
 
@@ -419,11 +509,8 @@ function App() {
                     </Button>
                   </div>
                   <ScrollArea className="flex-1 min-h-0">
-                    <pre
-                      ref={debugRef}
-                      className="text-xs whitespace-pre-wrap p-3 h-full overflow-auto font-mono"
-                    >
-{debugView}
+                    <pre ref={debugRef} className="text-xs whitespace-pre-wrap p-3 h-full overflow-auto font-mono">
+                      {debugView}
                     </pre>
                   </ScrollArea>
                 </div>
@@ -432,6 +519,7 @@ function App() {
           </div>
         </Panel>
       </PanelGroup>
+      </div>
       <div className="h-8 bg-slate-900 border-t border-slate-800 text-xs text-slate-400 flex items-center px-3">
         Status: Ready
       </div>
