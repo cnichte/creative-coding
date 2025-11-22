@@ -71,7 +71,7 @@ flowchart LR
   SR --> TL
 ```
 
-## Kernbausteine
+## Core Components
 
 ### Artwork + SketchRunner
 
