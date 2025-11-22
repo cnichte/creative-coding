@@ -119,7 +119,7 @@ flowchart LR
 - `AnimationTimeline` + `TimelinePlayer`: time-controlled segments, centrally wired in the artwork.
 - [ ] More segments (ease, curves), exportable keyframes, simplified agent bindings.
 
-## Wichtige Module
+## Important modules
 
 - Format: paper sizes, DPI, aspect ratio; registers own tweakpane controls.
 - Background: uses colourset or custom colour; hangs in SceneGraph.
