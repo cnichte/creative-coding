@@ -11,6 +11,7 @@ import {
   ParameterManager,
   type ParameterMappingEntry,
 } from "./ParameterManager";
+import { Debug } from "./Debug";
 
 export interface IOContext {
   parameter: any;
@@ -37,12 +38,14 @@ export class IOManager {
   private parameterManager: ParameterManager;
   private channels: Map<string, ChannelFactory>;
   private bindings: IOBinding[];
+  private debugPanel: HTMLElement | null;
 
   private constructor(parameter: any) {
     this.parameter = parameter;
     this.parameterManager = ParameterManager.from(parameter);
     this.channels = new Map();
     this.bindings = [];
+    this.debugPanel = null;
   }
 
   public static from(parameter: any): IOManager {
@@ -148,6 +151,17 @@ export class IOManager {
       parameterManager: this.parameterManager,
     };
 
+    // optional visual debug panel
+    if (Debug.isEnabled("debug.panel")) {
+      const lines: string[] = [];
+      cachedSources.forEach((value, key) => {
+        lines.push(
+          `${key}: ${JSON.stringify(value, null, 2).substring(0, 400)}`
+        );
+      });
+      Debug.renderPanel(this.parameter, lines.join("\n\n"), "cc-io-debug", "Debug", true);
+    }
+
     for (let i = 0; i < this.bindings.length; i++) {
       const binding = this.bindings[i];
       const source = cachedSources.get(binding.channelId);
@@ -155,7 +169,14 @@ export class IOManager {
         continue;
       }
 
+      const debugKey = `io.${binding.channelId}`;
+      const debugEnabled =
+        Debug.isEnabled("io") || Debug.isEnabled(debugKey);
+
       if (binding.mapping && binding.mapping.length > 0) {
+        if (debugEnabled) {
+          console.log(`[IO] apply mapping ${binding.channelId}`, source);
+        }
         this.parameterManager.applyMapping(source, binding.mapping);
       }
 
@@ -168,6 +189,11 @@ export class IOManager {
           source,
         });
       }
+
+      if (debugEnabled) {
+        console.log(`[IO] after mapping ${binding.channelId}`, this.parameter);
+      }
     }
   }
+
 }

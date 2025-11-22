@@ -117,8 +117,11 @@ class MySketch implements Sketch {
       this.ctx = ctx;
     }
 
-    Debug.enable("colorset.animation.timer");
+    // Debug.enable("colorset.animation.timer");
     // Debug.enable("animation.timer");
+    // Debug.enable("colorset.io");
+    Debug.enable("debug.panel") // Shows a panel under the canvas with debug info
+    Debug.enable("io")
 
     if (tweakpane_items?.manager) {
       // ensure base parameter sets before UI wiring

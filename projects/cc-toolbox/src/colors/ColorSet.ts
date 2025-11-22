@@ -879,6 +879,13 @@ export class ColorSet {
       ColorSet.setSelectedSetName(parameter, colorset.selectedSetName);
     }
 
+    // optional IO trace
+    if (Debug.isEnabled("colorset.io")) {
+      module.onUpdate((state) => {
+        console.log("[TP colorset state]", state);
+      });
+    }
+
     return module;
   }
 
