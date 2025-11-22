@@ -5,45 +5,6 @@
 - Date : 2022 - to date
 - Web : <https://carsten-nichte.de/index/>
 
-## Lizenz
-
-This is a "marketing version".
-
-### License & Usage Permissions
-
-This project is licensed under the MIT License.
-This means:
-
-- You can use this tool for any purpose — personal, educational, or commercial.
-- You can sell, mint, exhibit and publish artworks created with this software.
-- You can modify the code, fork it, or include it in your own projects.
-- No attribution is required for artworks (although appreciated).
-- The code is provided “as is”, without warranty.
-
-### Important: Your art belongs to you
-
-All artworks, renders, prints, videos or installations created using this software are 100% your property.
-You may:
-
-- Sell or license them
-- Use them in exhibitions
-- Use them in commercial projects
-- Publish or mint them as NFTs (if you’re into that)
-- Use them in client work
-
-The software does not impose any restrictions on the commercial use of the creative output.
-
-### Example Artworks
-
-Any example images, demo renders or illustrations included in this repository (if any) remain © by their respective authors and may have separate permissive licenses.
-
-## Pages
-
-- <https://carsten-nichte.de/apps/creative-code/>
-- <https://carsten-nichte.de/apps/docs/creative-code-projekt-dokumentation/>
-- <https://carsten-nichte.de/#generative-art>
-- <https://carsten-nichte.de/notes/artikel/generative-art-creative-code/>
-
 ## Description
 
 Creative-Coding Projects for HTML Canvas, with focus more on organisation and structure than on speed.
@@ -61,9 +22,11 @@ Navigate to one of the projects folder in the Terminal, and from there:
 - YARN 2
 - Webpack 5
 - Typescript 5.2
+- Electron, React
 - <https://github.com/cocopon/tweakpane>
 - <https://github.com/mattdesl/canvas-sketch-util>
-- Learn, code, create, and have fun.
+
+Learn, code, create, and have fun.
 
 ## The Creative Coding Studio
 
@@ -75,7 +38,7 @@ Is heavy under developmment at the moment.
 
 Brief overview of the current cc-toolbox architecture.
 
-## objectives
+## Objectives
 
 - Uniform basis for 2D artwork (static/dynamic); expandable later.
 - One source of truth: parameter object that bundles all inputs.
@@ -241,3 +204,43 @@ sequenceDiagram
 - [ ] SceneGraph with layer/Z-order and optional offscreen rendering.
 - [ ] IO manager: mapping presets, sensor simulation, debug overlay.
 - [ ] Tests/examples for each module (001–006 + new).
+
+
+## Licence
+
+This is a "marketing version".
+
+### License & Usage Permissions
+
+This project is licensed under the MIT License.
+This means:
+
+- You can use this tool for any purpose — personal, educational, or commercial.
+- You can sell, mint, exhibit and publish artworks created with this software.
+- You can modify the code, fork it, or include it in your own projects.
+- No attribution is required for artworks (although appreciated).
+- The code is provided “as is”, without warranty.
+
+### Important: Your art belongs to you
+
+All artworks, renders, prints, videos or installations created using this software are 100% your property.
+You may:
+
+- Sell or license them
+- Use them in exhibitions
+- Use them in commercial projects
+- Publish or mint them as NFTs (if you’re into that)
+- Use them in client work
+
+The software does not impose any restrictions on the commercial use of the creative output.
+
+### Example Artworks
+
+Any example images, demo renders or illustrations included in this repository (if any) remain © by their respective authors and may have separate permissive licenses.
+
+## Pages
+
+- <https://carsten-nichte.de/apps/creative-code/>
+- <https://carsten-nichte.de/apps/docs/creative-code-projekt-dokumentation/>
+- <https://carsten-nichte.de/#generative-art>
+- <https://carsten-nichte.de/notes/artikel/generative-art-creative-code/>
