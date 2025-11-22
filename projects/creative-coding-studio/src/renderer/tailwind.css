@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* custom tweaks */
+body {
+  @apply bg-slate-900 text-slate-50;
+}
+
+:root,
+html,
+body,
+#root {
+  height: 100%;
+  min-height: 100%;
+}
+
+:root {
+  --split-pos: 55%;
+}
+
+.cc-split {
+  grid-template-columns: var(--split-pos) 8px 1fr;
+}
+
+.cc-handle {
+  cursor: col-resize;
+  user-select: none;
+}

@@ -9,7 +9,7 @@
     "build:prod": "webpack --config ./config/prod.webpack.config.js",
     "build": "yarn build:prod",
     "prebuild": "yarn workspace @carstennichte/cc-toolbox build",
-    "cb":" yarn clean && yarn build:dev",
+    "cb": " yarn clean && yarn build:dev",
     "dev": "yarn start"
   },
   "devDependencies": {

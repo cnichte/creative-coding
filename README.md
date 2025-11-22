@@ -5,6 +5,41 @@
 - Date : 2022 - to date
 - Web : <https://carsten-nichte.de/index/>
 
+## Lizenz
+
+ das ist eine „Marketing-Version“
+
+### License & Usage Permissions
+
+This project is licensed under the MIT License.
+This means:
+
+- You can use this tool for any purpose — personal, educational, or commercial.
+- You can sell, mint, exhibit and publish artworks created with this software.
+- You can modify the code, fork it, or include it in your own projects.
+- No attribution is required for artworks (although appreciated).
+- The code is provided “as is”, without warranty.
+
+### Important: Your art belongs to you.
+
+All artworks, renders, prints, videos or installations created using this software are 100% your property.
+You may:
+
+- Sell or license them
+- Use them in exhibitions
+- Use them in commercial projects
+- Publish or mint them as NFTs (if you’re into that)
+- Use them in client work
+
+The software does not impose any restrictions on the commercial use of the creative output.
+
+### Example Artworks
+
+Any example images, demo renders or illustrations included in this repository (if any) remain © by their respective authors and may have separate permissive licenses.
+
+
+
+
 ## Pages
 
 - <https://carsten-nichte.de/apps/creative-code/>

@@ -1,5 +1,15 @@
 # Readme Development
 
+```bash
+yarn workspace @carstennichte/creative-coding-studio build:css (oder watch:css beim Arbeiten).
+
+yarn install 
+yarn workspace @carstennichte/creative-coding-studio build:css
+yarn workspace @carstennichte/creative-coding-studio build:renderer
+```
+
+## ----
+
 Reihenfolge veröffentlichung jetzt:
 
 - Bit
